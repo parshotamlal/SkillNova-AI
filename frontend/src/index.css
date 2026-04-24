@@ -1,0 +1,7 @@
+/* Add Tailwind directives if using Tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Or basic global styles if using plain CSS */
+/* body { font-family: sans-serif; margin: 0; padding: 0; } */
