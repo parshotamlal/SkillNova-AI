@@ -2,8 +2,9 @@ import express from "express";
 const router = express.Router();
 import multer from "multer";
 import path from "path";
-import { analyzeResume } from "../utils/geminiAnalyzer.js";
+import { analyzeResume,generateATSResume } from "../utils/geminiAnalyzer.js";
 import { extractTextFromFile } from "../utils/resumeParser.js";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // Setup multer for in-memory file uploads
 const storage = multer.memoryStorage();
@@ -32,7 +33,12 @@ router.post("/", async (req, res) => {
   try {
     const result = await analyzeResume(resume, jd);
     console.log("Analysis result:", result);
-    res.json(result);
+    // Include resumeText and jobDescription for rewrite functionality
+    res.json({
+      ...result,
+      resumeText: resume,
+      jobDescription: jd
+    });
   } catch (err) {
     console.error("Error analyzing resume:", err.message || err);
     res.status(500).json({ error: "Failed to analyze resume" });
@@ -56,10 +62,125 @@ router.post("/file", upload.single("resume"), async (req, res) => {
 
     const result = await analyzeResume(resumeText, jd);
     console.log("File Analysis result:", result);
-    res.json(result);
+    
+    // Include resumeText and jobDescription for rewrite functionality
+    res.json({
+      ...result,
+      resumeText,
+      jobDescription: jd
+    });
   } catch (err) {
     console.error("File Analyze Error:", err.message || err);
     res.status(500).json({ error: "Failed to analyze resume from file" });
+  }
+});
+
+
+
+// Route: Rewrite resume to match job description
+// router.post("/rewrite", async (req, res) => {
+//   try {
+//     const { resumeText, jobDescription } = req.body;
+
+//     // Log incoming payload for debugging
+//     console.log("/rewrite payload:", {
+//       resumeText: resumeText ? `[length: ${resumeText.length}]` : undefined,
+//       jobDescription: jobDescription ? `[length: ${jobDescription.length}]` : undefined
+//     });
+
+//     if (!resumeText || !jobDescription) {
+//       console.error("Missing resumeText or jobDescription in payload");
+//       return res.status(400).json({ error: "Resume text and job description are required" });
+//     }
+
+//     // Log API key presence
+//     if (!process.env.AI_API_KEY) {
+//       console.error("AI_API_KEY is missing in environment variables");
+//       return res.status(500).json({ error: "AI API key not configured on server" });
+//     }
+
+//     let rewrittenResume = "";
+//     try {
+//       const genAI = new GoogleGenerativeAI(process.env.AI_API_KEY);
+//       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+//       const prompt = `
+// Task: Rewrite the resume to better match the job description.
+
+// Requirements:
+// - Improve keywords, skills, and experience alignment
+// - Keep it professional and ATS-friendly
+// - Keep the same format structure but enhance the content
+// - Return ONLY the updated resume in clean text format
+
+// Existing Resume:
+// ${resumeText}
+
+// Job Description:
+// ${jobDescription}
+
+// Output:
+// Return ONLY the updated resume in clean text format. Do not include any explanations or markdown.
+// `;
+
+//       const result = await model.generateContent(prompt);
+//       rewrittenResume = result.response.text().trim();
+//       // Clean up any markdown code blocks if present
+//       rewrittenResume = rewrittenResume.replace(/```|```/g, "").trim();
+//     } catch (aiErr) {
+//       console.error("Gemini API error:", aiErr.message || aiErr);
+//       return res.status(500).json({ error: "Gemini API error: " + (aiErr.message || aiErr) });
+//     }
+
+//     res.json({ rewrittenResume });
+//   } catch (err) {
+//     console.error("Rewrite Error (outer):", err.message || err);
+//     res.status(500).json({ error: "Failed to rewrite resume: " + (err.message || err) });
+//   }
+// });
+
+
+
+router.post("/rewrite", async (req, res) => {
+
+   console.log("=== REWRITE ROUTE HIT ===");
+  console.log("API KEY:", process.env.AI_API_KEY ? "EXISTS" : "MISSING ❌");
+  console.log("Body keys:", Object.keys(req.body));
+  try {
+    const { resumeText, jobDescription } = req.body;
+ 
+    // Log incoming payload for debugging
+    console.log("/rewrite payload:", {
+      resumeText: resumeText ? `[length: ${resumeText.length}]` : undefined,
+      jobDescription: jobDescription ? `[length: ${jobDescription.length}]` : undefined
+    });
+ 
+    if (!resumeText || !jobDescription) {
+      console.error("Missing resumeText or jobDescription in payload");
+      return res.status(400).json({ error: "Resume text and job description are required" });
+    }
+ 
+    // Log API key presence
+    if (!process.env.AI_API_KEY) {
+      console.error("AI_API_KEY is missing in environment variables");
+      return res.status(500).json({ error: "AI API key not configured on server" });
+    }
+ 
+    const result = await generateATSResume(resumeText, jobDescription);
+ 
+    if (result.warning) {
+      console.error("generateATSResume warning:", result.warning);
+      return res.status(500).json({ error: result.warning });
+    }
+ 
+    res.json({
+      rewrittenResume: result.resume,
+      changes: result.changes
+    });
+ 
+  } catch (err) {
+    console.error("Rewrite Error:", err.message || err);
+    res.status(500).json({ error: "Failed to rewrite resume: " + (err.message || err) });
   }
 });
 

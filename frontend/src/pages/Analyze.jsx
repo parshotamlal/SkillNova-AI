@@ -9,6 +9,9 @@ export default function Upload() {
   const [jobDescription, setJobDescription] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [dragActive, setDragActive] = useState(false);
+  const VITE_API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+  console.log("VITE_API_URL:", VITE_API_URL); // Debug
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -55,8 +58,7 @@ export default function Upload() {
     try {
       setIsAnalyzing(true);
       const res = await axios.post(
-        // "https://ai-resumeanalyzer.onrender.com/api/analyze/file",
-        "https://ai-resumeanalyzer-bgl4.onrender.com/api/analyze/file",
+        `${VITE_API_URL}/api/analyze/file`,
         formData
       );
       const result = res.data;

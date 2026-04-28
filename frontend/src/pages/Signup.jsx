@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, User, Mail, Lock } from "lucide-react";
+import { FaRegEye } from "react-icons/fa";
+import { FaRegEyeSlash } from "react-icons/fa";
+
 import { signupUser } from "../services/api";
 
 export default function Register() {
@@ -8,6 +11,7 @@ export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
@@ -94,30 +98,43 @@ export default function Register() {
           </div>
 
           {/* Password */}
-          <div>
-            <label
-              htmlFor="password"
-              className="text-sm font-medium text-gray-700 block mb-2"
-            >
-              Password
-            </label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
-                className="w-full py-3 pl-10 pr-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Create a password"
-              />
-            </div>
-            <p className="text-xs text-gray-500 mt-1">
-              Password must be at least 6 characters long
-            </p>
-          </div>
+         <div>
+      <label
+        htmlFor="password"
+        className="text-sm font-medium text-gray-700 block mb-2"
+      >
+        Password
+      </label>
+
+      <div className="relative">
+        {/* Lock Icon */}
+        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+
+        {/* Input */}
+        <input
+          id="password"
+          type={showPassword ? "text" : "password"}   // 👈 change here
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          minLength={6}
+          className="w-full py-3 pl-10 pr-10 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="Create a password"
+        />
+
+        {/* Eye Icon */}
+        <span
+          onClick={() => setShowPassword(!showPassword)}
+          className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500 hover:text-black"
+        >
+          {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
+        </span>
+      </div>
+
+      <p className="text-xs text-gray-500 mt-1">
+        Password must be at least 6 characters long
+      </p>
+    </div>
 
           {/* Error */}
           {error && (

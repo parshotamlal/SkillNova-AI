@@ -13,7 +13,7 @@ export default function Footer() {
               </div>
               <div>
                 <h2 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                  ResumeAI
+                 SkillNova
                 </h2>
                 <p className="text-xs text-gray-400 leading-none">
                   Powered by AI
@@ -26,7 +26,7 @@ export default function Footer() {
             </p>
             <div className="flex space-x-4">
               <a
-                href="https://www.linkedin.com/in/singh-simranpreet"
+                href="https://www.linkedin.com/in/parshotamlal"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn"
@@ -35,7 +35,7 @@ export default function Footer() {
                 <Linkedin className="h-5 w-5 text-gray-400" />
               </a>
               <a
-                href="https://github.com/saini-devX"
+                href="https://github.com/parshotamlal"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="GitHub"
@@ -44,7 +44,7 @@ export default function Footer() {
                 <Github className="h-5 w-5 text-gray-400" />
               </a>
               <a
-                href="https://twitter.com/sainidevX"
+                href="https://twitter.com/parshotamsinghx"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Twitter"
@@ -136,8 +136,8 @@ export default function Footer() {
             </ul>
             <div className="flex items-center text-sm text-gray-400">
               <Mail className="h-4 w-4 mr-2" />
-              <a href="mailto:saini.devx@gmail.com" className="hover:underline">
-                saini.devx@gmail.com
+              <a href="mailto:parshotamworks@gmail.com" className="hover:underline">
+                parshotamworks@gmail.com
               </a>
             </div>
           </div>
@@ -146,7 +146,7 @@ export default function Footer() {
         {/* Footer Bottom */}
         <div className="mt-10 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-gray-400">
-            &copy; {new Date().getFullYear()} ResumeAI. All rights reserved.
+            &copy; {new Date().getFullYear()} SkillNova. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0 text-sm text-gray-400">
             <button type="button" className="hover:text-white">

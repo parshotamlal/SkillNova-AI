@@ -44,11 +44,14 @@ export default function Pricing() {
     },
   ];
 
+  const VITE_API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
   const handlePurchase = async (planName) => {
     try {
       const res = await axios.post(
         // "https://ai-resumeanalyzer.onrender.com/api/stripe/create-checkout-session",
-        "https://ai-resumeanalyzer-bgl4.onrender.com/api/stripe/create-checkout-session",
+        // "https://ai-resumeanalyzer-bgl4.onrender.com/api/stripe/create-checkout-session",
+         `${VITE_API_URL}/stripe/create-checkout-session`,
         { planName },
         {
           headers: { "Content-Type": "application/json" },

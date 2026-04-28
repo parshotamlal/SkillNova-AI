@@ -63,14 +63,14 @@ export default function Navbar({ showAuthButtons = true }) {
             </div>
             <div className="hidden sm:block">
               <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-teal-400">
-                ResumeAI
+                SkillNova Ai
               </h1>
               <p className="text-xs text-gray-500 leading-none">
                 Powered by AI
               </p>
             </div>
             <h1 className="sm:hidden text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-teal-400">
-              ResumeAI
+              SkillNova Ai
             </h1>
           </div>
 

@@ -9,8 +9,9 @@ dotenv.config();
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const MODEL = "gemini-1.5-flash";
+const genAI = new GoogleGenerativeAI(process.env.AI_API_KEY);
+// const MODEL = "gemini-1.5-flash";
+const MODEL = "gemini-2.0-flash";
 
 /*
 ========================================================
@@ -56,6 +57,7 @@ async function analyzeResume(resume, jobDescription) {
     return performKeywordFallback(resume, jobDescription);
   }
 }
+
 
 /*
 ========================================================
@@ -220,6 +222,117 @@ function fallbackResult(message) {
   };
 }
 
+
+
+/*
+========================================================
+ ATS RESUME GENERATOR
+========================================================
+*/
+ 
+/**
+ * Generates a new ATS-optimized resume based on the original resume
+ * and a target job description.
+ *
+ * @param {string} resume          - The candidate's existing resume (plain text)
+ * @param {string} jobDescription  - The target job description (plain text)
+ * @param {number} retries         - Number of retry attempts on failure (default: 2)
+ * @returns {Promise<{resume: string, changes: string[], warning: string|null}>}
+ *   - resume:  The newly generated ATS-friendly resume as plain text
+ *   - changes: A list of key improvements made over the original
+ *   - warning: null on success, or an error message if generation failed
+ */
+async function generateATSResume(resume, jobDescription, retries = 2) {
+  console.log("📝 Starting ATS Resume Generation...");
+ 
+  if (!resume || !jobDescription) {
+    return {
+      resume: "",
+      changes: [],
+      warning: "Missing resume or job description"
+    };
+  }
+ 
+  for (let i = 0; i <= retries; i++) {
+    try {
+      return await runGeminiResumeGeneration(resume, jobDescription);
+    } catch (err) {
+      console.log(`Generation attempt ${i + 1} failed →`, err.message);
+ 
+      if (i === retries) {
+        return {
+          resume: "",
+          changes: [],
+          warning: "ATS resume generation failed after retries. Please try again."
+        };
+      }
+ 
+      await new Promise(r => setTimeout(r, 1000));
+    }
+  }
+}
+ 
+/**
+ * Calls Gemini to rewrite the resume in an ATS-optimized format,
+ * injecting relevant keywords from the job description without fabricating
+ * any experience or credentials.
+ */
+async function runGeminiResumeGeneration(resume, jobDescription) {
+  const model = genAI.getGenerativeModel({ model: MODEL });
+ 
+  const prompt = `
+You are a professional ATS resume writer and career coach.
+ 
+Your task is to rewrite the candidate's EXISTING RESUME to be highly ATS-friendly
+and tailored for the TARGET JOB DESCRIPTION, while following strict rules.
+ 
+⚠ STRICT RULES:
+- Do NOT fabricate, invent, or add any experience, skills, certifications, or education that is NOT in the original resume.
+- Only rephrase, restructure, and keyword-optimize what already exists.
+- Use exact keywords and phrases from the job description wherever they truthfully apply.
+- Use standard ATS-safe section headers: Summary, Skills, Experience, Education, Certifications, Projects.
+- Use plain text only — NO tables, NO columns, NO icons, NO graphics.
+- Use bullet points (starting with "-") for experience and project entries.
+- Start each bullet with a strong action verb.
+- Quantify achievements if the original resume already includes numbers.
+- Write a 2–4 sentence professional summary at the top tailored to the job.
+- List skills as a comma-separated inline list under a "Skills" section.
+- Keep formatting consistent and clean for ATS parsing.
+ 
+OUTPUT FORMAT (return ONLY valid JSON, no markdown, no commentary):
+{
+  "resume": "<full plain-text ATS resume here, with \\n for line breaks>",
+  "changes": [
+    "Short description of each key improvement made"
+  ]
+}
+ 
+ORIGINAL RESUME:
+${resume}
+ 
+TARGET JOB DESCRIPTION:
+${jobDescription}
+`;
+ 
+  const result = await model.generateContent(prompt);
+  let raw = result.response.text().trim();
+ 
+  console.log("🤖 RAW GENERATION OUTPUT →", raw.substring(0, 300) + "...");
+ 
+  // Strip markdown code fences if present
+  if (raw.startsWith("```")) {
+    raw = raw.replace(/```json|```/g, "").trim();
+  }
+ 
+  const parsed = JSON.parse(raw);
+ 
+  return {
+    resume: typeof parsed.resume === "string" ? parsed.resume : "",
+    changes: Array.isArray(parsed.changes) ? parsed.changes : [],
+    warning: null
+  };
+}
+ 
 /*
 ========================================================
  EXPORTS
@@ -228,5 +341,6 @@ function fallbackResult(message) {
 
 export {
   analyzeResume,
-  analyzeResumeWithRetry
+  analyzeResumeWithRetry,
+  generateATSResume
 };
