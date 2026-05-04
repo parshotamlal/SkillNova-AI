@@ -1,4 +1,5 @@
 import { Zap, Mail, Github, Twitter, Linkedin } from "lucide-react";
+import Logo from "../../public/SkillNova-Logo.png";
 
 export default function Footer() {
   return (
@@ -8,8 +9,8 @@ export default function Footer() {
           {/* Brand Info */}
           <div>
             <div className="flex items-center mb-4">
-              <div className="bg-gradient-to-br from-blue-500 to-cyan-400 rounded-lg p-2 mr-3">
-                <Zap className="h-6 w-6 text-white" />
+              <div className=" w-12 h-12 p-1 ">
+                <img src={Logo} alt="SkillNova Logo" />
               </div>
               <div>
                 <h2 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">

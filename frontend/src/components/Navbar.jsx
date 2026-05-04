@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { fetchProfile } from "../services/api";
+import Logo from "../../public/SkillNova-Logo.png";
 
 export default function Navbar({ showAuthButtons = true }) {
   const navigate = useNavigate();
@@ -45,21 +46,8 @@ export default function Navbar({ showAuthButtons = true }) {
             className="flex items-center cursor-pointer"
             onClick={() => navigate("/")}
           >
-            <div className="p-2 mr-3 rounded-lg bg-gradient-to-br from-blue-600 to-teal-400">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-6 h-6 text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 10V3L4 14h7v7l9-11h-7z"
-                />
-              </svg>
+            <div className="p-2 rounded-lg ">
+      <img src={Logo} className=" w-10 h-10" alt="SkillNova Logo" />
             </div>
             <div className="hidden sm:block">
               <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-teal-400">

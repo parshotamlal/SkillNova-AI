@@ -51,26 +51,40 @@ src/
 ---
  
 ## 🚀 Getting Started
- 
+
 ### Prerequisites
- 
+
 - Node.js v18+
 - npm or yarn
+- MongoDB (local or cloud instance)
+- Google Gemini API key
+- Stripe account (for payments)
+
 ### Installation
- 
+
 ```bash
 # Clone the repository
 git clone https://github.com/your-username/skillnova-ai.git
- 
+
 # Navigate into the project
 cd skillnova-ai
- 
-# Install dependencies
+
+# Setup Backend
+cd backend
+cp .env.example .env
+# Edit .env with your actual values
 npm install
- 
-# Start the development server
+npm start
+
+# Setup Frontend (in a new terminal)
+cd ../frontend
+cp .env.example .env
+# Edit .env with your actual values
+npm install
 npm run dev
 ```
+
+**Note:** Make sure to copy and configure the `.env.example` files in both `backend/` and `frontend/` directories before starting the servers.
  
 ---
  
@@ -113,12 +127,36 @@ The ATS compatibility check runs **9 independent checks** on your resume text an
 ---
  
 ## 🔑 Environment Variables
- 
-Create a `.env` file in the root directory and add your API configuration:
- 
+
+### Backend (.env)
+Create a `.env` file in the `backend/` directory:
+
 ```env
-VITE_API_BASE_URL=https://your-api-url.com
+# Server Configuration
+PORT=8000
+
+# Database
+MONGO_URI=mongodb://localhost:27017/skillnova
+
+# Authentication
+JWT_SECRET=your_jwt_secret_key_here
+
+# Stripe Payment
+STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key_here
+
+# AI Service (Google Gemini)
+AI_API_KEY=your_google_gemini_api_key_here
 ```
+
+### Frontend (.env)
+Create a `.env` file in the `frontend/` directory:
+
+```env
+# API Configuration
+VITE_API_URL=http://localhost:8000
+```
+
+**Note:** Copy the respective `.env.example` files to `.env` and update with your actual values.
  
 ---
  
