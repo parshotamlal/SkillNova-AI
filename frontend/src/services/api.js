@@ -73,3 +73,18 @@ export const rewriteResume = async (resumeText, jobDescription) => {
   });
   return res.json();
 };
+
+// Generate Cover Letter
+export const generateCoverLetter = async (resumeText, jobDescription) => {
+  const token = localStorage.getItem('authToken');
+
+  const res = await fetch(`${BASE_URL}/api/analyze/cover-letter`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { "Authorization": `Bearer ${token}` } : {})
+    },
+    body: JSON.stringify({ resumeText, jobDescription }),
+  });
+  return res.json();
+};

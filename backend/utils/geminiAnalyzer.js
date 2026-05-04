@@ -332,6 +332,92 @@ ${jobDescription}
     warning: null
   };
 }
+
+
+/*
+========================================================
+ COVER LETTER GENERATOR
+========================================================
+*/
+
+/**
+ * Generates a professional, ATS-friendly cover letter
+ * tailored to the job description from the candidate's resume.
+ *
+ * @param {string} resume         - Candidate's resume (plain text)
+ * @param {string} jobDescription - Target job description (plain text)
+ * @param {number} retries        - Retry attempts on failure (default: 2)
+ * @returns {Promise<{coverLetter: string, warning: string|null}>}
+ */
+async function generateCoverLetter(resume, jobDescription, retries = 2) {
+  console.log("✉️ Starting Cover Letter Generation...");
+
+  if (!resume || !jobDescription) {
+    return { coverLetter: "", warning: "Missing resume or job description" };
+  }
+
+  for (let i = 0; i <= retries; i++) {
+    try {
+      return await runGeminiCoverLetterGeneration(resume, jobDescription);
+    } catch (err) {
+      console.log(`Cover letter attempt ${i + 1} failed →`, err.message);
+      if (i === retries) {
+        return {
+          coverLetter: "",
+          warning: "Cover letter generation failed after retries. Please try again."
+        };
+      }
+      await new Promise(r => setTimeout(r, 1000));
+    }
+  }
+}
+
+async function runGeminiCoverLetterGeneration(resume, jobDescription) {
+  const model = genAI.getGenerativeModel({ model: MODEL });
+
+  const prompt = `
+You are an expert career coach and professional cover letter writer.
+
+Your task is to write a compelling, ATS-optimized cover letter for the candidate
+based ONLY on their EXISTING RESUME and the TARGET JOB DESCRIPTION.
+
+⚠ STRICT RULES:
+- Do NOT fabricate any experience, skills, certifications, or education not in the resume.
+- Use exact keywords and phrases from the job description wherever they truthfully apply.
+- Write in a confident, professional, and personable first-person tone.
+- Structure: Opening hook → Why this role → Key achievements/skills match → Closing CTA.
+- Length: 3–4 paragraphs, no longer than 400 words.
+- Do NOT include placeholder text like "[Company Name]" — infer company context from the job description if possible, otherwise write generically.
+- Plain text only, no bullet points, no markdown.
+
+OUTPUT FORMAT (return ONLY valid JSON, no markdown fences, no commentary):
+{
+  "coverLetter": "<full plain-text cover letter here, with \\n for paragraph breaks>"
+}
+
+RESUME:
+${resume}
+
+JOB DESCRIPTION:
+${jobDescription}
+`;
+
+  const result = await model.generateContent(prompt);
+  let raw = result.response.text().trim();
+
+  console.log("🤖 RAW COVER LETTER OUTPUT →", raw.substring(0, 300) + "...");
+
+  if (raw.startsWith("```")) {
+    raw = raw.replace(/```json|```/g, "").trim();
+  }
+
+  const parsed = JSON.parse(raw);
+
+  return {
+    coverLetter: typeof parsed.coverLetter === "string" ? parsed.coverLetter : "",
+    warning: null
+  };
+}
  
 /*
 ========================================================
@@ -342,5 +428,6 @@ ${jobDescription}
 export {
   analyzeResume,
   analyzeResumeWithRetry,
-  generateATSResume
+  generateATSResume,
+  generateCoverLetter
 };
