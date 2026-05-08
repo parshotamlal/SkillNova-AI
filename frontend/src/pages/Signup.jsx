@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, User, Mail, Lock } from "lucide-react";
 import { FaRegEye } from "react-icons/fa";
 import { FaRegEyeSlash } from "react-icons/fa";
+import {toast,Toaster} from 'react-hot-toast';
 
 import { signupUser } from "../services/api";
 
@@ -22,12 +23,15 @@ export default function Register() {
 
       if (data.message === "Signup successful") {
         // Token is automatically stored in localStorage by signupUser function
+        toast.success('Successfully toasted!')
         navigate("/");
       } else {
         setError(data.message || "Something went wrong");
+        toast.error('Failed to sign up.')
       }
     } catch (err) {
       setError("Failed to sign up. Please try again later.");
+      toast.error('Failed to sign up.')
     }
   };
 
@@ -163,6 +167,10 @@ export default function Register() {
           </Link>
         </p>
       </div>
+      <Toaster
+  position="bottom-right"
+  reverseOrder={false}
+/>
     </div>
   );
 }

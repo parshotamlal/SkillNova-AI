@@ -19,8 +19,8 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    // origin: "https://resumes-analyzer.vercel.app",
-    origin: "http://localhost:5173",
+    
+    origin: "https://skill-nova-ai.vercel.app",
     credentials: true,
   })
 );
