@@ -15,16 +15,15 @@ const app = express();
 connectDB();
 
 // Middleware
-app.use(express.json());
-app.use(cookieParser());
 app.use(
   cors({
-    
     origin: "https://skill-nova-ai.vercel.app",
     credentials: true,
   })
 );
 
+app.use(express.json());
+app.use(cookieParser());
 // Public Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/analyze", analyzeRoutes);
