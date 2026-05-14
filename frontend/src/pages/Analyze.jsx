@@ -62,7 +62,7 @@ export default function Upload() {
         gsap.to(orb2Ref.current, { x: -px * 35 + 17, y: -py * 28 + 14, duration: 2.2, ease: "power1.out", overwrite: "auto" });
       };
       pageRef.current?.addEventListener("mousemove", onMove);
- 
+  
       // Card 3D tilt — resume card
       const addTilt = (el) => {
         const onCardMove = (e) => {
