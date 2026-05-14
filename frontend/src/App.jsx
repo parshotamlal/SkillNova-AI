@@ -13,6 +13,10 @@ import NotFound from "./pages/NotFound";
 import Profile from "./pages/Profile.jsx";
 import Success from "./pages/Success.jsx";
 import { useState, useEffect } from "react";
+import HelpCenter from "./pages/HelpCenter.jsx";
+import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
+import TermsOfService from "./pages/TermsofService.jsx";
+import Status from "./pages/Status.jsx";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -71,6 +75,14 @@ function App() {
               <Route path="/signup" element={<Signup />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/success" element={<Success />} />
+
+{/* SUPPORT */}
+              <Route path="/help-center" element={<HelpCenter />} />
+              <Route path="/Privacy-Policy" element={<PrivacyPolicy />} />
+              <Route path="/Terms-of-Service" element={<TermsOfService />} />
+              <Route path="/status" element={<Status />} />
+
+              
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>

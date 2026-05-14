@@ -1,5 +1,6 @@
 import { Zap, Mail, Github, Twitter, Linkedin } from "lucide-react";
 import Logo from "../../public/SkillNova-Logo.png";
+import { Link } from "react-router-dom";
 
 export default function Footer() {
   return (
@@ -10,11 +11,11 @@ export default function Footer() {
           <div>
             <div className="flex items-center mb-4">
               <div className=" w-12 h-12 p-1 ">
-                <img src={Logo} alt="SkillNova Logo" />
+                <img src={Logo} alt="Resume Logo" />
               </div>
               <div>
                 <h2 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                 SkillNova
+                  Resume Ai
                 </h2>
                 <p className="text-xs text-gray-400 leading-none">
                   Powered by AI
@@ -115,29 +116,47 @@ export default function Footer() {
             <h3 className="text-lg font-semibold mb-4">Support</h3>
             <ul className="space-y-2 text-sm text-gray-400 mb-4">
               <li>
-                <button type="button" className="hover:text-white">
+                <Link
+                  to="/help-center"
+                  className="hover:text-white transition-colors"
+                >
                   Help Center
-                </button>
+                </Link>
               </li>
+
               <li>
-                <button type="button" className="hover:text-white">
+                <Link
+                  to="/Privacy-Policy"
+                  className="hover:text-white transition-colors"
+                >
                   Privacy Policy
-                </button>
+                </Link>
               </li>
+
               <li>
-                <button type="button" className="hover:text-white">
+                <Link
+                  to="/Terms-of-Service"
+                  className="hover:text-white transition-colors"
+                >
                   Terms of Service
-                </button>
+                </Link>
               </li>
+
               <li>
-                <button type="button" className="hover:text-white">
+                <Link
+                  to="/status"
+                  className="hover:text-white transition-colors"
+                >
                   Status
-                </button>
+                </Link>
               </li>
             </ul>
             <div className="flex items-center text-sm text-gray-400">
               <Mail className="h-4 w-4 mr-2" />
-              <a href="mailto:parshotamworks@gmail.com" className="hover:underline">
+              <a
+                href="mailto:parshotamworks@gmail.com"
+                className="hover:underline"
+              >
                 parshotamworks@gmail.com
               </a>
             </div>
@@ -147,7 +166,7 @@ export default function Footer() {
         {/* Footer Bottom */}
         <div className="mt-10 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-gray-400">
-            &copy; {new Date().getFullYear()} SkillNova. All rights reserved.
+            &copy; {new Date().getFullYear()} Resume Ai. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0 text-sm text-gray-400">
             <button type="button" className="hover:text-white">
