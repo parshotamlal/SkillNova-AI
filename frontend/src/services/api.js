@@ -8,14 +8,14 @@ export const loginUser = async (email, password) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
   });
-  
+
   const data = await res.json();
-  
+
   // Store token in localStorage for iOS compatibility
   if (data.token) {
     localStorage.setItem('authToken', data.token);
   }
-  
+
   return data;
 };
 
@@ -25,14 +25,14 @@ export const signupUser = async (name, email, password) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ name, email, password }),
   });
-  
+
   const data = await res.json();
-  
+
   // Store token in localStorage for iOS compatibility
   if (data.token) {
     localStorage.setItem('authToken', data.token);
   }
-  
+
   return data;
 };
 
@@ -41,16 +41,16 @@ export const logoutUser = async () => {
     method: "POST",
     headers: { "Content-Type": "application/json" },
   });
-  
+
   // Remove token from localStorage
   localStorage.removeItem('authToken');
-  
+
   return res.json();
 };
 
 export const fetchProfile = async () => {
   const token = localStorage.getItem('authToken');
-  
+
   const res = await fetch(`${BASE_URL}/api/profile`, {
     headers: {
       "Authorization": `Bearer ${token}`,
@@ -62,7 +62,7 @@ export const fetchProfile = async () => {
 
 export const rewriteResume = async (resumeText, jobDescription) => {
   const token = localStorage.getItem('authToken');
-  
+
   const res = await fetch(`${BASE_URL}/api/analyze/rewrite`, {
     method: "POST",
     headers: {
@@ -85,6 +85,21 @@ export const generateCoverLetter = async (resumeText, jobDescription) => {
       ...(token ? { "Authorization": `Bearer ${token}` } : {})
     },
     body: JSON.stringify({ resumeText, jobDescription }),
+  });
+  return res.json();
+};
+
+
+export const getATSScore = async (resumeText) => {
+  const token = localStorage.getItem('authToken');
+
+  const res = await fetch(`${BASE_URL}/api/analyze/ats-score`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { "Authorization": `Bearer ${token}` } : {})
+    },
+    body: JSON.stringify({ resume: resumeText }),
   });
   return res.json();
 };

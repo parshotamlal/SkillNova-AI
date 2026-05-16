@@ -160,13 +160,13 @@ function performKeywordFallback(resume, jobDescription) {
   const jobText = jobDescription.toLowerCase();
 
   const skills = [
-    "python","sql","javascript","typescript",
-    "node.js","express","react","next.js",
-    "angular","vue","java","c++","aws",
-    "azure","docker","kubernetes","graphql",
-    "mongodb","mysql","postgresql","html",
-    "css","tailwind","machine learning",
-    "data analysis","excel"
+    "python", "sql", "javascript", "typescript",
+    "node.js", "express", "react", "next.js",
+    "angular", "vue", "java", "c++", "aws",
+    "azure", "docker", "kubernetes", "graphql",
+    "mongodb", "mysql", "postgresql", "html",
+    "css", "tailwind", "machine learning",
+    "data analysis", "excel"
   ];
 
   const matched = [];
@@ -229,7 +229,7 @@ function fallbackResult(message) {
  ATS RESUME GENERATOR
 ========================================================
 */
- 
+
 /**
  * Generates a new ATS-optimized resume based on the original resume
  * and a target job description.
@@ -244,7 +244,7 @@ function fallbackResult(message) {
  */
 async function generateATSResume(resume, jobDescription, retries = 2) {
   console.log("📝 Starting ATS Resume Generation...");
- 
+
   if (!resume || !jobDescription) {
     return {
       resume: "",
@@ -252,13 +252,13 @@ async function generateATSResume(resume, jobDescription, retries = 2) {
       warning: "Missing resume or job description"
     };
   }
- 
+
   for (let i = 0; i <= retries; i++) {
     try {
       return await runGeminiResumeGeneration(resume, jobDescription);
     } catch (err) {
       console.log(`Generation attempt ${i + 1} failed →`, err.message);
- 
+
       if (i === retries) {
         return {
           resume: "",
@@ -266,12 +266,12 @@ async function generateATSResume(resume, jobDescription, retries = 2) {
           warning: "ATS resume generation failed after retries. Please try again."
         };
       }
- 
+
       await new Promise(r => setTimeout(r, 1000));
     }
   }
 }
- 
+
 /**
  * Calls Gemini to rewrite the resume in an ATS-optimized format,
  * injecting relevant keywords from the job description without fabricating
@@ -279,7 +279,7 @@ async function generateATSResume(resume, jobDescription, retries = 2) {
  */
 async function runGeminiResumeGeneration(resume, jobDescription) {
   const model = genAI.getGenerativeModel({ model: MODEL });
- 
+
   const prompt = `
 You are a professional ATS resume writer and career coach.
  
@@ -313,19 +313,19 @@ ${resume}
 TARGET JOB DESCRIPTION:
 ${jobDescription}
 `;
- 
+
   const result = await model.generateContent(prompt);
   let raw = result.response.text().trim();
- 
+
   console.log("🤖 RAW GENERATION OUTPUT →", raw.substring(0, 300) + "...");
- 
+
   // Strip markdown code fences if present
   if (raw.startsWith("```")) {
     raw = raw.replace(/```json|```/g, "").trim();
   }
- 
+
   const parsed = JSON.parse(raw);
- 
+
   return {
     resume: typeof parsed.resume === "string" ? parsed.resume : "",
     changes: Array.isArray(parsed.changes) ? parsed.changes : [],
@@ -418,7 +418,121 @@ ${jobDescription}
     warning: null
   };
 }
- 
+
+async function analyzeDetailedATS(resume, retries = 2) {
+  console.log("📊 Starting Advanced ATS Analysis...");
+
+  if (!resume) {
+    return {
+      score: 0,
+      breakdown: {
+        contentQuality: 0,
+        formatting: 0,
+        skillsPresentation: 0,
+        professionalism: 0
+      },
+      detailedChecklist: {
+        contactInfo: "Fail",
+        actionVerbs: "Fail",
+        formattingStability: "Fail",
+        readability: "Fail",
+        technicalRelevance: "Fail"
+      },
+      analysis: {
+        highlightedSkills: [],
+        missingSections: [],
+        impactfulPhrases: [],
+        formattingIssues: []
+      },
+      suggestions: ["Missing resume text"],
+      warning: "Missing resume text"
+    };
+  }
+
+  for (let i = 0; i <= retries; i++) {
+    try {
+      return await runGeminiDetailedAnalysis(resume);
+    } catch (err) {
+      console.log(`Detailed analysis attempt ${i + 1} failed →`, err.message);
+      if (i === retries) {
+        return {
+          score: 0,
+          breakdown: { contentQuality: 0, formatting: 0, skillsPresentation: 0, professionalism: 0 },
+          detailedChecklist: { contactInfo: "Error", actionVerbs: "Error", formattingStability: "Error", readability: "Error", technicalRelevance: "Error" },
+          analysis: { highlightedSkills: [], missingSections: [], impactfulPhrases: [], formattingIssues: [] },
+          suggestions: ["ATS analysis failed after retries."],
+          warning: "ATS analysis failed after retries."
+        };
+      }
+      await new Promise(r => setTimeout(r, 1000));
+    }
+  }
+}
+
+async function runGeminiDetailedAnalysis(resume) {
+  const model = genAI.getGenerativeModel({ model: MODEL });
+
+  const prompt = `
+You are an advanced Applicant Tracking System (ATS) expert. Your goal is to perform a rigorous analysis of a RESUME based on production-grade standards.
+
+### EVALUATION CHECKLIST:
+1. **Resume Format**: Check for simple layout, proper headings, and parsing-friendly structure. Penalize complex tables, images, or fancy graphics. Check for ATS-friendly fonts (Arial, Calibri, Times New Roman).
+2. **Contact Information**: Verify presence of Name, Phone, Professional Email, and links (LinkedIn, GitHub, Portfolio).
+3. **Keywords & Skills**: Look for industry-relevant terms and clearly listed technical/soft skills.
+4. **Projects & Experience**: Evaluate descriptions for clarity, technologies used, and professional language.
+5. **Action Words**: Check for strong verbs like Developed, Implemented, Optimized, Managed, Built, Created.
+6. **Education & Certifications**: Verify clear listing of degrees, colleges, years, and relevant training.
+7. **Professionalism**: Check Grammar, Spelling, Consistency (fonts/spacing/alignment), and Readability (short bullet points).
+8. **Summary & Relevance**: Check for a concise Professional Summary and overall technical relevance.
+9. **Avoidances**: Penalize excessive colors, icons, images, and important info hidden in headers/footers.
+
+### OUTPUT FORMAT (Return ONLY valid JSON):
+{
+  "score": <overall_score_0_to_100>,
+  "breakdown": {
+    "contentQuality": <0_to_100>,
+    "formatting": <0_to_100>,
+    "skillsPresentation": <0_to_100>,
+    "professionalism": <0_to_100>
+  },
+  "detailedChecklist": {
+    "contactInfo": "Pass | Fail | Partial",
+    "actionVerbs": "Pass | Fail | Partial",
+    "formattingStability": "Pass | Fail | Partial",
+    "readability": "Pass | Fail | Partial",
+    "technicalRelevance": "Pass | Fail | Partial"
+  },
+  "analysis": {
+    "highlightedSkills": ["Skill A", "Skill B"],
+    "missingSections": ["Certifications", "Professional Summary"],
+    "impactfulPhrases": ["Optimized SQL queries by 40%", "Developed a full-stack app using MERN"],
+    "formattingIssues": ["Avoid using complex tables", "Use a more standard font like Arial", "Icons found everywhere; use sparingly"]
+  },
+  "suggestions": [
+    "Replace weak verbs with strong action words like 'Implemented' or 'Architected'.",
+    "Ensure your file name follows a professional format (e.g., Name_Resume.pdf).",
+    "Limit your resume to 1 page if you are a fresher."
+  ]
+}
+
+RESUME TEXT:
+${resume}
+`;
+
+  const result = await model.generateContent(prompt);
+  let raw = result.response.text().trim();
+
+  if (raw.startsWith("```")) {
+    raw = raw.replace(/```json|```/g, "").trim();
+  }
+
+  const parsed = JSON.parse(raw);
+  return {
+    ...parsed,
+    warning: null
+  };
+}
+
 /*
 ========================================================
  EXPORTS
@@ -429,5 +543,6 @@ export {
   analyzeResume,
   analyzeResumeWithRetry,
   generateATSResume,
-  generateCoverLetter
+  generateCoverLetter,
+  analyzeDetailedATS
 };
