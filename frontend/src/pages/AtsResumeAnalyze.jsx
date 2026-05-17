@@ -21,7 +21,6 @@ export default function Upload() {
   const headingRef     = useRef(null);
   const subRef         = useRef(null);
   const resumeCardRef  = useRef(null);
-  const jdCardRef      = useRef(null);
   const bottomBarRef   = useRef(null);
   const analyzeBtn     = useRef(null);
   const dropZoneRef    = useRef(null);
@@ -33,7 +32,6 @@ export default function Upload() {
       gsap.set(headingRef.current,    { opacity: 0, y: 30 });
       gsap.set(subRef.current,        { opacity: 0, y: 20 });
       gsap.set(resumeCardRef.current, { opacity: 0, x: -50, rotateY: -8, transformPerspective: 900 });
-      gsap.set(jdCardRef.current,     { opacity: 0, x:  50, rotateY:  8, transformPerspective: 900 });
       gsap.set(bottomBarRef.current,  { opacity: 0, y: 30 });
  
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
@@ -43,7 +41,6 @@ export default function Upload() {
         .to(headingRef.current,    { opacity: 1, y: 0, duration: 0.7 }, 0.3)
         .to(subRef.current,        { opacity: 1, y: 0, duration: 0.6 }, 0.5)
         .to(resumeCardRef.current, { opacity: 1, x: 0, rotateY: 0, duration: 0.85, ease: "back.out(1.2)" }, 0.65)
-        .to(jdCardRef.current,     { opacity: 1, x: 0, rotateY: 0, duration: 0.85, ease: "back.out(1.2)" }, 0.8)
         .to(bottomBarRef.current,  { opacity: 1, y: 0, duration: 0.6 }, 1.1);
  
       // Orb drift
@@ -52,8 +49,7 @@ export default function Upload() {
  
       // Card subtle float
       gsap.to(resumeCardRef.current, { y: -5, duration: 3.2, repeat: -1, yoyo: true, ease: "sine.inOut", delay: 1.2 });
-      gsap.to(jdCardRef.current,     { y: -7, duration: 3.8, repeat: -1, yoyo: true, ease: "sine.inOut", delay: 1.6 });
- 
+
       // Mouse parallax
       const onMove = (e) => {
         const px = e.clientX / window.innerWidth;
@@ -65,6 +61,7 @@ export default function Upload() {
   
       // Card 3D tilt — resume card
       const addTilt = (el) => {
+        if (!el) return () => {};
         const onCardMove = (e) => {
           const rect = el.getBoundingClientRect();
           const rx = gsap.utils.mapRange(0, rect.height,  5, -5, e.clientY - rect.top);
@@ -79,11 +76,10 @@ export default function Upload() {
       };
  
       const cleanR = addTilt(resumeCardRef.current);
-      const cleanJ = addTilt(jdCardRef.current);
  
       return () => {
         pageRef.current?.removeEventListener("mousemove", onMove);
-        cleanR(); cleanJ();
+        cleanR();
       };
     }, pageRef);
  
@@ -156,8 +152,8 @@ export default function Upload() {
       const result = res.data;
  
       // Outro before navigate
-      gsap.to([resumeCardRef.current, jdCardRef.current], {
-        opacity: 0, y: -20, stagger: 0.1, duration: 0.35, ease: "power2.in",
+      gsap.to(resumeCardRef.current, {
+        opacity: 0, y: -20, duration: 0.35, ease: "power2.in",
         onComplete: () => navigate("/ats-result", { state: { result } }),
       });
     } catch (err) {
@@ -198,7 +194,7 @@ export default function Upload() {
           </p>
         </div>
  
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <div className="max-w-2xl mx-auto mb-8">
  
           {/* Resume upload card */}
           <div
@@ -292,11 +288,7 @@ export default function Upload() {
               </span>
             )}
           </button>
-          {!canAnalyze && (
-            <p className="text-sm text-gray-500 mt-3">
-              Please upload a resume and provide a job description to continue
-            </p>
-          )}
+
         </div>
  
       </main>

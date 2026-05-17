@@ -24,7 +24,7 @@ export default function Navbar({ showAuthButtons = true }) {
     { path: "/", label: "Home" },
     { path: "/analyze", label: "Analyze" },
     { path: "/pricing", label: "Pricing" },
-    {path:"/ats-checker",label:"ATS Checker"},
+    {path:"/check-ats-score",label:"ATS Checker"},
     {path:"/templates",label:"Templates"}
   ];
  
