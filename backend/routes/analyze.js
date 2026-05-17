@@ -102,6 +102,37 @@ router.post("/ats-score", async (req, res) => {
   }
 });
 
+// Route: Detailed ATS Score from File
+router.post("/ats-score/file", upload.single("resume"), async (req, res) => {
+  console.log("=== ATS SCORE FILE ROUTE HIT ===");
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No resume file uploaded" });
+    }
+
+    if (!process.env.AI_API_KEY) {
+      return res.status(500).json({ error: "AI API key not configured on server" });
+    }
+
+    const resumeText = await extractTextFromFile(req.file);
+    console.log("Extracted Resume Text for ATS Score:", resumeText.slice(0, 200));
+
+    const result = await analyzeDetailedATS(resumeText);
+
+    if (result.warning) {
+      return res.status(500).json({ error: result.warning });
+    }
+
+    res.json({
+      ...result,
+      resumeText
+    });
+  } catch (err) {
+    console.error("ATS Score File Error:", err.message || err);
+    res.status(500).json({ error: "Failed to analyze ATS score from file: " + (err.message || err) });
+  }
+});
+
 
 router.post("/rewrite", async (req, res) => {
 

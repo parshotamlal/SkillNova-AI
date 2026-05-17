@@ -17,6 +17,8 @@ import HelpCenter from "./pages/HelpCenter.jsx";
 import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
 import TermsOfService from "./pages/TermsofService.jsx";
 import Status from "./pages/Status.jsx";
+import CheckAtsScore from "./pages/AtsResumeAnalyze.jsx";
+import AtsResult from "./pages/AtsResult.jsx";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -63,6 +65,14 @@ function App() {
                 }
               />
               <Route
+                path="/check-ats-score"
+                element={
+                  <ProtectedRoute>
+                    <CheckAtsScore />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="/pricing"
                 element={
                   <ProtectedRoute>
@@ -71,6 +81,7 @@ function App() {
                 }
               />
               <Route path="/result" element={<Result />} />
+              <Route path="/ats-result" element={<AtsResult />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/profile" element={<Profile />} />

@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import { Upload, Brain, Target } from "lucide-react";
+import { IoDocumentOutline } from "react-icons/io5";
+
 import { gsap } from "gsap";
  
 export default function Index() {
@@ -206,14 +208,25 @@ export default function Index() {
               Upload your resume and job description to get instant feedback and match score.
             </p>
  
+ <div ref={heroBtnRef} className="flex flex-col sm:flex-row justify-center items-center gap-4">
+ 
             <button
-              ref={heroBtnRef}
+            
+              onClick={() => navigate("/check-ats-score")}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-1 inline-flex items-center"
+            >
+              <IoDocumentOutline className="mr-2 h-5 w-5" />
+              Check Ats Score
+            </button>
+            <button
+             
               onClick={() => navigate("/analyze")}
               className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-1 inline-flex items-center"
             >
               <Upload className="mr-2 h-5 w-5" />
               Start Analyzing
             </button>
+</div>
  
             {/* Stats row */}
             <div className="flex justify-center gap-10 mt-10 flex-wrap">

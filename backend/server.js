@@ -17,7 +17,8 @@ connectDB();
 // Middleware
 app.use(
   cors({
-    origin: "https://skill-nova-ai.vercel.app",
+    // origin: "https://skill-nova-ai.vercel.app",
+    origin: "https://skill-nova-drjg7o1ch-parshotamlals-projects.vercel.app/",
     credentials: true,
   })
 );
