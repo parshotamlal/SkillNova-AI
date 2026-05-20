@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Upload as UploadIcon, FileText, Loader2 } from "lucide-react";
 import axios from "axios";
 import { gsap } from "gsap";
+import SEO from "../components/SEO";
  
 export default function Upload() {
   const navigate = useNavigate();
@@ -170,6 +171,10 @@ export default function Upload() {
       ref={pageRef}
       className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 relative overflow-hidden"
     >
+      <SEO 
+        title="Check ATS Score | ResumeAi Online"
+        description="Check your resume's ATS score for free. Find out if your resume can pass Applicant Tracking Systems and get hired faster."
+      />
       {/* Background orbs */}
       <div
         ref={orb1Ref}

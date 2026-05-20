@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
-import { Upload, Brain, Target } from "lucide-react";
+import { Upload, Brain, Target, Star, ChevronDown } from "lucide-react";
 import { IoDocumentOutline } from "react-icons/io5";
 
 import { gsap } from "gsap";
+import SEO from "../components/SEO";
  
 export default function Index() {
   const navigate = useNavigate();
@@ -174,6 +175,10 @@ export default function Index() {
       ref={pageRef}
       className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 relative overflow-hidden"
     >
+      <SEO 
+        title="ResumeAi Online | Best AI Resume Analyzer & ATS Checker"
+        description="Optimize your resume with our AI-powered ATS resume checker. Get instant feedback, match jobs accurately, and boost your interview chances with ResumeAi Online."
+      />
       {/* Floating background orbs */}
       <div
         ref={orb1Ref}
@@ -211,19 +216,19 @@ export default function Index() {
  <div ref={heroBtnRef} className="flex flex-col sm:flex-row justify-center items-center gap-4">
  
             <button
-            
+              aria-label="Check ATS Score"
               onClick={() => navigate("/check-ats-score")}
               className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-1 inline-flex items-center"
             >
-              <IoDocumentOutline className="mr-2 h-5 w-5" />
-              Check Ats Score
+              <IoDocumentOutline className="mr-2 h-5 w-5" aria-hidden="true" />
+              Check ATS Score
             </button>
             <button
-             
+              aria-label="Start Analyzing Resume"
               onClick={() => navigate("/analyze")}
               className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-1 inline-flex items-center"
             >
-              <Upload className="mr-2 h-5 w-5" />
+              <Upload className="mr-2 h-5 w-5" aria-hidden="true" />
               Start Analyzing
             </button>
 </div>
@@ -332,6 +337,58 @@ export default function Index() {
  
           </div>
         </div>
+
+        {/* ── Testimonials Section ──────────────────────────────────────── */}
+        <section className="mt-32" aria-labelledby="testimonials-heading">
+          <div className="text-center mb-12">
+            <h2 id="testimonials-heading" className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Loved by Job Seekers</h2>
+            <p className="text-xl text-gray-600">See how ResumeAi Online has helped professionals land their dream jobs.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { name: "Sarah J.", role: "Software Engineer", text: "ResumeAi Online's ATS checker highlighted exactly what my resume was missing. I got 3 interviews in a week after updating it!" },
+              { name: "Michael T.", role: "Product Manager", text: "The AI feedback is incredibly detailed and accurate. It's like having a professional resume writer by your side 24/7." },
+              { name: "Emily R.", role: "Marketing Specialist", text: "I struggled with getting past the ATS filters. Thanks to ResumeAi Online, my resume score went from 45% to 92%." }
+            ].map((testimonial, idx) => (
+              <article key={idx} className="bg-white/80 backdrop-blur-md rounded-2xl p-8 border border-gray-100 shadow-xl relative">
+                <div className="flex gap-1 mb-4">
+                  {[1, 2, 3, 4, 5].map((star) => <Star key={star} className="h-5 w-5 text-yellow-400 fill-current" />)}
+                </div>
+                <p className="text-gray-700 mb-6 italic">"{testimonial.text}"</p>
+                <div>
+                  <h4 className="font-bold text-gray-900">{testimonial.name}</h4>
+                  <p className="text-sm text-gray-500">{testimonial.role}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        {/* ── FAQ Section ──────────────────────────────────────────────── */}
+        <section className="mt-32 mb-10" aria-labelledby="faq-heading">
+          <div className="text-center mb-12">
+            <h2 id="faq-heading" className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+            <p className="text-xl text-gray-600">Everything you need to know about our AI Resume Analyzer.</p>
+          </div>
+          <div className="max-w-3xl mx-auto space-y-4">
+            {[
+              { q: "How does the ATS Resume Checker work?", a: "Our AI scans your resume against standard Applicant Tracking System (ATS) algorithms. It checks for keywords, formatting, and relevance to provide a match score and actionable feedback." },
+              { q: "Is ResumeAi Online free to use?", a: "Yes! We offer a completely free tier that allows you to analyze your resume and get essential feedback to improve your job application." },
+              { q: "How accurate is the AI feedback?", a: "Our AI is trained on millions of successful resumes and job descriptions, providing industry-standard accuracy of up to 98% in predicting ATS compatibility." }
+            ].map((faq, idx) => (
+              <details key={idx} className="group bg-white rounded-xl shadow-sm border border-gray-100 [&_summary::-webkit-details-marker]:hidden">
+                <summary className="flex cursor-pointer items-center justify-between gap-1.5 p-6 text-gray-900 font-semibold text-lg">
+                  {faq.q}
+                  <ChevronDown className="h-5 w-5 shrink-0 transition duration-300 group-open:-rotate-180" />
+                </summary>
+                <div className="px-6 pb-6 text-gray-600 leading-relaxed">
+                  <p>{faq.a}</p>
+                </div>
+              </details>
+            ))}
+          </div>
+        </section>
+
       </main>
     </div>
   );

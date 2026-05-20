@@ -10,4 +10,15 @@ export default defineConfig({
       hostname: 'https://www.resumeaionline.in'
     })
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          gsap: ['gsap'],
+          icons: ['lucide-react', 'react-icons']
+        }
+      }
+    }
+  }
 })

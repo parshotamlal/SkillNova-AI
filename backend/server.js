@@ -20,6 +20,7 @@ app.use(
     origin: [
       "https://skill-nova-ai.vercel.app",
       "https://skill-nova-drjg7o1ch-parshotamlals-projects.vercel.app",
+      "https://www.resumeaionline.in",
       "http://localhost:5173",
       "http://localhost:3000"
     ],
