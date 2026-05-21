@@ -3,8 +3,11 @@ import { useNavigate, Link } from "react-router-dom";
 import { Mail, Lock, ArrowLeft } from "lucide-react";
 import { FaRegEye } from "react-icons/fa";
 import { FaRegEyeSlash } from "react-icons/fa";
-import { loginUser } from "../services/api";
+import { loginUser, googleAuth } from "../services/api";
 import { gsap } from "gsap";
+import GoogleSignupButton from "../components/common/GoogleSignUpButton";
+import { auth, googleProvider } from "../firebase";
+import { signInWithPopup } from "firebase/auth";
  
 export default function Login() {
   const navigate = useNavigate();
@@ -132,6 +135,29 @@ export default function Login() {
       setError("Login failed. Please try again.");
     }
   };
+
+  // ── Google Auth ────────────────────────────────────────────────────
+  const handleGoogleAuth = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      
+      const data = await googleAuth(user.displayName, user.email, user.uid);
+
+      if (data.message === "Login successful" || data.message === "Signup successful") {
+        // Outro before navigate
+        gsap.to(cardRef.current, {
+          opacity: 0, y: -30, scale: 0.95, duration: 0.4, ease: "power2.in",
+          onComplete: () => navigate("/"),
+        });
+      } else {
+        setError(data.message || "Google authentication failed");
+      }
+    } catch (error) {
+      console.error(error);
+      setError(`Google Auth Error: ${error.message}`);
+    }
+  };
  
   // ── Render ─────────────────────────────────────────────────────────
   return (
@@ -238,6 +264,10 @@ export default function Login() {
               Sign In
             </button>
           </form>
+
+            <div className="flex items-center justify-center mt-5">
+              <GoogleSignupButton onClick={handleGoogleAuth} />
+            </div>
  
           {/* Signup link */}
           <div ref={signupRowRef} className="mt-6 text-center text-sm text-gray-600">

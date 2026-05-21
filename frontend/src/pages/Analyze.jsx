@@ -13,7 +13,6 @@ export default function Upload() {
   const [dragActive, setDragActive] = useState(false);
   const VITE_API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
  
-  console.log("VITE_API_URL:", VITE_API_URL);
  
   // ── Refs ───────────────────────────────────────────────────────────
   const pageRef        = useRef(null);

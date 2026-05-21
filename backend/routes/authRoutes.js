@@ -66,5 +66,38 @@ router.post("/logout", (req, res) => {
   // Since we're not using cookies, logout is handled on frontend by removing token from localStorage
   res.json({ message: "Logged out" });
 });
+// Google Auth
+router.post("/google", async (req, res) => {
+  const { name, email, googleId } = req.body;
+
+  try {
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      // Create new user if they don't exist
+      user = await User.create({ name, email, googleId });
+    } else {
+      // If user exists but doesn't have a googleId, maybe link them
+      if (!user.googleId) {
+        user.googleId = googleId;
+        await user.save();
+      }
+    }
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+
+    res.json({
+      message: "Login successful",
+      token: token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Google Auth failed" });
+  }
+});
 
 export default router;

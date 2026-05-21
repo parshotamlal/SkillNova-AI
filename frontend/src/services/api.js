@@ -36,6 +36,22 @@ export const signupUser = async (name, email, password) => {
   return data;
 };
 
+export const googleAuth = async (name, email, googleId) => {
+  const res = await fetch(`${BASE_URL}/api/auth/google`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, email, googleId }),
+  });
+
+  const data = await res.json();
+
+  if (data.token) {
+    localStorage.setItem('authToken', data.token);
+  }
+
+  return data;
+};
+
 export const logoutUser = async () => {
   const res = await fetch(`${BASE_URL}/api/auth/logout`, {
     method: "POST",

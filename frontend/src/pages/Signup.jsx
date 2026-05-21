@@ -4,8 +4,11 @@ import { ArrowLeft, User, Mail, Lock } from "lucide-react";
 import { FaRegEye } from "react-icons/fa";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { toast, Toaster } from "react-hot-toast";
-import { signupUser } from "../services/api";
+import { signupUser, googleAuth } from "../services/api";
 import { gsap } from "gsap";
+import GoogleSignupButton from "../components/common/GoogleSignUpButton";
+import { auth, googleProvider } from "../firebase";
+import { signInWithPopup } from "firebase/auth";
  
 export default function Register() {
   const navigate = useNavigate();
@@ -140,6 +143,31 @@ export default function Register() {
       toast.error("Failed to sign up.");
     }
   };
+
+  // ── Google Auth ────────────────────────────────────────────────────
+  const handleGoogleAuth = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      
+      const data = await googleAuth(user.displayName, user.email, user.uid);
+
+      if (data.message === "Login successful" || data.message === "Signup successful") {
+        toast.success("Successfully logged in with Google!");
+        // Outro before navigate
+        gsap.to(cardRef.current, {
+          opacity: 0, y: -30, scale: 0.95, duration: 0.4, ease: "power2.in",
+          onComplete: () => navigate("/"),
+        });
+      } else {
+        setError(data.message || "Google authentication failed");
+        toast.error("Failed to authenticate with Google.");
+      }
+    } catch (error) {
+      console.error(error);
+      setError(`Google Auth Error: ${error.message}`);
+    }
+  };
  
   // ── Render ─────────────────────────────────────────────────────────
   return (
@@ -269,6 +297,12 @@ export default function Register() {
             Create Account
           </button>
         </form>
+        
+        <div className="flex items-center justify-center mt-5">
+          <GoogleSignupButton onClick={handleGoogleAuth} />
+        </div>
+  
+    
  
         {/* Footer link */}
         <p ref={footerRef} className="mt-6 text-center text-gray-600 text-sm">
