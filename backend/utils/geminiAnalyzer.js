@@ -535,6 +535,47 @@ ${resume}
 
 /*
 ========================================================
+ SUMMARY GENERATOR
+========================================================
+*/
+
+/**
+ * Generates a professional summary based on the candidate's name, title, and experience.
+ *
+ * @param {object} personalDetails
+ * @param {array} experience
+ * @returns {Promise<{summary: string, warning: string|null}>}
+ */
+async function generateSummary(personalDetails, experience, retries = 2) {
+  console.log("📝 Starting Summary Generation...");
+
+  const name = personalDetails?.name || "a professional";
+  const title = personalDetails?.title || "Software Engineer";
+  const expString = (experience || []).map((e) => `${e.title} at ${e.company}`).join(", ");
+  
+  const prompt = `Write a professional resume summary (2-3 sentences, 50-70 words) for: ${name}, title: ${title}, experience: ${expString}. Be specific, action-oriented, and impactful. Return ONLY the summary text, no commentary, no markdown, no quotes.`;
+
+  for (let i = 0; i <= retries; i++) {
+    try {
+      const model = genAI.getGenerativeModel({ model: MODEL });
+      const result = await model.generateContent(prompt);
+      const summary = result.response.text().trim();
+      return { summary, warning: null };
+    } catch (err) {
+      console.log(`Summary generation attempt ${i + 1} failed →`, err.message);
+      if (i === retries) {
+        return {
+          summary: "",
+          warning: "Summary generation failed: " + err.message
+        };
+      }
+      await new Promise(r => setTimeout(r, 1000));
+    }
+  }
+}
+
+/*
+========================================================
  EXPORTS
 ========================================================
 */
@@ -544,5 +585,7 @@ export {
   analyzeResumeWithRetry,
   generateATSResume,
   generateCoverLetter,
-  analyzeDetailedATS
+  analyzeDetailedATS,
+  generateSummary
 };
+

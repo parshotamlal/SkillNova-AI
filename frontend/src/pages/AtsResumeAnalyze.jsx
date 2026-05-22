@@ -144,12 +144,15 @@ export default function Upload() {
     // Button press animation
     gsap.to(analyzeBtn.current, { scale: 0.96, duration: 0.12, yoyo: true, repeat: 1, ease: "power1.inOut" });
  
-    const formData = new FormData();
-    formData.append("resume", resumeFile);
- 
+    const token = localStorage.getItem('authToken');
+    const headers = {};
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
     try {
       setIsAnalyzing(true);
-      const res = await axios.post(`${VITE_API_URL}/api/analyze/ats-score/file`, formData);
+      const res = await axios.post(`${VITE_API_URL}/api/analyze/ats-score/file`, formData, { headers });
       const result = res.data;
  
       // Outro before navigate

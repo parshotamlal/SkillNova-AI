@@ -119,3 +119,53 @@ export const getATSScore = async (resumeText) => {
   });
   return res.json();
 };
+
+export const generateAISummary = async (personal, experience) => {
+  const token = localStorage.getItem('authToken');
+
+  const res = await fetch(`${BASE_URL}/api/analyze/summary`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { "Authorization": `Bearer ${token}` } : {})
+    },
+    body: JSON.stringify({ personal, experience }),
+  });
+  return res.json();
+};
+
+export const saveUserResume = async (resumeData) => {
+  const token = localStorage.getItem('authToken');
+  const res = await fetch(`${BASE_URL}/api/profile/resumes`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { "Authorization": `Bearer ${token}` } : {})
+    },
+    body: JSON.stringify(resumeData),
+  });
+  return res.json();
+};
+
+export const deleteUserResume = async (resumeId) => {
+  const token = localStorage.getItem('authToken');
+  const res = await fetch(`${BASE_URL}/api/profile/resumes/${resumeId}`, {
+    method: "DELETE",
+    headers: {
+      ...(token ? { "Authorization": `Bearer ${token}` } : {})
+    },
+  });
+  return res.json();
+};
+
+export const deleteUserAtsScore = async (scoreId) => {
+  const token = localStorage.getItem('authToken');
+  const res = await fetch(`${BASE_URL}/api/profile/ats-scores/${scoreId}`, {
+    method: "DELETE",
+    headers: {
+      ...(token ? { "Authorization": `Bearer ${token}` } : {})
+    },
+  });
+  return res.json();
+};
+

@@ -2,7 +2,9 @@ import express from "express";
 const router = express.Router();
 import multer from "multer";
 import path from "path";
-import { analyzeResume, generateATSResume, generateCoverLetter, analyzeDetailedATS } from "../utils/geminiAnalyzer.js";
+import jwt from "jsonwebtoken";
+import User from "../models/User.js";
+import { analyzeResume, generateATSResume, generateCoverLetter, analyzeDetailedATS, generateSummary } from "../utils/geminiAnalyzer.js";
 import { extractTextFromFile } from "../utils/resumeParser.js";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
@@ -94,6 +96,27 @@ router.post("/ats-score", async (req, res) => {
       return res.status(500).json({ error: result.warning });
     }
 
+    // Optional save to User profile if token exists
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (token) {
+      try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.id);
+        if (user) {
+          user.atsScores.push({
+            score: result.score || 0,
+            fileName: "Text Input",
+            result: result,
+            createdAt: new Date()
+          });
+          await user.save();
+        }
+      } catch (err) {
+        console.error("Failed to auto-save ATS score to user profile:", err.message);
+      }
+    }
+
     res.json(result);
 
   } catch (err) {
@@ -121,6 +144,27 @@ router.post("/ats-score/file", upload.single("resume"), async (req, res) => {
 
     if (result.warning) {
       return res.status(500).json({ error: result.warning });
+    }
+
+    // Optional save to User profile if token exists
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (token) {
+      try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.id);
+        if (user) {
+          user.atsScores.push({
+            score: result.score || 0,
+            fileName: req.file.originalname || "Uploaded File",
+            result: result,
+            createdAt: new Date()
+          });
+          await user.save();
+        }
+      } catch (err) {
+        console.error("Failed to auto-save ATS score to user profile:", err.message);
+      }
     }
 
     res.json({
@@ -213,4 +257,29 @@ router.post("/cover-letter", async (req, res) => {
     res.status(500).json({ error: "Failed to generate cover letter: " + (err.message || err) });
   }
 });
+
+// Route: Generate Summary
+router.post("/summary", async (req, res) => {
+  console.log("=== GENERATE SUMMARY ROUTE HIT ===");
+  try {
+    const { personal, experience } = req.body;
+
+    if (!process.env.AI_API_KEY) {
+      return res.status(500).json({ error: "AI API key not configured on server" });
+    }
+
+    const result = await generateSummary(personal, experience);
+
+    if (result.warning) {
+      return res.status(500).json({ error: result.warning });
+    }
+
+    res.json({ summary: result.summary });
+  } catch (err) {
+    console.error("Summary Generation Error:", err.message || err);
+    res.status(500).json({ error: "Failed to generate summary: " + (err.message || err) });
+  }
+});
+
 export default router;
+
