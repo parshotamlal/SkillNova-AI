@@ -174,6 +174,8 @@ const defaultData = {
 // ─── Templates config ─────────────────────────────────────────────────────────
 const TEMPLATES = [
     { id: "modern", label: "Modern", desc: "Bold header with two-column layout" },
+    { id: "ats_premium", label: "ATS Premium", desc: "Highly structured ATS-optimized design" },
+    { id: "nordic_slate", label: "Nordic Slate", desc: "Split slate-blue header with vertical divider" },
     { id: "ats", label: "ATS Friendly", desc: "Clean, ATS-optimized single column" },
     { id: "minimal", label: "Minimal", desc: "Elegant serif typography" },
     { id: "sidebar", label: "Sidebar", desc: "Dark sidebar with main content" },
@@ -840,8 +842,384 @@ export function ResumePreview({ data, template }) {
     const contactRowStyle = { display: "flex", flexWrap: "wrap", gap: 16, fontSize: 11 };
     const baseStyle = { fontFamily: "'DM Sans', sans-serif", fontSize: 12, lineHeight: 1.5, color: "#1a1a1a", background: "#fff" };
 
+    if (template === "nordic_slate") {
+        const slateBaseStyle = {
+            fontFamily: "'DM Sans', sans-serif",
+            fontSize: "11.5px",
+            lineHeight: 1.5,
+            color: "#2d3748",
+            background: "#ffffff",
+            minHeight: "297mm",
+            boxSizing: "border-box",
+            display: "flex",
+            flexDirection: "column"
+        };
+        const headerStyle = {
+            background: "#a1b9c9",
+            color: "#1a202c",
+            padding: "24px 32px",
+            display: "grid",
+            gridTemplateColumns: "220px 1fr",
+            gap: "32px",
+            boxSizing: "border-box"
+        };
+        const bodyStyle = {
+            padding: "24px 32px",
+            display: "grid",
+            gridTemplateColumns: "220px 1fr",
+            gap: "32px",
+            flex: 1,
+            boxSizing: "border-box"
+        };
+        const h1Style = { fontSize: "24px", fontWeight: 700, color: "#1a202c", marginBottom: 2 };
+        const titleStyle = { fontSize: "13px", fontWeight: 600, color: "#4a5568", marginBottom: 12 };
+        const h2Style = {
+            fontSize: "12px",
+            fontWeight: 700,
+            textTransform: "uppercase",
+            letterSpacing: "0.08em",
+            color: "#1a202c",
+            borderBottom: "1.5px solid #2d3748",
+            paddingBottom: 3,
+            margin: "0 0 12px 0"
+        };
+        const h3Style = { fontSize: "12px", fontWeight: 700, color: "#1a202c", marginBottom: 2 };
+        const dateStyle = { fontSize: "10.5px", color: "#718096", fontStyle: "italic", marginBottom: 6, display: "block" };
+
+        const renderNordicBullets = (descText) => {
+            if (!descText) return null;
+            const bullets = descText.split("\n").map(line => line.replace(/^[•\-\*\s]+/, "").trim()).filter(Boolean);
+            if (bullets.length === 0) return null;
+            return (
+                <p style={{ fontSize: "11.5px", lineHeight: 1.5, color: "#2d3748", marginTop: 4 }}>
+                    {bullets.map((b, idx) => (
+                        <span key={idx}>
+                            {idx === 0 ? "• " : " • "}
+                            {b}
+                        </span>
+                    ))}
+                </p>
+            );
+        };
+
+        const renderContactItem = (icon, text) => {
+            if (!text) return null;
+            const itemStyle = {
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                fontSize: "11px",
+                color: "#2d3748",
+                marginBottom: 6
+            };
+            const iconCircleStyle = {
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "20px",
+                height: "20px",
+                borderRadius: "50%",
+                backgroundColor: "#ffffff",
+                color: "#2d3748",
+                flexShrink: 0
+            };
+            return (
+                <div style={itemStyle}>
+                    <span style={iconCircleStyle}>
+                        <Icon name={icon} />
+                    </span>
+                    <span>{text}</span>
+                </div>
+            );
+        };
+
+        return (
+            <div style={slateBaseStyle}>
+                {/* Header Section */}
+                <div style={headerStyle}>
+                    <div>
+                        <h1 style={h1Style}>{p.name || "Your Name"}</h1>
+                        <p style={titleStyle}>{p.title}</p>
+                        {renderContactItem("mail", p.email)}
+                        {renderContactItem("phone", p.phone)}
+                        {renderContactItem("user", p.location)}
+                        {renderContactItem("link", p.linkedin)}
+                        {renderContactItem("link", p.github)}
+                        {renderContactItem("link", p.website)}
+                    </div>
+                    <div>
+                        <h2 style={{ ...h2Style, borderBottom: "1px solid #1a202c" }}>Summary</h2>
+                        <p style={{ fontSize: "11.5px", lineHeight: 1.4, color: "#2d3748" }}>{d.summary}</p>
+                    </div>
+                </div>
+
+                {/* Body Section */}
+                <div style={bodyStyle}>
+                    {/* Left Column */}
+                    <div style={{ borderRight: "1px solid #cbd5e1", paddingRight: 24 }}>
+                        {/* Education */}
+                        {d.education.filter(e => e.school || e.degree).length > 0 && (
+                            <div style={{ marginBottom: 24 }}>
+                                <h2 style={h2Style}>Education</h2>
+                                {d.education.filter(e => e.school || e.degree).map((e) => (
+                                    <div key={e.id} style={{ marginBottom: 12 }}>
+                                        <div style={{ fontWeight: 700, fontSize: "12px", color: "#1a202c" }}>{e.school}</div>
+                                        <div style={{ fontSize: "10.5px", color: "#718096", fontStyle: "italic", marginBottom: 2 }}>
+                                            · {e.start}{e.start && e.end ? " - " : ""}{e.end}
+                                        </div>
+                                        <div style={{ fontWeight: 600, fontSize: "11px", color: "#2d3748" }}>{e.degree}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Skills */}
+                        {d.skills.filter(Boolean).length > 0 && (
+                            <div>
+                                <h2 style={h2Style}>Skills</h2>
+                                {d.skills.filter(Boolean).map((s, i) => (
+                                    <div key={i} style={{ fontSize: "11.5px", color: "#2d3748", marginBottom: 6 }}>{s}</div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Right Column */}
+                    <div style={{ paddingLeft: 8 }}>
+                        {/* Experience */}
+                        {d.experience.filter(e => e.title || e.company).length > 0 && (
+                            <div style={{ marginBottom: 24 }}>
+                                <h2 style={h2Style}>Experience</h2>
+                                {d.experience.filter(e => e.title || e.company).map((e) => (
+                                    <div key={e.id} style={{ marginBottom: 16 }}>
+                                        <h3 style={h3Style}>{e.title}{e.company ? ` - ${e.company}` : ""}</h3>
+                                        <span style={dateStyle}>{e.start}{e.start && e.end ? " - " : ""}{e.end}</span>
+                                        {renderNordicBullets(e.desc)}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Projects */}
+                        {d.projects.filter(pr => pr.name).length > 0 && (
+                            <div style={{ marginBottom: 24 }}>
+                                <h2 style={h2Style}>Projects</h2>
+                                {d.projects.filter(pr => pr.name).map((pr) => (
+                                    <div key={pr.id} style={{ marginBottom: 16 }}>
+                                        <h3 style={h3Style}>
+                                            {pr.name}
+                                            {pr.url && (
+                                                <span style={{ fontSize: "10px", marginLeft: 8 }}>
+                                                    <a href={pr.url.startsWith("http") ? pr.url : `https://${pr.url}`} target="_blank" rel="noopener noreferrer" style={{ color: "#1a56db", textDecoration: "none" }}>Link</a>
+                                                </span>
+                                            )}
+                                        </h3>
+                                        {pr.tech && <div style={{ fontSize: "10.5px", color: "#718096", fontStyle: "italic", marginBottom: 4 }}>{pr.tech}</div>}
+                                        {renderNordicBullets(pr.desc)}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Certifications */}
+                        {d.certifications.filter(c => c.name).length > 0 && (
+                            <div>
+                                <h2 style={h2Style}>Certifications and Licenses</h2>
+                                {d.certifications.filter(c => c.name).map((c) => (
+                                    <div key={c.id} style={{ marginBottom: 12, fontSize: "11.5px", lineHeight: 1.4 }}>
+                                        <span style={{ fontWeight: 700, color: "#1a202c" }}>{c.name}</span>
+                                        {c.issuer && <span> · {c.issuer}</span>}
+                                        {(c.date || c.expiry) && (
+                                            <span> · {c.date}{c.date && c.expiry ? " - " : ""}{c.expiry}</span>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (template === "ats_premium") {
+        const premiumBaseStyle = {
+            fontFamily: "Arial, Calibri, sans-serif",
+            fontSize: "11pt",
+            lineHeight: 1.4,
+            color: "#000000",
+            background: "#ffffff",
+            minHeight: "297mm",
+            padding: "36px 44px",
+            boxSizing: "border-box"
+        };
+        const h1Style = { fontSize: "22pt", fontWeight: 700, color: "#000000", marginBottom: 2 };
+        const subtitleStyle = { fontSize: "11pt", fontWeight: 600, color: "#222222", marginBottom: 6 };
+        const contactLineStyle = { fontSize: "10pt", color: "#222222", marginBottom: 4 };
+        const h2Style = {
+            fontSize: "10.5pt",
+            fontWeight: 700,
+            textTransform: "uppercase",
+            letterSpacing: "0.08em",
+            color: "#000000",
+            borderBottom: "1.5px solid #000000",
+            paddingBottom: 3,
+            margin: "18px 0 10px"
+        };
+        const h3Style = { fontSize: "11pt", fontWeight: 700, color: "#000000" };
+        const dateStyle = { fontSize: "10pt", color: "#444444", fontWeight: 400, whiteSpace: "nowrap" };
+        const companyStyle = { fontSize: "10.5pt", color: "#333333", marginBottom: 4 };
+        const ulStyle = { listStyleType: "disc", paddingLeft: 20, marginTop: 4 };
+        const liStyle = { marginBottom: 3, fontSize: "10.5pt", color: "#111111" };
+        const skillRowStyle = { display: "flex", gap: 0, marginBottom: 5, fontSize: "10.5pt" };
+        const skillLabelStyle = { fontWeight: 700, minWidth: 130, color: "#000000", flexShrink: 0 };
+        const skillValStyle = { color: "#111111" };
+        const projStackStyle = { fontSize: "10pt", color: "#444444", marginBottom: 4, fontStyle: "italic" };
+
+        const renderPremiumBullets = (descText) => {
+            if (!descText) return null;
+            const bullets = descText.split("\n").map(line => line.replace(/^[•\-\*\s]+/, "").trim()).filter(Boolean);
+            if (bullets.length === 0) return null;
+            return (
+                <ul style={ulStyle}>
+                    {bullets.map((b, idx) => <li key={idx} style={liStyle}>{b}</li>)}
+                </ul>
+            );
+        };
+
+        const renderSectionContent = (key) => {
+            switch (key) {
+                case "summary":
+                    if (!d.summary) return null;
+                    return (
+                        <div key="summary">
+                            <h2 style={h2Style}>Professional Summary</h2>
+                            <p style={{ fontSize: "10.5pt", color: "#111111", lineHeight: 1.55, marginBottom: 6 }}>
+                                {d.summary}
+                            </p>
+                        </div>
+                    );
+                case "skills":
+                    if (!d.skills || d.skills.filter(Boolean).length === 0) return null;
+                    return (
+                        <div key="skills">
+                            <h2 style={h2Style}>Technical Skills</h2>
+                            <div style={skillRowStyle}>
+                                <span style={skillLabelStyle}>Skills:</span>
+                                <span style={skillValStyle}>{d.skills.filter(Boolean).join(", ")}</span>
+                            </div>
+                        </div>
+                    );
+                case "experience":
+                    const exps = d.experience.filter((e) => e.title || e.company);
+                    if (exps.length === 0) return null;
+                    return (
+                        <div key="experience">
+                            <h2 style={h2Style}>Work Experience</h2>
+                            {exps.map((e) => (
+                                <div key={e.id} style={{ marginBottom: 14 }}>
+                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", marginBottom: 2 }}>
+                                        <h3 style={h3Style}>{e.title}</h3>
+                                        <span style={dateStyle}>{e.start}{e.start && e.end ? " – " : ""}{e.end}</span>
+                                    </div>
+                                    <p style={companyStyle}>{e.company}{e.location ? ` \u00a0\u2013\u00a0 ${e.location}` : ""}</p>
+                                    {renderPremiumBullets(e.desc)}
+                                </div>
+                            ))}
+                        </div>
+                    );
+                case "education":
+                    const edus = d.education.filter((e) => e.degree || e.school);
+                    if (edus.length === 0) return null;
+                    return (
+                        <div key="education">
+                            <h2 style={h2Style}>Education</h2>
+                            {edus.map((e) => (
+                                <div key={e.id} style={{ marginBottom: 8 }}>
+                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", marginBottom: 2 }}>
+                                        <h3 style={h3Style}>{e.degree}</h3>
+                                        <span style={dateStyle}>{e.start}{e.start && e.end ? " – " : ""}{e.end}</span>
+                                    </div>
+                                    <p style={companyStyle}>
+                                        {e.school}{e.location ? ` \u00a0|\u00a0 ${e.location}` : ""}
+                                        {(e.gpa || e.honors) && ` \u00a0|\u00a0 ${e.honors}${e.gpa ? ` (GPA: ${e.gpa})` : ""}`}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    );
+                case "projects":
+                    const projs = d.projects.filter((pr) => pr.name);
+                    if (projs.length === 0) return null;
+                    return (
+                        <div key="projects">
+                            <h2 style={h2Style}>Projects</h2>
+                            {projs.map((pr) => (
+                                <div key={pr.id} style={{ marginBottom: 12 }}>
+                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", marginBottom: 2 }}>
+                                        <h3 style={h3Style}>{pr.name}</h3>
+                                        {pr.url && <span style={{ fontSize: "10pt" }}><a href={pr.url.startsWith("http") ? pr.url : `https://${pr.url}`} target="_blank" rel="noopener noreferrer" style={{ color: "#1a56db", textDecoration: "none" }}>Link</a></span>}
+                                    </div>
+                                    {pr.tech && <p style={projStackStyle}>{pr.tech}</p>}
+                                    {renderPremiumBullets(pr.desc)}
+                                </div>
+                            ))}
+                        </div>
+                    );
+                case "certifications":
+                    const certs = d.certifications.filter((c) => c.name);
+                    if (certs.length === 0) return null;
+                    return (
+                        <div key="certifications">
+                            <h2 style={h2Style}>Certifications</h2>
+                            {certs.map((c) => (
+                                <div key={c.id} style={{ marginBottom: 8 }}>
+                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", marginBottom: 2 }}>
+                                        <h3 style={h3Style}>{c.name}</h3>
+                                        <span style={dateStyle}>{c.date}{c.date && c.expiry ? ` \u2013 ` : ""}{c.expiry}</span>
+                                    </div>
+                                    <p style={companyStyle}>{c.issuer}</p>
+                                </div>
+                            ))}
+                        </div>
+                    );
+                default:
+                    return null;
+            }
+        };
+
+        return (
+            <div style={premiumBaseStyle}>
+                <header>
+                    <h1 style={h1Style}>{p.name || "Your Name"}</h1>
+                    <p style={subtitleStyle}>{p.title}</p>
+                    <div style={contactLineStyle}>
+                        {p.phone && <>Phone: <a href={`tel:${p.phone}`} style={{ color: "#1a56db" }}>{p.phone}</a></>}
+                        {p.phone && p.email && " \u00a0\u00a0|\u00a0\u00a0 "}
+                        {p.email && <>Email: <a href={`mailto:${p.email}`} style={{ color: "#1a56db" }}>{p.email}</a></>}
+                        {(p.phone || p.email) && p.location && " \u00a0\u00a0|\u00a0\u00a0 "}
+                        {p.location && <>Location: {p.location}</>}
+                    </div>
+                    {(p.github || p.linkedin || p.website) && (
+                        <div style={contactLineStyle}>
+                            {p.github && <>GitHub: <a href={p.github.startsWith("http") ? p.github : `https://${p.github}`} target="_blank" rel="noopener noreferrer" style={{ color: "#1a56db" }}>{p.github}</a></>}
+                            {p.github && p.linkedin && " \u00a0\u00a0|\u00a0\u00a0 "}
+                            {p.linkedin && <>LinkedIn: <a href={p.linkedin.startsWith("http") ? p.linkedin : `https://${p.linkedin}`} target="_blank" rel="noopener noreferrer" style={{ color: "#1a56db" }}>{p.linkedin}</a></>}
+                            {(p.github || p.linkedin) && p.website && " \u00a0\u00a0|\u00a0\u00a0 "}
+                            {p.website && <>Portfolio: <a href={p.website.startsWith("http") ? p.website : `https://${p.website}`} target="_blank" rel="noopener noreferrer" style={{ color: "#1a56db" }}>{p.website}</a></>}
+                        </div>
+                    )}
+                </header>
+
+                <div style={{ marginTop: 10 }}>
+                    {(d.sectionOrder || []).map((key) => renderSectionContent(key))}
+                </div>
+            </div>
+        );
+    }
+
     if (template === "modern") return (
-        <div style={baseStyle}>
+        <div style={{ ...baseStyle, minHeight: "297mm", display: "flex", flexDirection: "column", boxSizing: "border-box" }}>
             <div style={{ background: "linear-gradient(135deg,#1e3a5f,#2563eb)", color: "#fff", padding: "36px 40px" }}>
                 <div style={{ display: "flex", alignItems: "flex-start", gap: 20 }}>
                     {p.photo && <img src={p.photo} style={{ width: 80, height: 80, borderRadius: "50%", objectFit: "cover", border: "3px solid rgba(255,255,255,.3)" }} alt="" />}
@@ -857,7 +1235,7 @@ export function ResumePreview({ data, template }) {
                     </div>
                 </div>
             </div>
-            <div style={{ padding: "28px 40px", display: "grid", gridTemplateColumns: "1fr 280px", gap: 32 }}>
+            <div style={{ padding: "28px 40px", display: "grid", gridTemplateColumns: "1fr 280px", gap: 32, flex: 1 }}>
                 <div>{sections.filter(s => ["summary", "experience", "projects"].includes(s.key)).map(s => <div key={s.key}>{s.render()}</div>)}</div>
                 <div>{sections.filter(s => ["skills", "education", "certifications"].includes(s.key)).map(s => <div key={s.key}>{s.render()}</div>)}</div>
             </div>
@@ -865,30 +1243,28 @@ export function ResumePreview({ data, template }) {
     );
 
     if (template === "sidebar") return (
-        <div style={baseStyle}>
-            <div style={{ display: "flex", minHeight: "297mm" }}>
-                <div style={{ width: 200, background: "linear-gradient(180deg,#1e293b,#0f172a)", color: "#fff", padding: "28px 20px", flexShrink: 0 }}>
-                    {p.photo && <img src={p.photo} style={{ width: 72, height: 72, borderRadius: "50%", objectFit: "cover", marginBottom: 16 }} alt="" />}
-                    <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 20, fontWeight: 700, color: "#fff", marginBottom: 4, lineHeight: 1.2 }}>{p.name || "Your Name"}</div>
-                    <div style={{ fontSize: 11, color: "#94a3b8", marginBottom: 16 }}>{p.title}</div>
-                    <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, color: "#94a3b8", marginBottom: 8 }}>Contact</div>
-                    {p.email && <div style={{ fontSize: 10, color: "#cbd5e1", marginBottom: 4, wordBreak: "break-all" }}>{p.email}</div>}
-                    {p.phone && <div style={{ fontSize: 10, color: "#cbd5e1", marginBottom: 4 }}>{p.phone}</div>}
-                    {p.location && <div style={{ fontSize: 10, color: "#cbd5e1", marginBottom: 4 }}>{p.location}</div>}
-                    {d.skills.filter(Boolean).length > 0 && <>
-                        <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, color: "#94a3b8", marginBottom: 8, marginTop: 16 }}>Skills</div>
-                        <div>{d.skills.filter(Boolean).map((s, i) => <span key={i} style={skillBadgeStyle.sidebar}>{s}</span>)}</div>
-                    </>}
-                </div>
-                <div style={{ flex: 1, padding: "28px 28px" }}>
-                    {sections.filter(s => !["skills", "certifications"].includes(s.key)).map(s => <div key={s.key}>{s.render()}</div>)}
-                </div>
+        <div style={{ ...baseStyle, minHeight: "297mm", display: "flex", boxSizing: "border-box" }}>
+            <div style={{ width: 200, background: "linear-gradient(180deg,#1e293b,#0f172a)", color: "#fff", padding: "28px 20px", flexShrink: 0 }}>
+                {p.photo && <img src={p.photo} style={{ width: 72, height: 72, borderRadius: "50%", objectFit: "cover", marginBottom: 16 }} alt="" />}
+                <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 20, fontWeight: 700, color: "#fff", marginBottom: 4, lineHeight: 1.2 }}>{p.name || "Your Name"}</div>
+                <div style={{ fontSize: 11, color: "#94a3b8", marginBottom: 16 }}>{p.title}</div>
+                <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, color: "#94a3b8", marginBottom: 8 }}>Contact</div>
+                {p.email && <div style={{ fontSize: 10, color: "#cbd5e1", marginBottom: 4, wordBreak: "break-all" }}>{p.email}</div>}
+                {p.phone && <div style={{ fontSize: 10, color: "#cbd5e1", marginBottom: 4 }}>{p.phone}</div>}
+                {p.location && <div style={{ fontSize: 10, color: "#cbd5e1", marginBottom: 4 }}>{p.location}</div>}
+                {d.skills.filter(Boolean).length > 0 && <>
+                    <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, color: "#94a3b8", marginBottom: 8, marginTop: 16 }}>Skills</div>
+                    <div>{d.skills.filter(Boolean).map((s, i) => <span key={i} style={skillBadgeStyle.sidebar}>{s}</span>)}</div>
+                </>}
+            </div>
+            <div style={{ flex: 1, padding: "28px 28px" }}>
+                {sections.filter(s => !["skills", "certifications"].includes(s.key)).map(s => <div key={s.key}>{s.render()}</div>)}
             </div>
         </div>
     );
 
     if (template === "executive") return (
-        <div style={baseStyle}>
+        <div style={{ ...baseStyle, minHeight: "297mm", display: "flex", flexDirection: "column", boxSizing: "border-box" }}>
             <div style={{ background: "#1a1a2e", color: "#fff", padding: "36px 44px", position: "relative", overflow: "hidden" }}>
                 <div style={{ position: "absolute", right: -40, top: -40, width: 200, height: 200, background: "rgba(250,204,21,.08)", borderRadius: "50%" }} />
                 <div style={{ display: "flex", alignItems: "flex-start", gap: 20, position: "relative", zIndex: 1 }}>
@@ -904,12 +1280,12 @@ export function ResumePreview({ data, template }) {
                     </div>
                 </div>
             </div>
-            <div style={{ padding: "28px 44px" }}>{sections.map(s => <div key={s.key}>{s.render()}</div>)}</div>
+            <div style={{ padding: "28px 44px", flex: 1 }}>{sections.map(s => <div key={s.key}>{s.render()}</div>)}</div>
         </div>
     );
 
     if (template === "minimal") return (
-        <div style={baseStyle}>
+        <div style={{ ...baseStyle, minHeight: "297mm", display: "flex", flexDirection: "column", boxSizing: "border-box" }}>
             <div style={{ padding: "40px 48px 24px", borderBottom: "1px solid #e5e7eb" }}>
                 <div style={{ display: "flex", gap: 20, alignItems: "flex-start" }}>
                     {p.photo && <img src={p.photo} style={{ width: 80, height: 80, borderRadius: "50%", objectFit: "cover" }} alt="" />}
@@ -924,13 +1300,13 @@ export function ResumePreview({ data, template }) {
                     </div>
                 </div>
             </div>
-            <div style={{ padding: "24px 48px" }}>{sections.map(s => <div key={s.key}>{s.render()}</div>)}</div>
+            <div style={{ padding: "24px 48px", flex: 1 }}>{sections.map(s => <div key={s.key}>{s.render()}</div>)}</div>
         </div>
     );
 
     // ATS (default)
     return (
-        <div style={baseStyle}>
+        <div style={{ ...baseStyle, minHeight: "297mm", display: "flex", flexDirection: "column", boxSizing: "border-box" }}>
             <div style={{ background: "#f8fafc", padding: "28px 40px", borderBottom: "2px solid #334155" }}>
                 <div style={{ display: "flex", gap: 20, alignItems: "flex-start" }}>
                     {p.photo && <img src={p.photo} style={{ width: 80, height: 80, borderRadius: "50%", objectFit: "cover" }} alt="" />}
@@ -946,7 +1322,7 @@ export function ResumePreview({ data, template }) {
                     </div>
                 </div>
             </div>
-            <div style={{ padding: "24px 40px" }}>{sections.map(s => <div key={s.key}>{s.render()}</div>)}</div>
+            <div style={{ padding: "24px 40px", flex: 1 }}>{sections.map(s => <div key={s.key}>{s.render()}</div>)}</div>
         </div>
     );
 }
