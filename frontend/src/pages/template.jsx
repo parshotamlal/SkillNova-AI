@@ -176,6 +176,12 @@ const TEMPLATES = [
     { id: "modern", label: "Modern", desc: "Bold header with two-column layout" },
     { id: "ats_premium", label: "ATS Premium", desc: "Highly structured ATS-optimized design" },
     { id: "nordic_slate", label: "Nordic Slate", desc: "Split slate-blue header with vertical divider" },
+    { id: "golden_elegance", label: "Golden Elegance", desc: "Corporate split layout with gold accents and timeline" },
+    { id: "tech_minimal", label: "Tech Minimalist", desc: "Sleek tech layout with monospace accents and structured skills grid" },
+    { id: "creative_teal", label: "Creative Teal", desc: "Modern creative layout with dark teal highlights and sidebar border" },
+    { id: "classic_pro", label: "Classic Professional", desc: "Traditional centered layout with horizontal dividers and serif font" },
+    { id: "slate_grid", label: "Slate Grid", desc: "Minimalist slate-grey grid layout with clean vertical spacings" },
+    { id: "editorial_chic", label: "Modernist Editorial", desc: "High-end contemporary editorial layout with premium spacing and serif headers" },
     { id: "ats", label: "ATS Friendly", desc: "Clean, ATS-optimized single column" },
     { id: "minimal", label: "Minimal", desc: "Elegant serif typography" },
     { id: "sidebar", label: "Sidebar", desc: "Dark sidebar with main content" },
@@ -601,28 +607,114 @@ export function SectionOrderEditor({ order, onMove }) {
 // ═══════════════════════════════════════════════════════════════════
 
 /**
- * TemplateSelector — strip of template buttons
+ * TemplateSelectorModal — Visual overlay grid to select template with scale preview
  */
-export function TemplateSelector({ current, onSelect }) {
+export function TemplateSelectorModal({ current, onSelect, onClose, data }) {
+    // Close on Escape key press
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === "Escape") onClose();
+        };
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [onClose]);
+
     return (
-        <div className="flex items-center gap-2 flex-wrap px-5 py-3
-                    bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mr-1">Template</span>
-            {TEMPLATES.map((t) => (
-                <button
-                    key={t.id}
-                    onClick={() => onSelect(t.id)}
-                    title={t.desc}
-                    className={cn(
-                        "px-3 py-1.5 rounded-lg text-sm font-medium border transition-all duration-150",
-                        current === t.id
-                            ? "bg-blue-600 text-white border-blue-600 shadow-sm"
-                            : "bg-transparent text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-blue-400 hover:text-blue-600"
-                    )}
-                >
-                    {t.label}
-                </button>
-            ))}
+        <div className="fixed inset-0 bg-slate-950/65 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+            {/* Backdrop click listener */}
+            <div className="absolute inset-0" onClick={onClose} />
+            
+            {/* Modal Box */}
+            <div className="relative bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 w-full max-w-5xl h-[85vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                
+                {/* Modal Header */}
+                <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800/80">
+                    <div>
+                        <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100">Select a Resume Template</h2>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Choose a style below to format your resume. Previews show your active resume content.</p>
+                    </div>
+                    <button
+                        onClick={onClose}
+                        className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                        title="Close Modal"
+                    >
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                    </button>
+                </div>
+
+                {/* Modal Body / Template Grid */}
+                <div className="flex-1 overflow-y-auto p-6 bg-slate-50 dark:bg-slate-950/40">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                        {TEMPLATES.map((t) => (
+                            <div
+                                key={t.id}
+                                onClick={() => {
+                                    onSelect(t.id);
+                                    onClose();
+                                }}
+                                className={cn(
+                                    "group flex flex-col rounded-xl border bg-white dark:bg-slate-900 overflow-hidden cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5",
+                                    current === t.id
+                                        ? "border-blue-600 dark:border-blue-500 ring-2 ring-blue-500/20"
+                                        : "border-slate-200 dark:border-slate-800 hover:border-slate-350 dark:hover:border-slate-700"
+                                )}
+                            >
+                                {/* Miniature Template Preview */}
+                                <div className="relative w-full h-[220px] bg-slate-100 dark:bg-slate-950 overflow-hidden border-b border-slate-100 dark:border-slate-800/40">
+                                    <div style={{
+                                        position: "absolute",
+                                        left: "50%",
+                                        top: "16px",
+                                        transform: "translateX(-50%) scale(0.18)",
+                                        transformOrigin: "top center",
+                                        width: "210mm",
+                                        minWidth: "210mm",
+                                        height: "297mm",
+                                        minHeight: "297mm",
+                                        pointerEvents: "none",
+                                        userSelect: "none",
+                                        boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+                                        borderRadius: "2px"
+                                    }}>
+                                        <ResumePreview data={data} template={t.id} />
+                                    </div>
+
+                                    {/* Active State Icon */}
+                                    {current === t.id && (
+                                        <div className="absolute top-3 right-3 bg-blue-600 text-white rounded-full p-1 shadow-md z-10">
+                                            <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                                                <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clipRule="evenodd" />
+                                            </svg>
+                                        </div>
+                                    )}
+
+                                    {/* Hover overlay with button */}
+                                    <div className="absolute inset-0 bg-slate-950/10 dark:bg-slate-950/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                        <span className="bg-blue-600 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold shadow-md transform translate-y-1.5 group-hover:translate-y-0 transition-all duration-200">
+                                            {current === t.id ? "Selected" : "Use Template"}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Template Information */}
+                                <div className="p-4 flex-1 flex flex-col justify-between">
+                                    <div>
+                                        <h3 className="font-semibold text-slate-800 dark:text-slate-200 text-sm group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                            {t.label}
+                                        </h3>
+                                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">
+                                            {t.desc}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
@@ -1218,6 +1310,1440 @@ export function ResumePreview({ data, template }) {
         );
     }
 
+    if (template === "golden_elegance") {
+        const baseStyle = {
+            fontFamily: "'Open Sans', sans-serif",
+            fontSize: "12px",
+            lineHeight: 1.4,
+            color: "#4a5568",
+            background: "#ffffff",
+            minHeight: "297mm",
+            boxSizing: "border-box",
+            display: "flex",
+            width: "210mm",
+            margin: "0 auto"
+        };
+        const sidebarStyle = {
+            width: "262px",
+            flexShrink: 0,
+            background: "#1a2744",
+            display: "flex",
+            flexDirection: "column",
+            boxSizing: "border-box",
+        };
+        const mainStyle = {
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            background: "#fff",
+            boxSizing: "border-box",
+        };
+        const sidebarPhotoStyle = {
+            padding: "34px 24px 22px",
+            display: "flex",
+            justifyContent: "center"
+        };
+        const circleStyle = {
+            width: "130px",
+            height: "130px",
+            borderRadius: "50%",
+            overflow: "hidden",
+            border: "4px solid #c9a84c",
+            background: "#2d3f6e",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
+        };
+        const sidebarSectionStyle = {
+            padding: "0 22px 20px"
+        };
+        const sidebarTitleStyle = {
+            fontFamily: "'Raleway', sans-serif",
+            fontSize: "12.5px",
+            fontWeight: 800,
+            letterSpacing: "2.5px",
+            textTransform: "uppercase",
+            color: "#c9a84c",
+            marginBottom: "10px",
+            paddingBottom: "6px",
+            borderBottom: "2px solid #c9a84c"
+        };
+        const contactItemStyle = {
+            display: "flex",
+            alignItems: "flex-start",
+            gap: "9px",
+            marginBottom: "10px"
+        };
+        const contactSpanStyle = {
+            fontSize: "11.5px",
+            color: "#cdd5e0",
+            lineHeight: "1.5"
+        };
+        const skillItemStyle = {
+            display: "flex",
+            alignItems: "center",
+            gap: "9px",
+            marginBottom: "7px",
+            fontSize: "12px",
+            color: "#cdd5e0"
+        };
+        const skillDotStyle = {
+            width: "6px",
+            height: "6px",
+            borderRadius: "50%",
+            background: "#c9a84c",
+            flexShrink: 0
+        };
+        const refNameStyle = {
+            fontSize: "13px",
+            fontWeight: 700,
+            color: "#fff",
+            marginBottom: "2px"
+        };
+        const refRoleStyle = {
+            fontSize: "11.5px",
+            color: "#a0aec0",
+            marginBottom: "5px"
+        };
+
+        // Main elements
+        const mainHeaderStyle = {
+            background: "#2c3e5c",
+            padding: "32px 36px 28px 36px",
+            position: "relative",
+            borderBottom: "4px solid #c9a84c"
+        };
+        const nameStyle = {
+            fontFamily: "'Raleway', sans-serif",
+            fontSize: "32px",
+            fontWeight: 800,
+            color: "#fff",
+            letterSpacing: "3px",
+            textTransform: "uppercase",
+            lineHeight: 1
+        };
+        const jobTitleStyle = {
+            fontFamily: "'Raleway', sans-serif",
+            fontSize: "12.5px",
+            fontWeight: 500,
+            color: "#c9a84c",
+            letterSpacing: "4px",
+            textTransform: "uppercase",
+            marginTop: "7px"
+        };
+        const mainBodyStyle = {
+            padding: "24px 36px 32px",
+            flex: 1,
+            boxSizing: "border-box"
+        };
+
+        // Section Header
+        const sectionHeadingStyle = {
+            display: "flex",
+            alignItems: "center",
+            gap: "11px",
+            marginBottom: "12px"
+        };
+        const iconCircleStyle = {
+            width: "32px",
+            height: "32px",
+            borderRadius: "50%",
+            background: "#1a2744",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexShrink: 0,
+            boxShadow: "0 2px 8px rgba(26,39,68,0.25)"
+        };
+        const sectionTitleStyle = {
+            fontFamily: "'Raleway', sans-serif",
+            fontSize: "14.5px",
+            fontWeight: 800,
+            letterSpacing: "3px",
+            textTransform: "uppercase",
+            color: "#1a2744"
+        };
+        const sectionLineStyle = {
+            flex: 1,
+            height: "2px",
+            background: "linear-gradient(90deg,#1a2744,#c9a84c)",
+            marginLeft: "4px"
+        };
+        const profileTextStyle = {
+            fontSize: "12.5px",
+            color: "#4a5568",
+            lineHeight: "1.75",
+            textAlign: "justify",
+            paddingLeft: "22px"
+        };
+
+        // Timeline elements
+        const timelineStyle = {
+            position: "relative",
+            paddingLeft: "22px",
+            marginTop: "4px"
+        };
+        const timelineLineStyle = {
+            position: "absolute",
+            left: "4px",
+            top: "6px",
+            bottom: "6px",
+            width: "2px",
+            background: "linear-gradient(180deg, #1a2744 0%, #c9a84c 100%)"
+        };
+        const timelineEntryStyle = {
+            position: "relative",
+            marginBottom: "18px"
+        };
+        const tlDotStyle = (filled) => ({
+            position: "absolute",
+            left: "-21px",
+            top: "5px",
+            width: "12px",
+            height: "12px",
+            borderRadius: "50%",
+            border: "2px solid #1a2744",
+            background: filled ? "#c9a84c" : "white",
+            zIndex: 1,
+            boxShadow: filled ? "0 0 0 2px rgba(201,168,76,0.3)" : "none"
+        });
+        const jobRowStyle = {
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "baseline"
+        };
+        const jobNameStyle = {
+            fontSize: "13px",
+            fontWeight: 700,
+            color: "#1a2744"
+        };
+        const jobDateStyle = {
+            fontSize: "11px",
+            color: "#fff",
+            background: "#1a2744",
+            padding: "1px 8px",
+            borderRadius: "10px",
+            whiteSpace: "nowrap",
+            marginLeft: "8px"
+        };
+        const workTitleStyle = {
+            fontSize: "12px",
+            color: "#718096",
+            marginBottom: "6px",
+            marginTop: "1px",
+            fontStyle: "italic"
+        };
+        const eduGpaStyle = {
+            fontSize: "12px",
+            color: "#4a5568",
+            marginTop: "3px"
+        };
+
+        const renderGoldenBullets = (descText) => {
+            if (!descText) return null;
+            const bullets = descText.split("\n").map(line => line.replace(/^[•\-\*\s]+/, "").trim()).filter(Boolean);
+            if (bullets.length === 0) return null;
+            return (
+                <ul style={{ marginTop: "4px", listStyleType: "none", padding: 0, margin: 0 }}>
+                    {bullets.map((b, idx) => (
+                        <li key={idx} style={{
+                            fontSize: "12px",
+                            color: "#4a5568",
+                            paddingLeft: "14px",
+                            position: "relative",
+                            marginBottom: "4px",
+                            lineHeight: "1.6",
+                            textAlign: "justify"
+                        }}>
+                            <span style={{ position: "absolute", left: 0, color: "#c9a84c", fontSize: "14px", lineHeight: "1.3" }}>•</span>
+                            {b}
+                        </li>
+                    ))}
+                </ul>
+            );
+        };
+
+        return (
+            <div style={baseStyle}>
+                {/* ── SIDEBAR ── */}
+                <div style={sidebarStyle}>
+                    {/* Photo */}
+                    <div style={sidebarPhotoStyle}>
+                        <div style={circleStyle}>
+                            {p.photo ? (
+                                <img src={p.photo} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="profile" />
+                            ) : (
+                                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style={{ width: "100px", height: "100px" }}>
+                                    <circle cx="50" cy="36" r="22" fill="#4a5e8a"/>
+                                    <ellipse cx="50" cy="88" rx="34" ry="22" fill="#4a5e8a"/>
+                                </svg>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Contact */}
+                    <div style={sidebarSectionStyle}>
+                        <div style={sidebarTitleStyle}>Contact</div>
+                        {p.phone && (
+                            <div style={contactItemStyle}>
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="#c9a84c"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>
+                                <span style={contactSpanStyle}>{p.phone}</span>
+                            </div>
+                        )}
+                        {p.email && (
+                            <div style={contactItemStyle}>
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="#c9a84c"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                                <span style={contactSpanStyle}>{p.email}</span>
+                            </div>
+                        )}
+                        {p.location && (
+                            <div style={contactItemStyle}>
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="#c9a84c"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                                <span style={contactSpanStyle}>{p.location}</span>
+                            </div>
+                        )}
+                        {p.website && (
+                            <div style={contactItemStyle}>
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="#c9a84c"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93V18c0-.55.45-1 1-1s1 .45 1 1v1.93C10.39 19.47 8.28 17.36 7.81 14.74H9c.55 0 1-.45 1-1s-.45-1-1-1H7.07C7.54 10.11 9.64 8 12 7.07V9c0 .55.45 1 1 1s1-.45 1-1V7.07c2.36.93 4.46 3.04 4.93 5.67H17c-.55 0-1 .45-1 1s-.45 1-1 1h1.19c-.47 2.62-2.57 4.73-4.93 5.66V18c0-.55-.45-1-1-1s-1 .45-1 1v.93z"/></svg>
+                                <span style={contactSpanStyle}>{p.website}</span>
+                            </div>
+                        )}
+                        {p.linkedin && (
+                            <div style={contactItemStyle}>
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="#c9a84c" className="w-3 h-3"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                                <span style={contactSpanStyle}>{p.linkedin}</span>
+                            </div>
+                        )}
+                        {p.github && (
+                            <div style={contactItemStyle}>
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="#c9a84c" className="w-3 h-3"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                                <span style={contactSpanStyle}>{p.github}</span>
+                            </div>
+                        )}
+                    </div>
+
+                    {d.skills && d.skills.filter(Boolean).length > 0 && (
+                        <>
+                            <div style={{ height: "1px", background: "rgba(201,168,76,0.25)", margin: "20px 22px" }} />
+                            <div style={sidebarSectionStyle}>
+                                <div style={sidebarTitleStyle}>Skills</div>
+                                {d.skills.filter(Boolean).map((s, idx) => (
+                                    <div key={idx} style={skillItemStyle}>
+                                        <span style={skillDotStyle}></span>
+                                        {s}
+                                    </div>
+                                ))}
+                            </div>
+                        </>
+                    )}
+
+                    {d.certifications && d.certifications.filter(c => c.name).length > 0 && (
+                        <>
+                            <div style={{ height: "1px", background: "rgba(201,168,76,0.25)", margin: "20px 22px" }} />
+                            <div style={sidebarSectionStyle}>
+                                <div style={sidebarTitleStyle}>Certifications</div>
+                                {d.certifications.filter(c => c.name).map((c, idx) => (
+                                    <div key={idx} style={{ marginBottom: 10 }}>
+                                        <p style={refNameStyle}>{c.name}</p>
+                                        <p style={refRoleStyle}>{c.issuer}</p>
+                                        {(c.date || c.expiry) && (
+                                            <p style={{ fontSize: "11px", color: "#cdd5e0" }}>
+                                                {c.date}{c.date && c.expiry ? " – " : ""}{c.expiry}
+                                            </p>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </>
+                    )}
+                </div>
+
+                {/* ── MAIN CONTENT ── */}
+                <div style={mainStyle}>
+                    {/* Header */}
+                    <div style={mainHeaderStyle}>
+                        <h1 style={nameStyle}>{p.name || "Your Name"}</h1>
+                        {p.title && <p style={jobTitleStyle}>{p.title}</p>}
+                    </div>
+
+                    {/* Body */}
+                    <div style={mainBodyStyle}>
+                        {/* Profile Summary */}
+                        {d.summary && (
+                            <div style={{ marginBottom: "22px" }}>
+                                <div style={sectionHeadingStyle}>
+                                    <div style={iconCircleStyle}>
+                                        <svg viewBox="0 0 24 24" style={{ width: "15px", height: "15px", fill: "#c9a84c" }}><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+                                    </div>
+                                    <span style={sectionTitleStyle}>Profile</span>
+                                    <div style={sectionLineStyle}></div>
+                                </div>
+                                <p style={profileTextStyle}>{d.summary}</p>
+                            </div>
+                        )}
+
+                        {/* Experience */}
+                        {d.experience && d.experience.filter(e => e.title || e.company).length > 0 && (
+                            <div style={{ marginBottom: "22px" }}>
+                                <div style={sectionHeadingStyle}>
+                                    <div style={iconCircleStyle}>
+                                        <svg viewBox="0 0 24 24" style={{ width: "15px", height: "15px", fill: "#c9a84c" }}><path d="M20 6h-2.18c.07-.44.18-.88.18-1.36C18 2.29 15.71 0 13 0c-.96 0-1.86.28-2.61.76L9 2.38C8.15 1.52 7 1 5.73 1 3.1 1 1 3.07 1 5.64c0 .48.08.92.18 1.36H0v14h24V6h-4zm-7-4.27c.36-.22.77-.34 1.18-.34 1.25 0 2.27 1.01 2.27 2.27 0 .37-.12.77-.32 1.34H13V2.09c.01-.22.19-.34.32-.36zM5.73 2.91c.74 0 1.44.29 1.96.81.22.19.31.49.31.78v2.09H5.03c-.2-.57-.32-.97-.32-1.34 0-1.26 1.02-2.34 2.02-2.34zM22 18H2V8h20v10z"/></svg>
+                                    </div>
+                                    <span style={sectionTitleStyle}>Work Experience</span>
+                                    <div style={sectionLineStyle}></div>
+                                </div>
+
+                                <div style={timelineStyle}>
+                                    <div style={timelineLineStyle}></div>
+                                    {d.experience.filter(e => e.title || e.company).map((e, idx) => (
+                                        <div key={e.id} style={timelineEntryStyle}>
+                                            <div style={tlDotStyle(idx === 0)}></div>
+                                            <div style={jobRowStyle}>
+                                                <span style={jobNameStyle}>{e.company}{e.location ? `, ${e.location}` : ""}</span>
+                                                <span style={jobDateStyle}>{e.start}{e.start && e.end ? " – " : ""}{e.end}</span>
+                                            </div>
+                                            <p style={workTitleStyle}>{e.title}</p>
+                                            {renderGoldenBullets(e.desc)}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Projects */}
+                        {d.projects && d.projects.filter(pr => pr.name).length > 0 && (
+                            <div style={{ marginBottom: "22px" }}>
+                                <div style={sectionHeadingStyle}>
+                                    <div style={iconCircleStyle}>
+                                        <svg viewBox="0 0 24 24" style={{ width: "15px", height: "15px", fill: "#c9a84c" }}><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+                                    </div>
+                                    <span style={sectionTitleStyle}>Projects</span>
+                                    <div style={sectionLineStyle}></div>
+                                </div>
+
+                                <div style={timelineStyle}>
+                                    <div style={timelineLineStyle}></div>
+                                    {d.projects.filter(pr => pr.name).map((pr, idx) => (
+                                        <div key={pr.id} style={timelineEntryStyle}>
+                                            <div style={tlDotStyle(idx === 0)}></div>
+                                            <div style={jobRowStyle}>
+                                                <span style={jobNameStyle}>{pr.name}</span>
+                                                {pr.url && (
+                                                    <span style={{ fontSize: "10px" }}>
+                                                        <a href={pr.url.startsWith("http") ? pr.url : `https://${pr.url}`} target="_blank" rel="noopener noreferrer" style={{ color: "#1a56db", textDecoration: "none" }}>Link</a>
+                                                    </span>
+                                                )}
+                                            </div>
+                                            {pr.tech && <p style={workTitleStyle}>{pr.tech}</p>}
+                                            {renderGoldenBullets(pr.desc)}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Education */}
+                        {d.education && d.education.filter(edu => edu.school || edu.degree).length > 0 && (
+                            <div>
+                                <div style={sectionHeadingStyle}>
+                                    <div style={iconCircleStyle}>
+                                        <svg viewBox="0 0 24 24" style={{ width: "15px", height: "15px", fill: "#c9a84c" }}><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zm-1 12.99L5.13 13 4 13.61V17c0 1.1 3.58 3 8 3s8-1.9 8-3v-3.39l-1.13-.61L13 15.99l-1-.54-.01.54H11z"/></svg>
+                                    </div>
+                                    <span style={sectionTitleStyle}>Education</span>
+                                    <div style={sectionLineStyle}></div>
+                                </div>
+
+                                <div style={timelineStyle}>
+                                    <div style={timelineLineStyle}></div>
+                                    {d.education.filter(edu => edu.school || edu.degree).map((edu, idx) => (
+                                        <div key={edu.id} style={timelineEntryStyle}>
+                                            <div style={tlDotStyle(idx === 0)}></div>
+                                            <div style={jobRowStyle}>
+                                                <span style={jobNameStyle}>{edu.degree}</span>
+                                                <span style={jobDateStyle}>{edu.start}{edu.start && edu.end ? " – " : ""}{edu.end}</span>
+                                            </div>
+                                            <p style={workTitleStyle}>{edu.school}{edu.location ? `, ${edu.location}` : ""}</p>
+                                            {(edu.gpa || edu.honors) && (
+                                                <p style={eduGpaStyle}>
+                                                    <strong>GPA:</strong> {edu.gpa} {edu.honors ? `(${edu.honors})` : ""}
+                                                </p>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (template === "tech_minimal") {
+        const baseStyle = {
+            fontFamily: "'Inter', sans-serif",
+            fontSize: "12px",
+            lineHeight: "1.6",
+            color: "#1e293b",
+            background: "#ffffff",
+            minHeight: "297mm",
+            padding: "36px 44px",
+            boxSizing: "border-box"
+        };
+        const headerStyle = {
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+            marginBottom: "24px"
+        };
+        const nameStyle = {
+            fontSize: "26px",
+            fontWeight: 800,
+            color: "#0f172a",
+            letterSpacing: "-0.03em",
+            lineHeight: "1.1"
+        };
+        const titleStyle = {
+            fontSize: "13px",
+            color: "#64748b",
+            marginTop: "4px",
+            fontFamily: "'Roboto Mono', monospace",
+            fontWeight: 500
+        };
+        const contactBoxStyle = {
+            textAlign: "right",
+            fontSize: "11px",
+            color: "#475569"
+        };
+        const lineDividerStyle = {
+            height: "1px",
+            background: "#cbd5e1",
+            margin: "16px 0 24px"
+        };
+        const secHeadingStyle = {
+            display: "flex",
+            alignItems: "baseline",
+            gap: "12px",
+            marginBottom: "12px",
+            marginTop: "18px"
+        };
+        const secNumStyle = {
+            fontFamily: "'Roboto Mono', monospace",
+            fontSize: "11px",
+            fontWeight: 600,
+            color: "#3b82f6"
+        };
+        const secTitleStyle = {
+            fontSize: "12.5px",
+            fontWeight: 700,
+            textTransform: "uppercase",
+            letterSpacing: "0.05em",
+            color: "#0f172a"
+        };
+        const techSkillsGridStyle = {
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "6px",
+            marginTop: "6px"
+        };
+        const skillBadgeStyle = {
+            fontFamily: "'Roboto Mono', monospace",
+            fontSize: "10.5px",
+            background: "#f1f5f9",
+            color: "#334155",
+            padding: "3px 8px",
+            borderRadius: "4px",
+            border: "1px solid #e2e8f0"
+        };
+        const renderBullets = (descText) => {
+            if (!descText) return null;
+            const bullets = descText.split("\n").map(line => line.replace(/^[•\-\*\s]+/, "").trim()).filter(Boolean);
+            return (
+                <ul style={{ listStyleType: "disc", paddingLeft: "18px", marginTop: "4px" }}>
+                    {bullets.map((b, idx) => (
+                        <li key={idx} style={{ fontSize: "11.5px", color: "#334155", marginBottom: "3px" }}>{b}</li>
+                    ))}
+                </ul>
+            );
+        };
+
+        const renderSection = (key) => {
+            switch(key) {
+                case "summary":
+                    if (!d.summary) return null;
+                    return (
+                        <div key="summary" style={{ marginBottom: "16px" }}>
+                            <div style={secHeadingStyle}>
+                                <span style={secNumStyle}>// 01</span>
+                                <span style={secTitleStyle}>Professional Summary</span>
+                            </div>
+                            <p style={{ fontSize: "11.5px", color: "#334155", lineHeight: "1.6" }}>{d.summary}</p>
+                        </div>
+                    );
+                case "skills":
+                    if (!d.skills || d.skills.filter(Boolean).length === 0) return null;
+                    return (
+                        <div key="skills" style={{ marginBottom: "16px" }}>
+                            <div style={secHeadingStyle}>
+                                <span style={secNumStyle}>// 02</span>
+                                <span style={secTitleStyle}>Technical Skills</span>
+                            </div>
+                            <div style={techSkillsGridStyle}>
+                                {d.skills.filter(Boolean).map((s, idx) => <span key={idx} style={skillBadgeStyle}>{s}</span>)}
+                            </div>
+                        </div>
+                    );
+                case "experience":
+                    const exps = d.experience.filter(e => e.title || e.company);
+                    if (exps.length === 0) return null;
+                    return (
+                        <div key="experience" style={{ marginBottom: "16px" }}>
+                            <div style={secHeadingStyle}>
+                                <span style={secNumStyle}>// 03</span>
+                                <span style={secTitleStyle}>Work Experience</span>
+                            </div>
+                            {exps.map((e) => (
+                                <div key={e.id} style={{ marginBottom: "12px" }}>
+                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                                        <span style={{ fontWeight: 700, fontSize: "12px", color: "#0f172a" }}>{e.title}</span>
+                                        <span style={{ fontFamily: "'Roboto Mono', monospace", fontSize: "10px", color: "#64748b" }}>{e.start} – {e.end}</span>
+                                    </div>
+                                    <div style={{ fontFamily: "'Roboto Mono', monospace", fontSize: "10.5px", color: "#475569", marginTop: "1px" }}>
+                                        {e.company}{e.location ? ` | ${e.location}` : ""}
+                                    </div>
+                                    {renderBullets(e.desc)}
+                                </div>
+                            ))}
+                        </div>
+                    );
+                case "projects":
+                    const projs = d.projects.filter(pr => pr.name);
+                    if (projs.length === 0) return null;
+                    return (
+                        <div key="projects" style={{ marginBottom: "16px" }}>
+                            <div style={secHeadingStyle}>
+                                <span style={secNumStyle}>// 04</span>
+                                <span style={secTitleStyle}>Selected Projects</span>
+                            </div>
+                            {projs.map((pr) => (
+                                <div key={pr.id} style={{ marginBottom: "12px" }}>
+                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                                        <span style={{ fontWeight: 700, fontSize: "12px", color: "#0f172a" }}>{pr.name}</span>
+                                        {pr.url && <span style={{ fontSize: "10.5px" }}><a href={pr.url.startsWith("http") ? pr.url : `https://${pr.url}`} target="_blank" rel="noopener noreferrer" style={{ color: "#3b82f6", textDecoration: "none", fontFamily: "'Roboto Mono', monospace" }}>{pr.url}</a></span>}
+                                    </div>
+                                    {pr.tech && <div style={{ fontSize: "10.5px", color: "#64748b", fontStyle: "italic" }}>Tech: {pr.tech}</div>}
+                                    {renderBullets(pr.desc)}
+                                </div>
+                            ))}
+                        </div>
+                    );
+                case "education":
+                    const edus = d.education.filter(e => e.school || e.degree);
+                    if (edus.length === 0) return null;
+                    return (
+                        <div key="education" style={{ marginBottom: "16px" }}>
+                            <div style={secHeadingStyle}>
+                                <span style={secNumStyle}>// 05</span>
+                                <span style={secTitleStyle}>Education</span>
+                            </div>
+                            {edus.map((edu) => (
+                                <div key={edu.id} style={{ marginBottom: "8px" }}>
+                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                                        <span style={{ fontWeight: 700, fontSize: "12px", color: "#0f172a" }}>{edu.degree}</span>
+                                        <span style={{ fontFamily: "'Roboto Mono', monospace", fontSize: "10px", color: "#64748b" }}>{edu.start} – {edu.end}</span>
+                                    </div>
+                                    <div style={{ fontSize: "11px", color: "#475569" }}>
+                                        {edu.school}{edu.location ? `, ${edu.location}` : ""}{edu.gpa ? ` (GPA: ${edu.gpa})` : ""}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    );
+                case "certifications":
+                    const certs = d.certifications.filter(c => c.name);
+                    if (certs.length === 0) return null;
+                    return (
+                        <div key="certifications" style={{ marginBottom: "16px" }}>
+                            <div style={secHeadingStyle}>
+                                <span style={secNumStyle}>// 06</span>
+                                <span style={secTitleStyle}>Certifications</span>
+                            </div>
+                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                                {certs.map((c) => (
+                                    <div key={c.id} style={{ fontSize: "11px", color: "#334155" }}>
+                                        <strong>{c.name}</strong> – <span style={{ color: "#64748b" }}>{c.issuer}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    );
+                default: return null;
+            }
+        };
+
+        return (
+            <div style={baseStyle}>
+                <div style={headerStyle}>
+                    <div>
+                        <h1 style={nameStyle}>{p.name || "Your Name"}</h1>
+                        {p.title && <div style={titleStyle}>{p.title}</div>}
+                    </div>
+                    <div style={contactBoxStyle}>
+                        {p.email && <div>{p.email}</div>}
+                        {p.phone && <div>{p.phone}</div>}
+                        {p.location && <div>{p.location}</div>}
+                        {p.linkedin && <div>linkedin: {p.linkedin}</div>}
+                        {p.github && <div>github: {p.github}</div>}
+                    </div>
+                </div>
+                <div style={lineDividerStyle}></div>
+                <div>{(d.sectionOrder || []).map(key => renderSection(key))}</div>
+            </div>
+        );
+    }
+
+    if (template === "creative_teal") {
+        const baseStyle = {
+            fontFamily: "'Inter', sans-serif",
+            fontSize: "12px",
+            lineHeight: "1.5",
+            color: "#334155",
+            background: "#ffffff",
+            minHeight: "297mm",
+            padding: "36px 40px",
+            boxSizing: "border-box",
+            display: "flex",
+            flexDirection: "column",
+            borderLeft: "6px solid #0f766e"
+        };
+        const headerStyle = {
+            marginBottom: "20px"
+        };
+        const nameStyle = {
+            fontSize: "30px",
+            fontWeight: 800,
+            color: "#0f766e",
+            letterSpacing: "-0.02em"
+        };
+        const titleStyle = {
+            fontSize: "14px",
+            color: "#475569",
+            fontWeight: 500,
+            letterSpacing: "1px",
+            textTransform: "uppercase"
+        };
+        const contactRow = {
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "12px",
+            fontSize: "10.5px",
+            color: "#64748b",
+            marginTop: "8px"
+        };
+        const layoutStyle = {
+            display: "grid",
+            gridTemplateColumns: "260px 1fr",
+            gap: "28px",
+            flex: 1
+        };
+        const headingStyle = {
+            fontSize: "12px",
+            fontWeight: 700,
+            color: "#0f766e",
+            textTransform: "uppercase",
+            letterSpacing: "1px",
+            borderBottom: "1.5px solid #ccfbf1",
+            paddingBottom: "4px",
+            marginBottom: "10px",
+            marginTop: "16px"
+        };
+        const listBullets = (descText) => {
+            if (!descText) return null;
+            const bullets = descText.split("\n").map(line => line.replace(/^[•\-\*\s]+/, "").trim()).filter(Boolean);
+            return (
+                <ul style={{ listStyleType: "none", padding: 0, margin: "4px 0 0" }}>
+                    {bullets.map((b, idx) => (
+                        <li key={idx} style={{
+                            fontSize: "11px",
+                            color: "#475569",
+                            position: "relative",
+                            paddingLeft: "12px",
+                            marginBottom: "3px"
+                        }}>
+                            <span style={{ position: "absolute", left: 0, color: "#14b8a6" }}>›</span>
+                            {b}
+                        </li>
+                    ))}
+                </ul>
+            );
+        };
+
+        const renderLeft = () => (
+            <div>
+                {d.summary && (
+                    <div style={{ marginBottom: "16px" }}>
+                        <div style={headingStyle}>Profile</div>
+                        <p style={{ fontSize: "11px", color: "#475569", lineHeight: "1.6" }}>{d.summary}</p>
+                    </div>
+                )}
+                {d.skills && d.skills.filter(Boolean).length > 0 && (
+                    <div style={{ marginBottom: "16px" }}>
+                        <div style={headingStyle}>Skills</div>
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+                            {d.skills.filter(Boolean).map((s, idx) => (
+                                <span key={idx} style={{
+                                    fontSize: "10px",
+                                    background: "#f0fdfa",
+                                    color: "#0f766e",
+                                    padding: "2px 6px",
+                                    borderRadius: "4px",
+                                    border: "1px solid #ccfbf1",
+                                    fontWeight: 500
+                                }}>{s}</span>
+                            ))}
+                        </div>
+                    </div>
+                )}
+                {d.certifications && d.certifications.filter(c => c.name).length > 0 && (
+                    <div style={{ marginBottom: "16px" }}>
+                        <div style={headingStyle}>Certifications</div>
+                        {d.certifications.filter(c => c.name).map((c) => (
+                            <div key={c.id} style={{ marginBottom: "6px", fontSize: "10.5px" }}>
+                                <div style={{ fontWeight: 600, color: "#334155" }}>{c.name}</div>
+                                <div style={{ color: "#64748b" }}>{c.issuer}</div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+        );
+
+        const renderRight = () => (
+            <div>
+                {d.experience && d.experience.filter(e => e.title || e.company).length > 0 && (
+                    <div style={{ marginBottom: "20px" }}>
+                        <div style={headingStyle}>Experience</div>
+                        {d.experience.filter(e => e.title || e.company).map((e) => (
+                            <div key={e.id} style={{ marginBottom: "12px" }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                                    <span style={{ fontWeight: 700, fontSize: "12px", color: "#1e293b" }}>{e.title}</span>
+                                    <span style={{ fontSize: "10px", color: "#64748b", fontWeight: 500 }}>{e.start} – {e.end}</span>
+                                </div>
+                                <div style={{ fontSize: "11px", color: "#0f766e", fontWeight: 500 }}>{e.company}{e.location ? ` | ${e.location}` : ""}</div>
+                                {listBullets(e.desc)}
+                            </div>
+                        ))}
+                    </div>
+                )}
+                {d.projects && d.projects.filter(pr => pr.name).length > 0 && (
+                    <div style={{ marginBottom: "20px" }}>
+                        <div style={headingStyle}>Projects</div>
+                        {d.projects.filter(pr => pr.name).map((pr) => (
+                            <div key={pr.id} style={{ marginBottom: "12px" }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                                    <span style={{ fontWeight: 700, fontSize: "12px", color: "#1e293b" }}>{pr.name}</span>
+                                    {pr.url && <span style={{ fontSize: "10px" }}><a href={pr.url.startsWith("http") ? pr.url : `https://${pr.url}`} target="_blank" rel="noopener noreferrer" style={{ color: "#14b8a6", textDecoration: "none" }}>Link</a></span>}
+                                </div>
+                                {pr.tech && <div style={{ fontSize: "10px", color: "#64748b", fontStyle: "italic" }}>{pr.tech}</div>}
+                                {listBullets(pr.desc)}
+                            </div>
+                        ))}
+                    </div>
+                )}
+                {d.education && d.education.filter(edu => edu.school || edu.degree).length > 0 && (
+                    <div>
+                        <div style={headingStyle}>Education</div>
+                        {d.education.filter(edu => edu.school || edu.degree).map((edu) => (
+                            <div key={edu.id} style={{ marginBottom: "8px" }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                                    <span style={{ fontWeight: 700, fontSize: "11.5px", color: "#1e293b" }}>{edu.degree}</span>
+                                    <span style={{ fontSize: "10px", color: "#64748b" }}>{edu.start} – {edu.end}</span>
+                                </div>
+                                <div style={{ fontSize: "11px", color: "#475569" }}>{edu.school}{edu.location ? `, ${edu.location}` : ""}</div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+        );
+
+        return (
+            <div style={baseStyle}>
+                <div style={headerStyle}>
+                    <h1 style={nameStyle}>{p.name || "Your Name"}</h1>
+                    {p.title && <div style={titleStyle}>{p.title}</div>}
+                    <div style={contactRow}>
+                        {p.email && <span>{p.email}</span>}
+                        {p.phone && <span>· {p.phone}</span>}
+                        {p.location && <span>· {p.location}</span>}
+                        {p.linkedin && <span>· linkedin.com/in/{p.linkedin}</span>}
+                        {p.github && <span>· github.com/{p.github}</span>}
+                    </div>
+                </div>
+                <div style={layoutStyle}>
+                    {renderLeft()}
+                    {renderRight()}
+                </div>
+            </div>
+        );
+    }
+
+    if (template === "classic_pro") {
+        const baseStyle = {
+            fontFamily: "'Inter', sans-serif",
+            fontSize: "12px",
+            lineHeight: "1.55",
+            color: "#111111",
+            background: "#ffffff",
+            minHeight: "297mm",
+            padding: "44px 48px",
+            boxSizing: "border-box",
+            display: "flex",
+            flexDirection: "column"
+        };
+        const headerStyle = {
+            textAlign: "center",
+            marginBottom: "24px"
+        };
+        const nameStyle = {
+            fontFamily: "'Playfair Display', serif",
+            fontSize: "30px",
+            fontWeight: 700,
+            color: "#111827"
+        };
+        const titleStyle = {
+            fontSize: "12px",
+            color: "#6b7280",
+            fontWeight: 600,
+            textTransform: "uppercase",
+            letterSpacing: "2px",
+            marginTop: "4px"
+        };
+        const contactStyle = {
+            display: "flex",
+            justifyContent: "center",
+            flexWrap: "wrap",
+            gap: "16px",
+            fontSize: "10.5px",
+            color: "#4b5563",
+            marginTop: "10px"
+        };
+        const secHeaderStyle = {
+            fontFamily: "'Playfair Display', serif",
+            fontSize: "14px",
+            fontWeight: 700,
+            color: "#1f2937",
+            textTransform: "uppercase",
+            letterSpacing: "1px",
+            borderBottom: "1.5px solid #1f2937",
+            paddingBottom: "3px",
+            marginTop: "18px",
+            marginBottom: "10px"
+        };
+        const bulletsRenderer = (descText) => {
+            if (!descText) return null;
+            const bullets = descText.split("\n").map(line => line.replace(/^[•\-\*\s]+/, "").trim()).filter(Boolean);
+            return (
+                <ul style={{ listStyleType: "square", paddingLeft: "20px", marginTop: "3px" }}>
+                    {bullets.map((b, idx) => (
+                        <li key={idx} style={{ fontSize: "11.5px", color: "#374151", marginBottom: "2px" }}>{b}</li>
+                    ))}
+                </ul>
+            );
+        };
+
+        const renderSection = (key) => {
+            switch(key) {
+                case "summary":
+                    if (!d.summary) return null;
+                    return (
+                        <div key="summary" style={{ marginBottom: "14px" }}>
+                            <div style={secHeaderStyle}>Profile Summary</div>
+                            <p style={{ fontSize: "11.5px", color: "#374151", textAlign: "justify" }}>{d.summary}</p>
+                        </div>
+                    );
+                case "skills":
+                    if (!d.skills || d.skills.filter(Boolean).length === 0) return null;
+                    return (
+                        <div key="skills" style={{ marginBottom: "14px" }}>
+                            <div style={secHeaderStyle}>Core Competencies</div>
+                            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "6px" }}>
+                                {d.skills.filter(Boolean).map((s, idx) => (
+                                    <div key={idx} style={{ fontSize: "11.5px", color: "#374151" }}>• {s}</div>
+                                ))}
+                            </div>
+                        </div>
+                    );
+                case "experience":
+                    const exps = d.experience.filter(e => e.title || e.company);
+                    if (exps.length === 0) return null;
+                    return (
+                        <div key="experience" style={{ marginBottom: "14px" }}>
+                            <div style={secHeaderStyle}>Professional Experience</div>
+                            {exps.map((e) => (
+                                <div key={e.id} style={{ marginBottom: "10px" }}>
+                                    <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 700, fontSize: "12px", color: "#1f2937" }}>
+                                        <span>{e.title}</span>
+                                        <span>{e.start} – {e.end}</span>
+                                    </div>
+                                    <div style={{ display: "flex", justifyContent: "space-between", fontStyle: "italic", fontSize: "11px", color: "#4b5563" }}>
+                                        <span>{e.company}</span>
+                                        <span>{e.location}</span>
+                                    </div>
+                                    {bulletsRenderer(e.desc)}
+                                </div>
+                            ))}
+                        </div>
+                    );
+                case "projects":
+                    const projs = d.projects.filter(pr => pr.name);
+                    if (projs.length === 0) return null;
+                    return (
+                        <div key="projects" style={{ marginBottom: "14px" }}>
+                            <div style={secHeaderStyle}>Key Projects</div>
+                            {projs.map((pr) => (
+                                <div key={pr.id} style={{ marginBottom: "10px" }}>
+                                    <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 700, fontSize: "12px", color: "#1f2937" }}>
+                                        <span>{pr.name}</span>
+                                        {pr.url && <span style={{ fontStyle: "normal" }}><a href={pr.url.startsWith("http") ? pr.url : `https://${pr.url}`} target="_blank" rel="noopener noreferrer" style={{ color: "#2563eb", textDecoration: "none" }}>{pr.url}</a></span>}
+                                    </div>
+                                    {pr.tech && <div style={{ fontSize: "10.5px", color: "#4b5563", fontStyle: "italic" }}>{pr.tech}</div>}
+                                    {bulletsRenderer(pr.desc)}
+                                </div>
+                            ))}
+                        </div>
+                    );
+                case "education":
+                    const edus = d.education.filter(e => e.school || e.degree);
+                    if (edus.length === 0) return null;
+                    return (
+                        <div key="education" style={{ marginBottom: "14px" }}>
+                            <div style={secHeaderStyle}>Education</div>
+                            {edus.map((edu) => (
+                                <div key={edu.id} style={{ marginBottom: "6px" }}>
+                                    <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 700, fontSize: "11.5px", color: "#1f2937" }}>
+                                        <span>{edu.degree}</span>
+                                        <span>{edu.start} – {edu.end}</span>
+                                    </div>
+                                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", color: "#4b5563" }}>
+                                        <span>{edu.school}{edu.location ? `, ${edu.location}` : ""}</span>
+                                        {edu.gpa && <span>GPA: {edu.gpa}</span>}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    );
+                case "certifications":
+                    const certs = d.certifications.filter(c => c.name);
+                    if (certs.length === 0) return null;
+                    return (
+                        <div key="certifications" style={{ marginBottom: "14px" }}>
+                            <div style={secHeaderStyle}>Certifications</div>
+                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px", fontSize: "11.5px", color: "#374151" }}>
+                                {certs.map((c) => (
+                                    <div key={c.id}>• <strong>{c.name}</strong> – {c.issuer}</div>
+                                ))}
+                            </div>
+                        </div>
+                    );
+                default: return null;
+            }
+        };
+
+        return (
+            <div style={baseStyle}>
+                <div style={headerStyle}>
+                    <h1 style={nameStyle}>{p.name || "Your Name"}</h1>
+                    {p.title && <div style={titleStyle}>{p.title}</div>}
+                    <div style={contactStyle}>
+                        {p.email && <span>{p.email}</span>}
+                        {p.phone && <span>| {p.phone}</span>}
+                        {p.location && <span>| {p.location}</span>}
+                        {p.website && <span>| <a href={p.website.startsWith("http") ? p.website : `https://${p.website}`} target="_blank" rel="noopener noreferrer" style={{ color: "inherit", textDecoration: "none" }}>{p.website}</a></span>}
+                    </div>
+                </div>
+                <div>{(d.sectionOrder || []).map(key => renderSection(key))}</div>
+            </div>
+        );
+    }
+
+    if (template === "slate_grid") {
+        const baseStyle = {
+            fontFamily: "'Inter', sans-serif",
+            fontSize: "11.5px",
+            lineHeight: "1.5",
+            color: "#374151",
+            background: "#ffffff",
+            minHeight: "297mm",
+            padding: "36px 40px",
+            boxSizing: "border-box"
+        };
+        const gridContainerStyle = {
+            display: "grid",
+            gridTemplateColumns: "240px 1fr",
+            gap: "36px",
+            height: "100%"
+        };
+        const leftColStyle = {
+            borderRight: "1px solid #e2e8f0",
+            paddingRight: "28px"
+        };
+        const rightColStyle = {
+            paddingLeft: "4px"
+        };
+        const sidebarTitleStyle = {
+            fontSize: "11px",
+            fontWeight: 700,
+            textTransform: "uppercase",
+            color: "#64748b",
+            letterSpacing: "1.5px",
+            marginBottom: "8px",
+            marginTop: "18px"
+        };
+        const titleStyle = {
+            fontSize: "24px",
+            fontWeight: 800,
+            color: "#0f172a",
+            lineHeight: "1.1"
+        };
+        const subtitleStyle = {
+            fontSize: "12px",
+            fontWeight: 500,
+            color: "#334155",
+            marginTop: "4px"
+        };
+        const secHeadingStyle = {
+            fontSize: "12.5px",
+            fontWeight: 700,
+            textTransform: "uppercase",
+            color: "#334155",
+            borderBottom: "2px solid #cbd5e1",
+            paddingBottom: "4px",
+            marginBottom: "12px",
+            marginTop: "18px"
+        };
+        const renderBullets = (descText) => {
+            if (!descText) return null;
+            const bullets = descText.split("\n").map(line => line.replace(/^[•\-\*\s]+/, "").trim()).filter(Boolean);
+            return (
+                <ul style={{ listStyleType: "circle", paddingLeft: "16px", marginTop: "4px" }}>
+                    {bullets.map((b, idx) => (
+                        <li key={idx} style={{ fontSize: "11px", color: "#4b5563", marginBottom: "2px" }}>{b}</li>
+                    ))}
+                </ul>
+            );
+        };
+
+        return (
+            <div style={baseStyle}>
+                <div style={gridContainerStyle}>
+                    {/* Left Column */}
+                    <div style={leftColStyle}>
+                        <h1 style={titleStyle}>{p.name || "Your Name"}</h1>
+                        <p style={subtitleStyle}>{p.title}</p>
+                        
+                        <div style={{ marginTop: "16px" }}>
+                            <div style={sidebarTitleStyle}>Contact</div>
+                            <div style={{ display: "flex", flexDirection: "column", gap: "6px", fontSize: "10.5px", color: "#475569" }}>
+                                {p.email && <div>{p.email}</div>}
+                                {p.phone && <div>{p.phone}</div>}
+                                {p.location && <div>{p.location}</div>}
+                                {p.linkedin && <div style={{ wordBreak: "break-all" }}>{p.linkedin}</div>}
+                                {p.github && <div style={{ wordBreak: "break-all" }}>{p.github}</div>}
+                            </div>
+                        </div>
+
+                        {d.summary && (
+                            <div style={{ marginTop: "16px" }}>
+                                <div style={sidebarTitleStyle}>Profile Summary</div>
+                                <p style={{ fontSize: "10.5px", color: "#475569", lineHeight: "1.5" }}>{d.summary}</p>
+                            </div>
+                        )}
+
+                        {d.skills && d.skills.filter(Boolean).length > 0 && (
+                            <div style={{ marginTop: "16px" }}>
+                                <div style={sidebarTitleStyle}>Core Skills</div>
+                                <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+                                    {d.skills.filter(Boolean).map((s, idx) => (
+                                        <span key={idx} style={{
+                                            fontSize: "9.5px",
+                                            background: "#f8fafc",
+                                            border: "1px solid #e2e8f0",
+                                            padding: "2px 5px",
+                                            borderRadius: "3px",
+                                            color: "#475569"
+                                        }}>{s}</span>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Right Column */}
+                    <div style={rightColStyle}>
+                        {d.experience && d.experience.filter(e => e.title || e.company).length > 0 && (
+                            <div style={{ marginBottom: "18px" }}>
+                                <div style={secHeadingStyle}>Work Experience</div>
+                                {d.experience.filter(e => e.title || e.company).map((e) => (
+                                    <div key={e.id} style={{ marginBottom: "12px" }}>
+                                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", fontWeight: 700 }}>
+                                            <span style={{ fontSize: "11.5px", color: "#1e293b" }}>{e.title}</span>
+                                            <span style={{ fontSize: "10px", color: "#64748b" }}>{e.start} – {e.end}</span>
+                                        </div>
+                                        <div style={{ fontSize: "11px", color: "#475569", fontWeight: 500 }}>{e.company}{e.location ? ` | ${e.location}` : ""}</div>
+                                        {renderBullets(e.desc)}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {d.projects && d.projects.filter(pr => pr.name).length > 0 && (
+                            <div style={{ marginBottom: "18px" }}>
+                                <div style={secHeadingStyle}>Projects</div>
+                                {d.projects.filter(pr => pr.name).map((pr) => (
+                                    <div key={pr.id} style={{ marginBottom: "12px" }}>
+                                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", fontWeight: 700 }}>
+                                            <span style={{ fontSize: "11.5px", color: "#1e293b" }}>{pr.name}</span>
+                                            {pr.url && <span style={{ fontSize: "10px" }}><a href={pr.url.startsWith("http") ? pr.url : `https://${pr.url}`} target="_blank" rel="noopener noreferrer" style={{ color: "#3b82f6", textDecoration: "none" }}>Link</a></span>}
+                                        </div>
+                                        {pr.tech && <div style={{ fontSize: "10px", color: "#64748b", fontStyle: "italic" }}>{pr.tech}</div>}
+                                        {renderBullets(pr.desc)}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {d.education && d.education.filter(edu => edu.school || edu.degree).length > 0 && (
+                            <div style={{ marginBottom: "18px" }}>
+                                <div style={secHeadingStyle}>Education</div>
+                                {d.education.filter(edu => edu.school || edu.degree).map((edu) => (
+                                    <div key={edu.id} style={{ marginBottom: "8px" }}>
+                                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", fontWeight: 700 }}>
+                                            <span style={{ fontSize: "11px", color: "#1e293b" }}>{edu.degree}</span>
+                                            <span style={{ fontSize: "10px", color: "#64748b" }}>{edu.start} – {edu.end}</span>
+                                        </div>
+                                        <div style={{ fontSize: "10.5px", color: "#475569" }}>{edu.school}{edu.location ? `, ${edu.location}` : ""}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {d.certifications && d.certifications.filter(c => c.name).length > 0 && (
+                            <div>
+                                <div style={secHeadingStyle}>Certifications</div>
+                                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px" }}>
+                                    {d.certifications.filter(c => c.name).map((c) => (
+                                        <div key={c.id} style={{ fontSize: "10.5px", color: "#475569" }}>
+                                            • <strong>{c.name}</strong> <span style={{ fontSize: "9.5px", color: "#64748b" }}>({c.issuer})</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (template === "editorial_chic") {
+        const baseStyle = {
+            fontFamily: "'Inter', sans-serif",
+            fontSize: "11.5px",
+            lineHeight: "1.6",
+            color: "#292524",
+            background: "#ffffff",
+            minHeight: "297mm",
+            padding: "44px 50px",
+            boxSizing: "border-box"
+        };
+        const headerStyle = {
+            borderBottom: "1.5px solid #d6d3d1",
+            paddingBottom: "24px",
+            marginBottom: "24px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-end"
+        };
+        const nameStyle = {
+            fontFamily: "'Playfair Display', serif",
+            fontSize: "34px",
+            fontWeight: 800,
+            color: "#1c1917",
+            lineHeight: "1.0",
+            letterSpacing: "-0.02em"
+        };
+        const titleStyle = {
+            fontSize: "12px",
+            color: "#78716c",
+            fontWeight: 600,
+            textTransform: "uppercase",
+            letterSpacing: "3px",
+            marginTop: "6px"
+        };
+        const contactStyle = {
+            textAlign: "right",
+            fontSize: "10.5px",
+            color: "#57534e",
+            lineHeight: "1.5"
+        };
+        const secTitleStyle = {
+            fontFamily: "'Playfair Display', serif",
+            fontSize: "15px",
+            fontWeight: 700,
+            color: "#1c1917",
+            letterSpacing: "0.5px",
+            marginBottom: "12px",
+            marginTop: "20px",
+            display: "flex",
+            alignItems: "center"
+        };
+        const secLineStyle = {
+            flex: 1,
+            height: "1px",
+            background: "#e7e5e4",
+            marginLeft: "12px"
+        };
+        const bulletStyle = {
+            listStyleType: "circle",
+            paddingLeft: "16px",
+            marginTop: "4px"
+        };
+        const renderBullets = (descText) => {
+            if (!descText) return null;
+            const bullets = descText.split("\n").map(line => line.replace(/^[•\-\*\s]+/, "").trim()).filter(Boolean);
+            return (
+                <ul style={bulletStyle}>
+                    {bullets.map((b, idx) => (
+                        <li key={idx} style={{ fontSize: "11px", color: "#44403c", marginBottom: "2px" }}>{b}</li>
+                    ))}
+                </ul>
+            );
+        };
+
+        const renderSection = (key) => {
+            switch(key) {
+                case "summary":
+                    if (!d.summary) return null;
+                    return (
+                        <div key="summary" style={{ marginBottom: "16px" }}>
+                            <div style={secTitleStyle}>Profile<span style={secLineStyle} /></div>
+                            <p style={{ fontSize: "11px", color: "#44403c", textAlign: "justify" }}>{d.summary}</p>
+                        </div>
+                    );
+                case "skills":
+                    if (!d.skills || d.skills.filter(Boolean).length === 0) return null;
+                    return (
+                        <div key="skills" style={{ marginBottom: "16px" }}>
+                            <div style={secTitleStyle}>Core Competencies<span style={secLineStyle} /></div>
+                            <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                                {d.skills.filter(Boolean).map((s, idx) => (
+                                    <span key={idx} style={{
+                                        fontSize: "10px",
+                                        background: "#fafaf9",
+                                        border: "1px solid #e7e5e4",
+                                        padding: "3px 8px",
+                                        borderRadius: "2px",
+                                        color: "#57534e",
+                                        textTransform: "uppercase",
+                                        letterSpacing: "0.5px"
+                                    }}>{s}</span>
+                                ))}
+                            </div>
+                        </div>
+                    );
+                case "experience":
+                    const exps = d.experience.filter(e => e.title || e.company);
+                    if (exps.length === 0) return null;
+                    return (
+                        <div key="experience" style={{ marginBottom: "16px" }}>
+                            <div style={secTitleStyle}>Experience History<span style={secLineStyle} /></div>
+                            {exps.map((e) => (
+                                <div key={e.id} style={{ marginBottom: "12px" }}>
+                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                                        <span style={{ fontWeight: 700, fontSize: "12px", color: "#1c1917" }}>{e.title}</span>
+                                        <span style={{ fontSize: "10.5px", color: "#78716c", fontWeight: 500 }}>{e.start} – {e.end}</span>
+                                    </div>
+                                    <div style={{ fontSize: "11px", color: "#a8a29e", fontWeight: 600, textTransform: "uppercase", letterSpacing: "1px", marginTop: "1px" }}>
+                                        {e.company}{e.location ? ` / ${e.location}` : ""}
+                                    </div>
+                                    {renderBullets(e.desc)}
+                                </div>
+                            ))}
+                        </div>
+                    );
+                case "projects":
+                    const projs = d.projects.filter(pr => pr.name);
+                    if (projs.length === 0) return null;
+                    return (
+                        <div key="projects" style={{ marginBottom: "16px" }}>
+                            <div style={secTitleStyle}>Selected Projects<span style={secLineStyle} /></div>
+                            {projs.map((pr) => (
+                                <div key={pr.id} style={{ marginBottom: "12px" }}>
+                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                                        <span style={{ fontWeight: 700, fontSize: "12px", color: "#1c1917" }}>{pr.name}</span>
+                                        {pr.url && <span style={{ fontSize: "10.5px" }}><a href={pr.url.startsWith("http") ? pr.url : `https://${pr.url}`} target="_blank" rel="noopener noreferrer" style={{ color: "#78716c", textDecoration: "underline" }}>Link</a></span>}
+                                    </div>
+                                    {pr.tech && <div style={{ fontSize: "10.5px", color: "#78716c", fontStyle: "italic" }}>{pr.tech}</div>}
+                                    {renderBullets(pr.desc)}
+                                </div>
+                            ))}
+                        </div>
+                    );
+                case "education":
+                    const edus = d.education.filter(e => e.school || e.degree);
+                    if (edus.length === 0) return null;
+                    return (
+                        <div key="education" style={{ marginBottom: "16px" }}>
+                            <div style={secTitleStyle}>Academic Credentials<span style={secLineStyle} /></div>
+                            {edus.map((edu) => (
+                                <div key={edu.id} style={{ marginBottom: "8px" }}>
+                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                                        <span style={{ fontWeight: 700, fontSize: "11.5px", color: "#1c1917" }}>{edu.degree}</span>
+                                        <span style={{ fontSize: "10.5px", color: "#78716c" }}>{edu.start} – {edu.end}</span>
+                                    </div>
+                                    <div style={{ fontSize: "11px", color: "#78716c" }}>{edu.school}{edu.location ? `, ${edu.location}` : ""}</div>
+                                </div>
+                            ))}
+                        </div>
+                    );
+                case "certifications":
+                    const certs = d.certifications.filter(c => c.name);
+                    if (certs.length === 0) return null;
+                    return (
+                        <div key="certifications" style={{ marginBottom: "16px" }}>
+                            <div style={secTitleStyle}>Certifications<span style={secLineStyle} /></div>
+                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+                                {certs.map((c) => (
+                                    <div key={c.id} style={{ fontSize: "11px", color: "#44403c" }}>
+                                        • <strong>{c.name}</strong> – <span style={{ color: "#78716c" }}>{c.issuer}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    );
+                default: return null;
+            }
+        };
+
+        return (
+            <div style={baseStyle}>
+                <div style={headerStyle}>
+                    <div>
+                        <h1 style={nameStyle}>{p.name || "Your Name"}</h1>
+                        {p.title && <p style={titleStyle}>{p.title}</p>}
+                    </div>
+                    <div style={contactStyle}>
+                        {p.email && <div>{p.email}</div>}
+                        {p.phone && <div>{p.phone}</div>}
+                        {p.location && <div>{p.location}</div>}
+                    </div>
+                </div>
+                <div>{(d.sectionOrder || []).map(key => renderSection(key))}</div>
+            </div>
+        );
+    }
+
     if (template === "modern") return (
         <div style={{ ...baseStyle, minHeight: "297mm", display: "flex", flexDirection: "column", boxSizing: "border-box" }}>
             <div style={{ background: "linear-gradient(135deg,#1e3a5f,#2563eb)", color: "#fff", padding: "36px 40px" }}>
@@ -1634,7 +3160,12 @@ export default function ResumeBuilder() {
             />
 
             {showTemplates && (
-                <TemplateSelector current={template} onSelect={(t) => { setTemplate(t); setShowTemplates(false); }} />
+                <TemplateSelectorModal
+                    current={template}
+                    onSelect={(t) => setTemplate(t)}
+                    onClose={() => setShowTemplates(false)}
+                    data={data}
+                />
             )}
 
             <div className="flex flex-1 overflow-hidden">
