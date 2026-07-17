@@ -205,33 +205,31 @@ export default function Index() {
               AI-Powered Career Tool
             </div>
  
-            <h1 ref={heroTitleRef} className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-              AI Resume Analyzer
+            <h1 ref={heroTitleRef} className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 tracking-tight mb-6">
+              Optimize Your Resume with <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-indigo-500 to-teal-400">AI Intelligence</span>
             </h1>
- 
-            <p ref={heroSubRef} className="text-xl sm:text-2xl text-gray-600 mb-8 leading-relaxed">
-              Upload your resume and job description to get instant feedback and match score.
+
+            <p ref={heroSubRef} className="text-lg sm:text-xl text-gray-600 mb-8 leading-relaxed max-w-2xl mx-auto">
+              Get detailed ATS score checks, section-by-section improvements, and instant professional templates designed to land you interviews.
             </p>
- 
- <div ref={heroBtnRef} className="flex flex-col sm:flex-row justify-center items-center gap-4">
- 
-            <button
-              aria-label="Check ATS Score"
-              onClick={() => navigate("/check-ats-score")}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-1 inline-flex items-center"
-            >
-              <IoDocumentOutline className="mr-2 h-5 w-5" aria-hidden="true" />
-              Check ATS Score
-            </button>
-            <button
-              aria-label="Start Analyzing Resume"
-              onClick={() => navigate("/analyze")}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-1 inline-flex items-center"
-            >
-              <Upload className="mr-2 h-5 w-5" aria-hidden="true" />
-              Start Analyzing
-            </button>
-</div>
+            <div ref={heroBtnRef} className="flex flex-col sm:flex-row justify-center items-center gap-4">
+              <button
+                aria-label="Check ATS Score"
+                onClick={() => navigate("/check-ats-score")}
+                className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 text-base font-semibold rounded-2xl shadow-lg shadow-blue-500/15 hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 inline-flex items-center justify-center"
+              >
+                <IoDocumentOutline className="mr-2 h-5 w-5" aria-hidden="true" />
+                Check ATS Score
+              </button>
+              <button
+                aria-label="Start Analyzing Resume"
+                onClick={() => navigate("/analyze")}
+                className="w-full sm:w-auto bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-8 py-4 text-base font-semibold rounded-2xl shadow-sm hover:shadow-md transition-all duration-200 transform hover:-translate-y-0.5 inline-flex items-center justify-center"
+              >
+                <Upload className="mr-2 h-5 w-5" aria-hidden="true" />
+                Start Analyzing
+              </button>
+            </div>
  
             {/* Stats row */}
             <div className="flex justify-center gap-10 mt-10 flex-wrap">

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import { generateAISummary, saveUserResume } from "../services/api";
+import { CanvaToolbar } from "../features/CanvaToolbar";
 
 // ─── Tailwind class helpers ───────────────────────────────────────────────────
 const cn = (...classes) => classes.filter(Boolean).join(" ");
@@ -728,24 +729,29 @@ export function TemplateSelectorModal({ current, onSelect, onClose, data }) {
  */
 export function TopBar({ dark, onToggleDark, onDownload, onReset, downloading, activeTab, onTabChange, onToggleTemplates }) {
     return (
-        <header className="h-14 flex items-center gap-3 px-5 bg-white dark:bg-slate-900
-                       border-b border-slate-200 dark:border-slate-800 flex-shrink-0 z-20 shadow-sm">
-            <span className="font-black text-lg bg-gradient-to-r from-blue-600 to-teal-400 bg-clip-text text-transparent tracking-tight">
-                ✦
-            </span>
+        <header className="h-16 flex items-center gap-3 px-6 bg-white/80 dark:bg-slate-900/85 backdrop-blur-md
+                       border-b border-slate-200/60 dark:border-slate-800/60 flex-shrink-0 z-20 shadow-sm shadow-slate-100/10">
+            <a href="/" className="flex items-center gap-2 group mr-4">
+                <span className="font-black text-xl bg-gradient-to-r from-blue-600 to-teal-400 bg-clip-text text-transparent group-hover:rotate-12 transition-transform duration-200">
+                    ✦
+                </span>
+                <span className="hidden sm:inline-block font-extrabold text-sm tracking-wide text-slate-800 dark:text-slate-200">
+                    SkillNova <span className="text-blue-600">Workspace</span>
+                </span>
+            </a>
             <div className="flex-1" />
 
             {/* Mobile tab switcher */}
-            <div className="flex md:hidden gap-1">
+            <div className="flex md:hidden gap-1 bg-slate-100 dark:bg-slate-800/50 p-1 rounded-xl">
                 {["form", "preview"].map((tab) => (
                     <button
                         key={tab}
                         onClick={() => onTabChange(tab)}
                         className={cn(
-                            "px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors",
+                            "px-4 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200",
                             activeTab === tab
-                                ? "bg-blue-600 text-white border-blue-600"
-                                : "bg-transparent text-slate-500 border-slate-200 dark:border-slate-700"
+                                ? "bg-white dark:bg-slate-900 text-blue-600 shadow-sm"
+                                : "bg-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300"
                         )}
                     >
                         {tab === "form" ? "Edit" : "Preview"}
@@ -753,19 +759,19 @@ export function TopBar({ dark, onToggleDark, onDownload, onReset, downloading, a
                 ))}
             </div>
 
-            <Button variant="ghost" onClick={onToggleTemplates} className="hidden md:inline-flex text-xs py-1.5">
+            <Button variant="ghost" onClick={onToggleTemplates} className="hidden md:inline-flex text-xs py-2 px-3 border border-slate-200 dark:border-slate-700 hover:bg-slate-50/80 rounded-lg">
                 <Icon name="settings" /> Templates
             </Button>
 
-            <Button variant="primary" onClick={onDownload} disabled={downloading} className="text-xs py-1.5">
+            <Button variant="ai" onClick={onDownload} disabled={downloading} className="text-xs py-2 px-4 shadow-md shadow-blue-500/10 hover:shadow-blue-500/20 rounded-lg">
                 {downloading ? <><Spinner /> Exporting…</> : <><Icon name="download" /> Download PDF</>}
             </Button>
 
-            <Button variant="ghost" onClick={onToggleDark} className="px-2.5 py-1.5">
+            <Button variant="ghost" onClick={onToggleDark} className="px-3 py-2 border border-slate-200 dark:border-slate-700 hover:bg-slate-50/80 rounded-lg" title="Toggle Theme">
                 <Icon name={dark ? "sun" : "moon"} />
             </Button>
 
-            <Button variant="ghost" onClick={onReset} className="px-2.5 py-1.5" title="Reset to defaults">
+            <Button variant="ghost" onClick={onReset} className="px-3 py-2 border border-slate-200 dark:border-slate-700 hover:bg-red-50 dark:hover:bg-red-950/20 hover:text-red-600 rounded-lg" title="Reset to defaults">
                 <Icon name="reset" />
             </Button>
         </header>
@@ -828,91 +834,173 @@ function ContactItem({ icon, text }) {
  * @param {object} data — resume data
  * @param {string} template — one of: modern | ats | minimal | sidebar | executive
  */
-export function ResumePreview({ data, template }) {
+export function ResumePreview({ data, template, design, selectedElement, setSelectedElement, onUpdate }) {
     const d = data;
     const p = d.personal;
+    
+    const accentColor = design?.accentColor || "#2563eb";
+    const fontFamily = design?.fontFamily || "Inter";
+    const spacing = design?.spacing || "standard";
+
+    const SelectableWrapper = ({ elementKey, children }) => {
+        const isSelected = selectedElement === elementKey;
+        return (
+            <div
+                onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedElement(elementKey);
+                }}
+                className={cn(
+                    "relative cursor-pointer transition-all duration-150 rounded",
+                    isSelected 
+                        ? "outline outline-2 outline-violet-500 shadow-[0_0_8px_rgba(139,92,246,0.45)] outline-offset-4 z-10" 
+                        : "hover:outline hover:outline-1 hover:outline-slate-200 hover:outline-offset-4"
+                )}
+            >
+                {children}
+            </div>
+        );
+    };
+
+    const EditableText = ({ value, path, placeholder = "Type here...", isBlock = false }) => {
+        const Tag = isBlock ? "div" : "span";
+        return (
+            <Tag
+                contentEditable={true}
+                suppressContentEditableWarning={true}
+                onBlur={(e) => {
+                    const text = e.target.innerText;
+                    onUpdate(path, text);
+                }}
+                className="focus:bg-slate-100/80 focus:outline-none rounded px-0.5 -mx-0.5 transition-colors cursor-text"
+                style={{ 
+                    display: isBlock ? "block" : "inline-block", 
+                    minWidth: value ? "auto" : "50px",
+                    whiteSpace: isBlock ? "pre-wrap" : "normal"
+                }}
+            >
+                {value || placeholder}
+            </Tag>
+        );
+    };
 
     const orderMap = {};
     (d.sectionOrder || []).forEach((s, i) => (orderMap[s] = i));
 
     const renderExp = () =>
-        d.experience.filter((e) => e.title || e.company).map((e) => (
-            <div key={e.id} style={{ marginBottom: 14 }}>
-                <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 2 }}>
-                    <span style={{ fontWeight: 600, fontSize: 13 }}>{e.title}</span>
-                    <span style={{ fontSize: 11, color: "#9ca3af", marginLeft: "auto" }}>
-                        {e.start}{e.start && e.end ? " – " : ""}{e.end}
-                    </span>
-                </div>
-                <div style={{ fontSize: 12, color: "#4a5568" }}>
-                    {e.company}{e.location ? `, ${e.location}` : ""}
-                </div>
-                {e.desc && (
-                    <div style={{ fontSize: 11.5, color: "#374151", marginTop: 4, whiteSpace: "pre-wrap" }}>
-                        {e.desc}
+        d.experience.filter((e) => e.title || e.company).map((e) => {
+            const idx = d.experience.findIndex(item => item.id === e.id);
+            return (
+                <div key={e.id} style={{ marginBottom: spacing === "compact" ? 10 : spacing === "spacious" ? 18 : 14 }}>
+                    <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 2 }}>
+                        <span style={{ fontWeight: 600, fontSize: 13 }}>
+                            <EditableText value={e.title} path={`experience.${idx}.title`} placeholder="Job Title" />
+                        </span>
+                        <span style={{ fontSize: 11, color: "#9ca3af", marginLeft: "auto" }}>
+                            <EditableText value={e.start} path={`experience.${idx}.start`} placeholder="Start Date" />
+                            {(e.start || e.end) && " – "}
+                            <EditableText value={e.end} path={`experience.${idx}.end`} placeholder="End Date" />
+                        </span>
                     </div>
-                )}
-            </div>
-        ));
+                    <div style={{ fontSize: 12, color: "#4a5568" }}>
+                        <EditableText value={e.company} path={`experience.${idx}.company`} placeholder="Company Name" />
+                        {(e.company || e.location) && ", "}
+                        <EditableText value={e.location} path={`experience.${idx}.location`} placeholder="Location" />
+                    </div>
+                    <div style={{ fontSize: 11.5, color: "#374151", marginTop: 4 }}>
+                        <EditableText value={e.desc} path={`experience.${idx}.desc`} placeholder="Job Description" isBlock={true} />
+                    </div>
+                </div>
+            );
+        });
 
     const renderEdu = () =>
-        d.education.filter((e) => e.degree || e.school).map((e) => (
-            <div key={e.id} style={{ marginBottom: 12 }}>
-                <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-                    <span style={{ fontWeight: 600, fontSize: 13 }}>{e.degree}</span>
-                    <span style={{ fontSize: 11, color: "#9ca3af", marginLeft: "auto" }}>
-                        {e.start}{e.start && e.end ? " – " : ""}{e.end}
-                    </span>
-                </div>
-                <div style={{ fontSize: 12, color: "#4a5568" }}>
-                    {e.school}{e.location ? `, ${e.location}` : ""}
-                </div>
-                {(e.gpa || e.honors) && (
-                    <div style={{ fontSize: 11, color: "#6b7280", marginTop: 2 }}>
-                        {e.honors}{e.gpa ? ` | GPA: ${e.gpa}` : ""}
+        d.education.filter((e) => e.degree || e.school).map((e) => {
+            const idx = d.education.findIndex(item => item.id === e.id);
+            return (
+                <div key={e.id} style={{ marginBottom: spacing === "compact" ? 8 : spacing === "spacious" ? 16 : 12 }}>
+                    <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+                        <span style={{ fontWeight: 600, fontSize: 13 }}>
+                            <EditableText value={e.degree} path={`education.${idx}.degree`} placeholder="Degree / Field" />
+                        </span>
+                        <span style={{ fontSize: 11, color: "#9ca3af", marginLeft: "auto" }}>
+                            <EditableText value={e.start} path={`education.${idx}.start`} placeholder="Start Date" />
+                            {(e.start || e.end) && " – "}
+                            <EditableText value={e.end} path={`education.${idx}.end`} placeholder="End Date" />
+                        </span>
                     </div>
-                )}
-            </div>
-        ));
+                    <div style={{ fontSize: 12, color: "#4a5568" }}>
+                        <EditableText value={e.school} path={`education.${idx}.school`} placeholder="School / Institution" />
+                        {(e.school || e.location) && ", "}
+                        <EditableText value={e.location} path={`education.${idx}.location`} placeholder="Location" />
+                    </div>
+                    {(e.gpa || e.honors) && (
+                        <div style={{ fontSize: 11, color: "#6b7280", marginTop: 2 }}>
+                            <EditableText value={e.honors} path={`education.${idx}.honors`} placeholder="Honors / Awards" />
+                            {(e.honors || e.gpa) && " | GPA: "}
+                            <EditableText value={e.gpa} path={`education.${idx}.gpa`} placeholder="GPA" />
+                        </div>
+                    )}
+                </div>
+            );
+        });
 
     const renderProjects = () =>
-        d.projects.filter((pr) => pr.name).map((pr) => (
-            <div key={pr.id} style={{ marginBottom: 12 }}>
-                <div style={{ fontWeight: 600, fontSize: 13 }}>{pr.name}</div>
-                {pr.tech && <div style={{ fontSize: 11, color: "#6b7280" }}>{pr.tech}</div>}
-                {pr.desc && <div style={{ fontSize: 11.5, color: "#374151" }}>{pr.desc}</div>}
-                {pr.url && <div style={{ fontSize: 10, color: "#6366f1", marginTop: 2 }}>{pr.url}</div>}
-            </div>
-        ));
+        d.projects.filter((pr) => pr.name).map((pr) => {
+            const idx = d.projects.findIndex(item => item.id === pr.id);
+            return (
+                <div key={pr.id} style={{ marginBottom: spacing === "compact" ? 8 : spacing === "spacious" ? 16 : 12 }}>
+                    <div style={{ fontWeight: 600, fontSize: 13 }}>
+                        <EditableText value={pr.name} path={`projects.${idx}.name`} placeholder="Project Name" />
+                    </div>
+                    <div style={{ fontSize: 11, color: "#6b7280" }}>
+                        <EditableText value={pr.tech} path={`projects.${idx}.tech`} placeholder="Technologies used" />
+                    </div>
+                    <div style={{ fontSize: 11.5, color: "#374151", marginTop: 2 }}>
+                        <EditableText value={pr.desc} path={`projects.${idx}.desc`} placeholder="Project Description" isBlock={true} />
+                    </div>
+                    <div style={{ fontSize: 10, color: accentColor, marginTop: 2 }}>
+                        <EditableText value={pr.url} path={`projects.${idx}.url`} placeholder="Project Link" />
+                    </div>
+                </div>
+            );
+        });
 
     const renderCerts = () =>
-        d.certifications.filter((c) => c.name).map((c) => (
-            <div key={c.id} style={{ marginBottom: 8, display: "flex", justifyContent: "space-between" }}>
-                <div>
-                    <div style={{ fontWeight: 500, fontSize: 12 }}>{c.name}</div>
-                    <div style={{ fontSize: 11, color: "#6b7280" }}>{c.issuer}</div>
+        d.certifications.filter((c) => c.name).map((c) => {
+            const idx = d.certifications.findIndex(item => item.id === c.id);
+            return (
+                <div key={c.id} style={{ marginBottom: 8, display: "flex", justifyBetween: "space-between" }}>
+                    <div>
+                        <div style={{ fontWeight: 500, fontSize: 12 }}>
+                            <EditableText value={c.name} path={`certifications.${idx}.name`} placeholder="Certification Name" />
+                        </div>
+                        <div style={{ fontSize: 11, color: "#6b7280" }}>
+                            <EditableText value={c.issuer} path={`certifications.${idx}.issuer`} placeholder="Issuer" />
+                        </div>
+                    </div>
+                    <div style={{ fontSize: 10, color: "#9ca3af", textAlign: "right", marginLeft: "auto" }}>
+                        <EditableText value={c.date} path={`certifications.${idx}.date`} placeholder="Date Issued" />
+                    </div>
                 </div>
-                <div style={{ fontSize: 10, color: "#9ca3af", textAlign: "right" }}>
-                    {c.date}{c.expiry ? ` – ${c.expiry}` : ""}
-                </div>
-            </div>
-        ));
+            );
+        });
 
     // Template-specific section title styles
     const sectionTitleStyle = {
-        modern: { fontFamily: "'Syne', sans-serif", fontSize: 13, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, color: "#2563eb", borderBottom: "2px solid #2563eb", paddingBottom: 4, marginBottom: 14 },
-        ats: { fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, color: "#334155", borderBottom: "1.5px solid #cbd5e1", paddingBottom: 3, marginBottom: 12, marginTop: 20 },
-        minimal: { fontFamily: "'Georgia', serif", fontSize: 18, fontWeight: 600, color: "#111", marginBottom: 12, marginTop: 20 },
-        sidebar: { fontFamily: "'Syne', sans-serif", fontSize: 13, fontWeight: 600, color: "#1e293b", borderLeft: "3px solid #6366f1", paddingLeft: 10, marginBottom: 12, marginTop: 18 },
-        executive: { fontFamily: "'Georgia', serif", fontSize: 16, color: "#1a1a2e", marginBottom: 12, marginTop: 20, paddingBottom: 6, borderBottom: "2px solid #fbbf24" },
+        modern: { fontFamily: `'${fontFamily}', sans-serif`, fontSize: 13, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, color: accentColor, borderBottom: `2px solid ${accentColor}`, paddingBottom: 4, marginBottom: 14 },
+        ats: { fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, color: "#334155", borderBottom: `1.5px solid ${accentColor}80`, paddingBottom: 3, marginBottom: 12, marginTop: 20 },
+        minimal: { fontFamily: `'${fontFamily}', serif`, fontSize: 18, fontWeight: 600, color: "#111", marginBottom: 12, marginTop: 20 },
+        sidebar: { fontFamily: `'${fontFamily}', sans-serif`, fontSize: 13, fontWeight: 600, color: "#1e293b", borderLeft: `3px solid ${accentColor}`, paddingLeft: 10, marginBottom: 12, marginTop: 18 },
+        executive: { fontFamily: `'${fontFamily}', serif`, fontSize: 16, color: "#1a1a2e", marginBottom: 12, marginTop: 20, paddingBottom: 6, borderBottom: `2px solid ${accentColor}` },
     };
 
     const skillBadgeStyle = {
-        modern: { background: "#dbeafe", color: "#1d4ed8", padding: "3px 10px", borderRadius: 99, fontSize: 11, fontWeight: 500, display: "inline-block", margin: 2 },
+        modern: { background: `${accentColor}15`, color: accentColor, padding: "3px 10px", borderRadius: 99, fontSize: 11, fontWeight: 500, display: "inline-block", margin: 2 },
         ats: { background: "#f1f5f9", color: "#334155", padding: "2px 8px", borderRadius: 4, fontSize: 11, display: "inline-block", margin: 2, border: "1px solid #cbd5e1" },
         minimal: { background: "transparent", color: "#374151", fontSize: 12, display: "inline-block", margin: "2px 8px 2px 0" },
         sidebar: { background: "#334155", color: "#e2e8f0", padding: "3px 8px", borderRadius: 4, fontSize: 10, display: "inline-block", margin: 2 },
-        executive: { background: "#fef3c7", color: "#92400e", padding: "3px 10px", borderRadius: 4, fontSize: 11, display: "inline-block", margin: 2, border: "1px solid #fde68a" },
+        executive: { background: `${accentColor}15`, color: accentColor, padding: "3px 10px", borderRadius: 4, fontSize: 11, display: "inline-block", margin: 2, border: `1px solid ${accentColor}30` },
     };
 
     const SectionTitle = ({ children }) => (
@@ -922,14 +1010,29 @@ export function ResumePreview({ data, template }) {
         <span style={skillBadgeStyle[template] || skillBadgeStyle.ats}>{s}</span>
     );
 
-    const sections = [
-        { key: "summary", render: () => d.summary ? <><SectionTitle>Professional Summary</SectionTitle><p style={{ fontSize: 12, color: "#374151", lineHeight: 1.6 }}>{d.summary}</p></> : null },
-        { key: "skills", render: () => d.skills.filter(Boolean).length ? <><SectionTitle>Skills</SectionTitle><div style={{ lineHeight: 2 }}>{d.skills.filter(Boolean).map((s, i) => <SkillBadge key={i} s={s} />)}</div></> : null },
+    const rawSections = [
+        { key: "summary", render: () => d.summary ? <><SectionTitle>Professional Summary</SectionTitle><div style={{ fontSize: 12, color: "#374151", lineHeight: 1.6 }}><EditableText value={d.summary} path="summary" placeholder="Write a summary..." isBlock={true} /></div></> : null },
+        { key: "skills", render: () => d.skills.filter(Boolean).length ? <><SectionTitle>Skills</SectionTitle><div style={{ lineHeight: 2 }}>{d.skills.map((s, i) => s !== undefined ? <span key={i} style={{ display: "inline-block", margin: "2px" }}><SkillBadge s={<EditableText value={s} path={`skills.${i}`} placeholder="Skill" />} /></span> : null)}</div></> : null },
         { key: "experience", render: () => d.experience.filter(e => e.title).length ? <><SectionTitle>Experience</SectionTitle>{renderExp()}</> : null },
         { key: "education", render: () => d.education.filter(e => e.degree).length ? <><SectionTitle>Education</SectionTitle>{renderEdu()}</> : null },
         { key: "projects", render: () => d.projects.filter(pr => pr.name).length ? <><SectionTitle>Projects</SectionTitle>{renderProjects()}</> : null },
         { key: "certifications", render: () => d.certifications.filter(c => c.name).length ? <><SectionTitle>Certifications</SectionTitle>{renderCerts()}</> : null },
-    ].sort((a, b) => (orderMap[a.key] ?? 99) - (orderMap[b.key] ?? 99));
+    ];
+
+    const sections = rawSections.map(s => ({
+        key: s.key,
+        render: () => {
+            const content = s.render();
+            if (!content) return null;
+            return (
+                <SelectableWrapper elementKey={s.key}>
+                    <div className={`element-${s.key}`}>
+                        {content}
+                    </div>
+                </SelectableWrapper>
+            );
+        }
+    })).sort((a, b) => (orderMap[a.key] ?? 99) - (orderMap[b.key] ?? 99));
 
     const contactRowStyle = { display: "flex", flexWrap: "wrap", gap: 16, fontSize: 11 };
     const baseStyle = { fontFamily: "'DM Sans', sans-serif", fontSize: 12, lineHeight: 1.5, color: "#1a1a1a", background: "#fff" };
@@ -2726,41 +2829,79 @@ export function ResumePreview({ data, template }) {
             }
         };
 
+        const renderWrappedSection = (key) => {
+            const el = renderSection(key);
+            if (!el) return null;
+            return (
+                <SelectableWrapper elementKey={key}>
+                    <div className={`element-${key}`}>
+                        {el}
+                    </div>
+                </SelectableWrapper>
+            );
+        };
+
         return (
             <div style={baseStyle}>
-                <div style={headerStyle}>
-                    <div>
-                        <h1 style={nameStyle}>{p.name || "Your Name"}</h1>
-                        {p.title && <p style={titleStyle}>{p.title}</p>}
+                <SelectableWrapper elementKey="personal">
+                    <div className="element-personal" style={headerStyle}>
+                        <div>
+                            <h1 style={nameStyle}>
+                                <EditableText value={p.name} path="personal.name" placeholder="Your Name" />
+                            </h1>
+                            {p.title !== undefined && (
+                                <p style={titleStyle}>
+                                    <EditableText value={p.title} path="personal.title" placeholder="Job Title" />
+                                </p>
+                            )}
+                        </div>
+                        <div style={contactStyle}>
+                            {p.email !== undefined && (
+                                <div>
+                                    <EditableText value={p.email} path="personal.email" placeholder="Email" />
+                                </div>
+                            )}
+                            {p.phone !== undefined && (
+                                <div>
+                                    <EditableText value={p.phone} path="personal.phone" placeholder="Phone" />
+                                </div>
+                            )}
+                            {p.location !== undefined && (
+                                <div>
+                                    <EditableText value={p.location} path="personal.location" placeholder="Location" />
+                                </div>
+                            )}
+                        </div>
                     </div>
-                    <div style={contactStyle}>
-                        {p.email && <div>{p.email}</div>}
-                        {p.phone && <div>{p.phone}</div>}
-                        {p.location && <div>{p.location}</div>}
-                    </div>
-                </div>
-                <div>{(d.sectionOrder || []).map(key => renderSection(key))}</div>
+                </SelectableWrapper>
+                <div>{(d.sectionOrder || []).map(key => renderWrappedSection(key))}</div>
             </div>
         );
     }
 
     if (template === "modern") return (
         <div style={{ ...baseStyle, minHeight: "297mm", display: "flex", flexDirection: "column", boxSizing: "border-box" }}>
-            <div style={{ background: "linear-gradient(135deg,#1e3a5f,#2563eb)", color: "#fff", padding: "36px 40px" }}>
-                <div style={{ display: "flex", alignItems: "flex-start", gap: 20 }}>
-                    {p.photo && <img src={p.photo} style={{ width: 80, height: 80, borderRadius: "50%", objectFit: "cover", border: "3px solid rgba(255,255,255,.3)" }} alt="" />}
-                    <div style={{ flex: 1 }}>
-                        <div style={{ fontFamily: "'Georgia',serif", fontSize: 32, fontWeight: 700, marginBottom: 4 }}>{p.name || "Your Name"}</div>
-                        <div style={{ fontSize: 14, opacity: 0.85, marginBottom: 16 }}>{p.title}</div>
-                        <div style={{ ...contactRowStyle, opacity: 0.9 }}>
-                            <ContactItem icon="mail" text={p.email} />
-                            <ContactItem icon="phone" text={p.phone} />
-                            <ContactItem icon="user" text={p.location} />
-                            <ContactItem icon="link" text={p.linkedin} />
+            <SelectableWrapper elementKey="personal">
+                <div className="element-personal" style={{ background: "linear-gradient(135deg,#1e3a5f,#2563eb)", color: "#fff", padding: "36px 40px" }}>
+                    <div style={{ display: "flex", alignItems: "flex-start", gap: 20 }}>
+                        {p.photo && <img src={p.photo} style={{ width: 80, height: 80, borderRadius: "50%", objectFit: "cover", border: "3px solid rgba(255,255,255,.3)" }} alt="" />}
+                        <div style={{ flex: 1 }}>
+                            <div style={{ fontFamily: "'Georgia',serif", fontSize: 32, fontWeight: 700, marginBottom: 4 }}>
+                                <EditableText value={p.name} path="personal.name" placeholder="Your Name" />
+                            </div>
+                            <div style={{ fontSize: 14, opacity: 0.85, marginBottom: 16 }}>
+                                <EditableText value={p.title} path="personal.title" placeholder="Job Title" />
+                            </div>
+                            <div style={{ ...contactRowStyle, opacity: 0.9 }}>
+                                <ContactItem icon="mail" text={<EditableText value={p.email} path="personal.email" placeholder="Email" />} />
+                                <ContactItem icon="phone" text={<EditableText value={p.phone} path="personal.phone" placeholder="Phone" />} />
+                                <ContactItem icon="user" text={<EditableText value={p.location} path="personal.location" placeholder="Location" />} />
+                                <ContactItem icon="link" text={<EditableText value={p.linkedin} path="personal.linkedin" placeholder="LinkedIn" />} />
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </SelectableWrapper>
             <div style={{ padding: "28px 40px", display: "grid", gridTemplateColumns: "1fr 280px", gap: 32, flex: 1 }}>
                 <div>{sections.filter(s => ["summary", "experience", "projects"].includes(s.key)).map(s => <div key={s.key}>{s.render()}</div>)}</div>
                 <div>{sections.filter(s => ["skills", "education", "certifications"].includes(s.key)).map(s => <div key={s.key}>{s.render()}</div>)}</div>
@@ -2771,13 +2912,27 @@ export function ResumePreview({ data, template }) {
     if (template === "sidebar") return (
         <div style={{ ...baseStyle, minHeight: "297mm", display: "flex", boxSizing: "border-box" }}>
             <div style={{ width: 200, background: "linear-gradient(180deg,#1e293b,#0f172a)", color: "#fff", padding: "28px 20px", flexShrink: 0 }}>
-                {p.photo && <img src={p.photo} style={{ width: 72, height: 72, borderRadius: "50%", objectFit: "cover", marginBottom: 16 }} alt="" />}
-                <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 20, fontWeight: 700, color: "#fff", marginBottom: 4, lineHeight: 1.2 }}>{p.name || "Your Name"}</div>
-                <div style={{ fontSize: 11, color: "#94a3b8", marginBottom: 16 }}>{p.title}</div>
-                <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, color: "#94a3b8", marginBottom: 8 }}>Contact</div>
-                {p.email && <div style={{ fontSize: 10, color: "#cbd5e1", marginBottom: 4, wordBreak: "break-all" }}>{p.email}</div>}
-                {p.phone && <div style={{ fontSize: 10, color: "#cbd5e1", marginBottom: 4 }}>{p.phone}</div>}
-                {p.location && <div style={{ fontSize: 10, color: "#cbd5e1", marginBottom: 4 }}>{p.location}</div>}
+                <SelectableWrapper elementKey="personal">
+                    <div className="element-personal">
+                        {p.photo && <img src={p.photo} style={{ width: 72, height: 72, borderRadius: "50%", objectFit: "cover", marginBottom: 16 }} alt="" />}
+                        <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 20, fontWeight: 700, color: "#fff", marginBottom: 4, lineHeight: 1.2 }}>
+                            <EditableText value={p.name} path="personal.name" placeholder="Your Name" />
+                        </div>
+                        <div style={{ fontSize: 11, color: "#94a3b8", marginBottom: 16 }}>
+                            <EditableText value={p.title} path="personal.title" placeholder="Job Title" />
+                        </div>
+                        <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, color: "#94a3b8", marginBottom: 8 }}>Contact</div>
+                        <div style={{ fontSize: 10, color: "#cbd5e1", marginBottom: 4, wordBreak: "break-all" }}>
+                            <EditableText value={p.email} path="personal.email" placeholder="Email" />
+                        </div>
+                        <div style={{ fontSize: 10, color: "#cbd5e1", marginBottom: 4 }}>
+                            <EditableText value={p.phone} path="personal.phone" placeholder="Phone" />
+                        </div>
+                        <div style={{ fontSize: 10, color: "#cbd5e1", marginBottom: 4 }}>
+                            <EditableText value={p.location} path="personal.location" placeholder="Location" />
+                        </div>
+                    </div>
+                </SelectableWrapper>
                 {d.skills.filter(Boolean).length > 0 && <>
                     <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, color: "#94a3b8", marginBottom: 8, marginTop: 16 }}>Skills</div>
                     <div>{d.skills.filter(Boolean).map((s, i) => <span key={i} style={skillBadgeStyle.sidebar}>{s}</span>)}</div>
@@ -2791,41 +2946,55 @@ export function ResumePreview({ data, template }) {
 
     if (template === "executive") return (
         <div style={{ ...baseStyle, minHeight: "297mm", display: "flex", flexDirection: "column", boxSizing: "border-box" }}>
-            <div style={{ background: "#1a1a2e", color: "#fff", padding: "36px 44px", position: "relative", overflow: "hidden" }}>
-                <div style={{ position: "absolute", right: -40, top: -40, width: 200, height: 200, background: "rgba(250,204,21,.08)", borderRadius: "50%" }} />
-                <div style={{ display: "flex", alignItems: "flex-start", gap: 20, position: "relative", zIndex: 1 }}>
-                    {p.photo && <img src={p.photo} style={{ width: 80, height: 80, borderRadius: "50%", objectFit: "cover" }} alt="" />}
-                    <div>
-                        <div style={{ fontFamily: "'Georgia',serif", fontSize: 34, fontWeight: 700, marginBottom: 4 }}>{p.name || "Your Name"}</div>
-                        <div style={{ fontSize: 13, color: "#fbbf24", marginBottom: 16, textTransform: "uppercase", letterSpacing: 2 }}>{p.title}</div>
-                        <div style={{ ...contactRowStyle, color: "#94a3b8" }}>
-                            <ContactItem icon="mail" text={p.email} />
-                            <ContactItem icon="phone" text={p.phone} />
-                            <ContactItem icon="user" text={p.location} />
+            <SelectableWrapper elementKey="personal">
+                <div className="element-personal" style={{ background: "#1a1a2e", color: "#fff", padding: "36px 44px", position: "relative", overflow: "hidden" }}>
+                    <div style={{ position: "absolute", right: -40, top: -40, width: 200, height: 200, background: "rgba(250,204,21,.08)", borderRadius: "50%" }} />
+                    <div style={{ display: "flex", alignItems: "flex-start", gap: 20, position: "relative", zIndex: 1 }}>
+                        {p.photo && <img src={p.photo} style={{ width: 80, height: 80, borderRadius: "50%", objectFit: "cover" }} alt="" />}
+                        <div>
+                            <div style={{ fontFamily: "'Georgia',serif", fontSize: 34, fontWeight: 700, marginBottom: 4 }}>
+                                <EditableText value={p.name} path="personal.name" placeholder="Your Name" />
+                            </div>
+                            <div style={{ fontSize: 13, color: "#fbbf24", marginBottom: 16, textTransform: "uppercase", letterSpacing: 2 }}>
+                                <EditableText value={p.title} path="personal.title" placeholder="Job Title" />
+                            </div>
+                            <div style={{ ...contactRowStyle, color: "#94a3b8" }}>
+                                <ContactItem icon="mail" text={<EditableText value={p.email} path="personal.email" placeholder="Email" />} />
+                                <ContactItem icon="phone" text={<EditableText value={p.phone} path="personal.phone" placeholder="Phone" />} />
+                                <ContactItem icon="user" text={<EditableText value={p.location} path="personal.location" placeholder="Location" />} />
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </SelectableWrapper>
             <div style={{ padding: "28px 44px", flex: 1 }}>{sections.map(s => <div key={s.key}>{s.render()}</div>)}</div>
         </div>
     );
 
     if (template === "minimal") return (
         <div style={{ ...baseStyle, minHeight: "297mm", display: "flex", flexDirection: "column", boxSizing: "border-box" }}>
-            <div style={{ padding: "40px 48px 24px", borderBottom: "1px solid #e5e7eb" }}>
-                <div style={{ display: "flex", gap: 20, alignItems: "flex-start" }}>
-                    {p.photo && <img src={p.photo} style={{ width: 80, height: 80, borderRadius: "50%", objectFit: "cover" }} alt="" />}
-                    <div>
-                        <div style={{ fontFamily: "'Georgia',serif", fontSize: 36, fontWeight: 600, color: "#111", marginBottom: 4 }}>{p.name || "Your Name"}</div>
-                        {p.title && <div style={{ fontSize: 14, color: "#6b7280", marginBottom: 12 }}>{p.title}</div>}
-                        <div style={{ ...contactRowStyle, color: "#9ca3af" }}>
-                            <ContactItem icon="mail" text={p.email} />
-                            <ContactItem icon="phone" text={p.phone} />
-                            <ContactItem icon="user" text={p.location} />
+            <SelectableWrapper elementKey="personal">
+                <div className="element-personal" style={{ padding: "40px 48px 24px", borderBottom: "1px solid #e5e7eb" }}>
+                    <div style={{ display: "flex", gap: 20, alignItems: "flex-start" }}>
+                        {p.photo && <img src={p.photo} style={{ width: 80, height: 80, borderRadius: "50%", objectFit: "cover" }} alt="" />}
+                        <div>
+                            <div style={{ fontFamily: "'Georgia',serif", fontSize: 36, fontWeight: 600, color: "#111", marginBottom: 4 }}>
+                                <EditableText value={p.name} path="personal.name" placeholder="Your Name" />
+                            </div>
+                            {p.title && (
+                                <div style={{ fontSize: 14, color: "#6b7280", marginBottom: 12 }}>
+                                    <EditableText value={p.title} path="personal.title" placeholder="Job Title" />
+                                </div>
+                            )}
+                            <div style={{ ...contactRowStyle, color: "#9ca3af" }}>
+                                <ContactItem icon="mail" text={<EditableText value={p.email} path="personal.email" placeholder="Email" />} />
+                                <ContactItem icon="phone" text={<EditableText value={p.phone} path="personal.phone" placeholder="Phone" />} />
+                                <ContactItem icon="user" text={<EditableText value={p.location} path="personal.location" placeholder="Location" />} />
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </SelectableWrapper>
             <div style={{ padding: "24px 48px", flex: 1 }}>{sections.map(s => <div key={s.key}>{s.render()}</div>)}</div>
         </div>
     );
@@ -2833,21 +3002,29 @@ export function ResumePreview({ data, template }) {
     // ATS (default)
     return (
         <div style={{ ...baseStyle, minHeight: "297mm", display: "flex", flexDirection: "column", boxSizing: "border-box" }}>
-            <div style={{ background: "#f8fafc", padding: "28px 40px", borderBottom: "2px solid #334155" }}>
-                <div style={{ display: "flex", gap: 20, alignItems: "flex-start" }}>
-                    {p.photo && <img src={p.photo} style={{ width: 80, height: 80, borderRadius: "50%", objectFit: "cover" }} alt="" />}
-                    <div>
-                        <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 28, fontWeight: 700, color: "#0f172a", marginBottom: 6 }}>{p.name || "Your Name"}</div>
-                        {p.title && <div style={{ fontSize: 13, color: "#475569", marginBottom: 8 }}>{p.title}</div>}
-                        <div style={{ ...contactRowStyle, color: "#475569" }}>
-                            <ContactItem icon="mail" text={p.email} />
-                            <ContactItem icon="phone" text={p.phone} />
-                            <ContactItem icon="user" text={p.location} />
-                            <ContactItem icon="link" text={p.linkedin} />
+            <SelectableWrapper elementKey="personal">
+                <div className="element-personal" style={{ background: "#f8fafc", padding: "28px 40px", borderBottom: "2px solid #334155" }}>
+                    <div style={{ display: "flex", gap: 20, alignItems: "flex-start" }}>
+                        {p.photo && <img src={p.photo} style={{ width: 80, height: 80, borderRadius: "50%", objectFit: "cover" }} alt="" />}
+                        <div>
+                            <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 28, fontWeight: 700, color: "#0f172a", marginBottom: 6 }}>
+                                <EditableText value={p.name} path="personal.name" placeholder="Your Name" />
+                            </div>
+                            {p.title && (
+                                <div style={{ fontSize: 13, color: "#475569", marginBottom: 8 }}>
+                                    <EditableText value={p.title} path="personal.title" placeholder="Job Title" />
+                                </div>
+                            )}
+                            <div style={{ ...contactRowStyle, color: "#475569" }}>
+                                <ContactItem icon="mail" text={<EditableText value={p.email} path="personal.email" placeholder="Email" />} />
+                                <ContactItem icon="phone" text={<EditableText value={p.phone} path="personal.phone" placeholder="Phone" />} />
+                                <ContactItem icon="user" text={<EditableText value={p.location} path="personal.location" placeholder="Location" />} />
+                                <ContactItem icon="link" text={<EditableText value={p.linkedin} path="personal.linkedin" placeholder="LinkedIn" />} />
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </SelectableWrapper>
             <div style={{ padding: "24px 40px", flex: 1 }}>{sections.map(s => <div key={s.key}>{s.render()}</div>)}</div>
         </div>
     );
@@ -3021,26 +3198,411 @@ export function FormPanel({ data, onUpdate, onAIGenerate, aiLoading }) {
 /**
  * PreviewPanel — the right-side resume preview pane
  */
-export function PreviewPanel({ data, template, previewRef }) {
+export function PreviewPanel({ 
+    data, 
+    template, 
+    previewRef, 
+    design, 
+    onDesignChange, 
+    onAskAI, 
+    aiLoading, 
+    onReset, 
+    isLocked, 
+    onToggleLock,
+    selectedElement,
+    setSelectedElement,
+    onUpdate
+}) {
+    const [zoom, setZoom] = useState(100);
+    const accentColor = design?.accentColor || "#2563eb";
+    const fontFamily = design?.fontFamily || "Inter";
+    const fontSize = design?.fontSize || "12px";
+
+    const overrides = design?.overrides || {};
+    
+    // Generate element-specific override CSS dynamically
+    const overrideStyles = Object.entries(overrides).map(([key, style]) => {
+        if (!style) return "";
+        const fFamily = style.fontFamily ? `font-family: '${style.fontFamily}', sans-serif !important;` : "";
+        const fSize = style.fontSize ? `font-size: ${style.fontSize} !important;` : "";
+        const color = style.accentColor ? `color: ${style.accentColor} !important; border-color: ${style.accentColor} !important;` : "";
+        const fWeight = style.bold !== undefined ? `font-weight: ${style.bold ? "bold" : "normal"} !important;` : "";
+        const fStyle = style.italic !== undefined ? `font-style: ${style.italic ? "italic" : "normal"} !important;` : "";
+        const textDec = style.underline !== undefined ? `text-decoration: ${style.underline ? "underline" : "none"} !important;` : "";
+        const textTransform = style.uppercase !== undefined ? `text-transform: ${style.uppercase ? "uppercase" : "none"} !important;` : "";
+        const textAlign = style.textAlignment ? `text-align: ${style.textAlignment} !important;` : "";
+
+        return `
+            .resume-preview-content .element-${key}, 
+            .resume-preview-content .element-${key} * {
+                ${fFamily}
+                ${fWeight}
+                ${fStyle}
+                ${textDec}
+                ${textTransform}
+                ${textAlign}
+            }
+            .resume-preview-content .element-${key} {
+                ${fSize}
+            }
+            /* Specific text tags overrides for headers */
+            .resume-preview-content .element-${key} h1,
+            .resume-preview-content .element-${key} h2,
+            .resume-preview-content .element-${key} h3 {
+                ${color}
+            }
+            /* Background selector overrides */
+            .resume-preview-content .element-${key} [style*="background"],
+            .resume-preview-content .element-${key} [style*="background-color"] {
+                ${style.accentColor ? `background: ${style.accentColor} !important; background-color: ${style.accentColor} !important;` : ""}
+            }
+        `;
+    }).join("\n");
+
     return (
-        <div className="flex-1 overflow-auto flex flex-col items-center p-6 bg-slate-100 dark:bg-slate-950">
-            <div className="flex items-center justify-between w-full max-w-[850px] mb-4">
-                <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">Preview</span>
+        <div 
+            onClick={() => setSelectedElement(null)}
+            className="flex-1 overflow-auto flex flex-col items-center p-6 bg-slate-50 dark:bg-slate-950/60 transition-colors duration-200"
+        >
+            {/* Global style overrides for templates */}
+            <style>{`
+                .resume-preview-content, .resume-preview-content * {
+                    font-family: '${fontFamily}', sans-serif !important;
+                }
+                
+                /* Typography sizing and styles */
+                .resume-preview-content {
+                    font-size: ${fontSize} !important;
+                }
+                .resume-preview-content h1 {
+                    font-size: calc(${fontSize} * 2.2) !important;
+                    font-weight: ${design.bold ? "bold" : "800"} !important;
+                    font-style: ${design.italic ? "italic" : "normal"} !important;
+                    text-decoration: ${design.underline ? "underline" : design.strikethrough ? "line-through" : "none"} !important;
+                    text-transform: ${design.uppercase ? "uppercase" : "none"} !important;
+                    text-align: ${design.textAlignment || "left"} !important;
+                }
+                .resume-preview-content h2, 
+                .resume-preview-content .section-title {
+                    font-size: calc(${fontSize} * 1.3) !important;
+                    font-weight: ${design.bold ? "bold" : "700"} !important;
+                    font-style: ${design.italic ? "italic" : "normal"} !important;
+                    text-decoration: ${design.underline ? "underline" : design.strikethrough ? "line-through" : "none"} !important;
+                    text-transform: ${design.uppercase ? "uppercase" : "none"} !important;
+                    text-align: ${design.textAlignment || "left"} !important;
+                }
+                .resume-preview-content h3 {
+                    font-size: calc(${fontSize} * 1.1) !important;
+                    font-weight: ${design.bold ? "bold" : "600"} !important;
+                    font-style: ${design.italic ? "italic" : "normal"} !important;
+                    text-decoration: ${design.underline ? "underline" : design.strikethrough ? "line-through" : "none"} !important;
+                    text-transform: ${design.uppercase ? "uppercase" : "none"} !important;
+                }
+                .resume-preview-content p, 
+                .resume-preview-content span, 
+                .resume-preview-content li, 
+                .resume-preview-content div {
+                    font-size: ${fontSize};
+                }
+                
+                /* Nordic Slate accents */
+                .resume-preview-content [style*="background: rgb(161, 185, 201)"],
+                .resume-preview-content [style*="background-color: rgb(161, 185, 201)"] {
+                    background: ${accentColor} !important;
+                    background-color: ${accentColor} !important;
+                }
+                
+                /* Creative Teal accents */
+                .resume-preview-content [style*="color: rgb(15, 118, 110)"] {
+                    color: ${accentColor} !important;
+                }
+                .resume-preview-content [style*="border-left: 6px solid rgb(15, 118, 110)"],
+                .resume-preview-content [style*="border-left-color: rgb(15, 118, 110)"] {
+                    border-left-color: ${accentColor} !important;
+                }
+                .resume-preview-content [style*="border-bottom: 1.5px solid rgb(204, 251, 241)"],
+                .resume-preview-content [style*="border-bottom-color: rgb(204, 251, 241)"] {
+                    border-bottom-color: ${accentColor}30 !important;
+                }
+                
+                /* Tech Minimal accents */
+                .resume-preview-content [style*="color: rgb(59, 130, 246)"] {
+                    color: ${accentColor} !important;
+                }
+                
+                /* Golden Elegance accents */
+                .resume-preview-content [style*="color: rgb(201, 168, 76)"] {
+                    color: ${accentColor} !important;
+                }
+                .resume-preview-content [style*="border-color: rgb(201, 168, 76)"],
+                .resume-preview-content [style*="border-bottom: 2px solid rgb(201, 168, 76)"] {
+                    border-color: ${accentColor} !important;
+                    border-bottom-color: ${accentColor} !important;
+                }
+                .resume-preview-content [style*="fill: rgb(201, 168, 76)"] {
+                    fill: ${accentColor} !important;
+                }
+                .resume-preview-content [style*="border: 4px solid rgb(201, 168, 76)"] {
+                    border-color: ${accentColor} !important;
+                }
+                
+                /* Modern header gradient */
+                .resume-preview-content [style*="background: linear-gradient(135deg, rgb(30, 58, 95), rgb(37, 99, 235))"] {
+                    background: linear-gradient(135deg, ${accentColor}, ${accentColor}dd) !important;
+                }
+
+                /* Element style overrides */
+                ${overrideStyles}
+            `}</style>
+
+            {/* Contextual Canva format and floating action helper bar */}
+            {selectedElement && (
+                <CanvaToolbar
+                    design={overrides[selectedElement] || {
+                        fontFamily: design.fontFamily || "Inter",
+                        fontSize: design.fontSize || "12px",
+                        accentColor: design.accentColor || "#2563eb",
+                    }}
+                    onChange={(newElementDesign) => {
+                        const nextOverrides = {
+                            ...overrides,
+                            [selectedElement]: newElementDesign
+                        };
+                        onDesignChange({ ...design, overrides: nextOverrides });
+                    }}
+                    onAskAI={onAskAI}
+                    aiLoading={aiLoading}
+                    onReset={onReset}
+                    isLocked={isLocked}
+                    onToggleLock={onToggleLock}
+                />
+            )}
+            <div className="flex flex-wrap items-center justify-between w-full max-w-[850px] gap-3 mb-6 bg-white dark:bg-slate-900 px-5 py-3 rounded-2xl border border-slate-200/50 dark:border-slate-800/80 shadow-sm">
+                <div className="flex items-center gap-2.5">
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Preview Canvas</span>
                     <Badge variant="blue">{TEMPLATES.find((t) => t.id === template)?.label}</Badge>
                 </div>
-                <div className="flex items-center gap-1.5 text-xs text-slate-400">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block" />
+                
+                {/* Zoom Controls */}
+                <div className="flex items-center gap-2 border border-slate-200/60 dark:border-slate-800/85 px-2 py-1 rounded-xl bg-slate-50/50 dark:bg-slate-950/30">
+                    <button 
+                        onClick={(e) => { e.stopPropagation(); setZoom(z => Math.max(50, z - 10)); }}
+                        className="px-2 py-0.5 rounded text-xs font-bold hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 transition-colors"
+                        title="Zoom Out"
+                    >
+                        －
+                    </button>
+                    <span className="text-xs font-mono font-semibold text-slate-600 dark:text-slate-350 min-w-[36px] text-center">{zoom}%</span>
+                    <button 
+                        onClick={(e) => { e.stopPropagation(); setZoom(z => Math.min(150, z + 10)); }}
+                        className="px-2 py-0.5 rounded text-xs font-bold hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 transition-colors"
+                        title="Zoom In"
+                    >
+                        ＋
+                    </button>
+                    <div className="w-[1px] h-3 bg-slate-200 dark:bg-slate-800 mx-1" />
+                    <button 
+                        onClick={(e) => { e.stopPropagation(); setZoom(100); }}
+                        className="text-[10px] font-semibold px-2 py-0.5 rounded hover:bg-slate-250 dark:hover:bg-slate-800 text-slate-400 dark:text-slate-500 transition-colors"
+                    >
+                        Reset
+                    </button>
+                </div>
+
+                <div className="flex items-center gap-1.5 text-xs text-slate-400 dark:text-slate-500">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse" />
                     Auto-saved
                 </div>
             </div>
-            <div className="w-full max-w-[850px] overflow-x-auto">
+            <div className="w-full flex-1 flex items-start justify-center overflow-auto py-2">
                 <div
                     ref={previewRef}
-                    style={{ width: "210mm", minHeight: "297mm", background: "#fff", boxShadow: "0 4px 40px rgba(0,0,0,.15)", borderRadius: 4, margin: "0 auto" }}
+                    className="resume-preview-content"
+                    style={{ 
+                        width: "210mm", 
+                        minHeight: "297mm", 
+                        background: "#fff", 
+                        boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)", 
+                        borderRadius: 12, 
+                        margin: "0 auto",
+                        zoom: zoom / 100,
+                        transformOrigin: "top center"
+                    }}
                 >
-                    <ResumePreview data={data} template={template} />
+                    <ResumePreview 
+                        data={data} 
+                        template={template} 
+                        design={design} 
+                        selectedElement={selectedElement}
+                        setSelectedElement={setSelectedElement}
+                        onUpdate={onUpdate}
+                    />
                 </div>
+            </div>
+        </div>
+    );
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// CANVA STYLES & TEMPLATE SIDEBAR PANELS
+// ═══════════════════════════════════════════════════════════════════
+
+export function DesignPanel({ design, onChange }) {
+    const customColorRef = useRef();
+    const fonts = ["Inter", "Georgia", "Courier New"];
+    const colors = [
+        { name: "Executive Navy", value: "#1e3a8a" },
+        { name: "Teal Dream", value: "#0f766e" },
+        { name: "Sunset Crimson", value: "#be123c" },
+        { name: "Slate Dark", value: "#334155" },
+        { name: "Golden Elegance", value: "#c9a84c" },
+        { name: "Emerald Mint", value: "#059669" },
+        { name: "Royal Violet", value: "#7c3aed" },
+        { name: "Warm Amber", value: "#d97706" },
+        { name: "Hot Rose", value: "#db2777" },
+        { name: "Classic Black", value: "#0f172a" },
+    ];
+    const spacings = [
+        { label: "Compact", value: "compact" },
+        { label: "Standard", value: "standard" },
+        { label: "Spacious", value: "spacious" },
+    ];
+
+    const isPreset = colors.some(c => c.value === design.accentColor);
+
+    return (
+        <div className="p-5 space-y-6 overflow-y-auto h-full bg-slate-50 dark:bg-slate-950">
+            {/* Customizer Card */}
+            <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-2xl p-4 shadow-sm">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-3.5">Accent Color</h3>
+                <div className="grid grid-cols-5 gap-2.5">
+                    {colors.map((c) => (
+                        <button
+                            key={c.value}
+                            onClick={() => onChange({ ...design, accentColor: c.value })}
+                            className={cn(
+                                "w-8 h-8 rounded-full border-2 transition-transform hover:scale-105",
+                                design.accentColor === c.value ? "border-blue-600 scale-110 shadow-md shadow-blue-500/20" : "border-transparent"
+                            )}
+                            style={{ backgroundColor: c.value }}
+                            title={c.name}
+                        />
+                    ))}
+
+                    {/* Custom Color Selector (Color Wheel Icon) */}
+                    <button
+                        onClick={() => customColorRef.current?.click()}
+                        className={cn(
+                            "w-8 h-8 rounded-full border-2 transition-transform hover:scale-105 flex items-center justify-center relative overflow-hidden",
+                            !isPreset ? "border-blue-600 scale-110 shadow-md shadow-blue-500/20" : "border-transparent"
+                        )}
+                        style={{
+                            background: !isPreset ? design.accentColor : "conic-gradient(red, yellow, lime, aqua, blue, magenta, red)"
+                        }}
+                        title="Custom Color"
+                    >
+                        {!isPreset ? (
+                            <span className="text-[10px] text-white font-bold drop-shadow-sm">✓</span>
+                        ) : (
+                            <span className="text-sm text-white font-extrabold mix-blend-difference">+</span>
+                        )}
+                    </button>
+                    <input
+                        ref={customColorRef}
+                        type="color"
+                        value={design.accentColor}
+                        onChange={(e) => onChange({ ...design, accentColor: e.target.value })}
+                        className="hidden"
+                    />
+                </div>
+            </div>
+
+            {/* Typography Card */}
+            <div>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-3">Typography</h3>
+                <div className="space-y-2">
+                    {fonts.map((f) => (
+                        <button
+                            key={f}
+                            onClick={() => onChange({ ...design, fontFamily: f })}
+                            className={cn(
+                                "w-full text-left px-4 py-2.5 rounded-xl border text-sm font-medium transition-all duration-200",
+                                design.fontFamily === f
+                                    ? "border-blue-600 bg-blue-50/50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300"
+                                    : "border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-350"
+                            )}
+                            style={{ fontFamily: f }}
+                        >
+                            {f}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            <div>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-3">Page Spacing</h3>
+                <div className="grid grid-cols-3 gap-2">
+                    {spacings.map((s) => (
+                        <button
+                            key={s.value}
+                            onClick={() => onChange({ ...design, spacing: s.value })}
+                            className={cn(
+                                "px-3 py-2.5 rounded-xl border text-xs font-semibold text-center transition-all duration-200",
+                                design.spacing === s.value
+                                    ? "border-blue-600 bg-blue-50/50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300"
+                                    : "border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-350"
+                            )}
+                        >
+                            {s.label}
+                        </button>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export function TemplateDrawer({ current, onSelect, data }) {
+    const getBadge = (id) => {
+        if (id.includes("ats")) return { text: "ATS Friendly", variant: "green" };
+        if (id.includes("creative") || id.includes("modern")) return { text: "Creative", variant: "blue" };
+        if (id.includes("minimal")) return { text: "Minimalist", variant: "slate" };
+        return { text: "Professional", variant: "blue" };
+    };
+
+    return (
+        <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-950">
+            <div className="px-5 py-4 border-b border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-900">
+                <h3 className="text-sm font-bold text-slate-850 dark:text-slate-200">Resume Templates</h3>
+                <p className="text-[10px] text-slate-500 mt-0.5">Select a layout to format your document</p>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                {TEMPLATES.map((t) => {
+                    const badge = getBadge(t.id);
+                    return (
+                        <div
+                            key={t.id}
+                            onClick={() => onSelect(t.id)}
+                            className={cn(
+                                "group flex flex-col rounded-xl border bg-white dark:bg-slate-900 p-4 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md",
+                                current === t.id
+                                    ? "border-blue-600 dark:border-blue-500 ring-2 ring-blue-500/10 shadow-sm"
+                                    : "border-slate-200 dark:border-slate-800 hover:border-slate-350 dark:hover:border-slate-700"
+                            )}
+                        >
+                            <div className="flex items-center justify-between gap-2 mb-1.5">
+                                <h4 className="font-bold text-slate-800 dark:text-slate-200 text-xs group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                    {t.label}
+                                </h4>
+                                <Badge variant={badge.variant}>{badge.text}</Badge>
+                            </div>
+                            <p className="text-[10px] text-slate-500 dark:text-slate-450 leading-relaxed">
+                                {t.desc}
+                            </p>
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );
@@ -3062,7 +3624,16 @@ export default function ResumeBuilder() {
     const [aiLoading, setAiLoading] = useState(false);
     const [downloading, setDownloading] = useState(false);
     const [showTemplates, setShowTemplates] = useState(false);
+    const [sidebarTab, setSidebarTab] = useState("content");
+    const [design, setDesign] = useLocalStorage("resume-design-settings-v1", {
+        fontFamily: "Inter",
+        accentColor: "#2563eb",
+        spacing: "standard",
+        fontSize: "12px",
+    });
     const previewRef = useRef();
+    const [isLocked, setIsLocked] = useState(false);
+    const [selectedElement, setSelectedElement] = useState(null);
 
     // Dark mode toggle
     useEffect(() => {
@@ -3156,31 +3727,95 @@ export default function ResumeBuilder() {
                 downloading={downloading}
                 activeTab={activeTab}
                 onTabChange={setActiveTab}
-                onToggleTemplates={() => setShowTemplates(!showTemplates)}
+                onToggleTemplates={() => setSidebarTab(sidebarTab === "templates" ? "content" : "templates")}
             />
 
-            {showTemplates && (
-                <TemplateSelectorModal
-                    current={template}
-                    onSelect={(t) => setTemplate(t)}
-                    onClose={() => setShowTemplates(false)}
-                    data={data}
-                />
-            )}
-
             <div className="flex flex-1 overflow-hidden">
+                {/* Canva-style Vertical Tab Menu */}
+                <div className={cn(
+                    "w-[72px] bg-slate-900 text-slate-400 flex flex-col items-center py-4 gap-4 flex-shrink-0 z-10",
+                    activeTab === "preview" ? "hidden md:flex" : "flex"
+                )}>
+                    {[
+                        { id: "templates", label: "Templates", icon: (
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5">
+                                <rect x="3" y="3" width="7" height="9" rx="1" /><rect x="14" y="3" width="7" height="5" rx="1" />
+                                <rect x="3" y="16" width="7" height="5" rx="1" /><rect x="14" y="12" width="7" height="9" rx="1" />
+                            </svg>
+                        )},
+                        { id: "content", label: "Content", icon: (
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5">
+                                <path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                            </svg>
+                        )},
+                        { id: "styles", label: "Styles", icon: (
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5">
+                                <line x1="4" y1="21" x2="4" y2="14" /><line x1="4" y1="10" x2="4" y2="3" />
+                                <line x1="12" y1="21" x2="12" y2="12" /><line x1="12" y1="8" x2="12" y2="3" />
+                                <line x1="20" y1="21" x2="20" y2="16" /><line x1="20" y1="12" x2="20" y2="3" />
+                                <line x1="1" y1="14" x2="7" y2="14" /><line x1="9" y1="8" x2="15" y2="8" /><line x1="17" y1="16" x2="23" y2="16" />
+                            </svg>
+                        )},
+                        { id: "reorder", label: "Reorder", icon: (
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5">
+                                <line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="18" x2="21" y2="18" />
+                            </svg>
+                        )},
+                    ].map((tab) => (
+                        <button
+                            key={tab.id}
+                            onClick={() => {
+                                setSidebarTab(tab.id);
+                                if (activeTab === "preview") setActiveTab("form");
+                            }}
+                            className={cn(
+                                "flex flex-col items-center justify-center w-14 h-14 rounded-xl gap-1.5 text-[10px] font-semibold transition-all duration-150 relative",
+                                sidebarTab === tab.id
+                                    ? "bg-slate-800/80 text-blue-400 border border-slate-700/30 shadow-inner"
+                                    : "hover:bg-slate-800/40 text-slate-400 hover:text-slate-200"
+                            )}
+                        >
+                            {sidebarTab === tab.id && (
+                                <span className="absolute left-0 top-3 bottom-3 w-1.5 rounded-r bg-blue-500 shadow-[0_0_8px_rgb(59,130,246)]"></span>
+                            )}
+                            {tab.icon}
+                            {tab.label}
+                        </button>
+                    ))}
+                </div>
+
                 {/* Left panel — hidden on mobile when previewing */}
                 <div className={cn(
-                    "w-[420px] min-w-[380px] flex-shrink-0 flex flex-col",
-                    "md:flex",
-                    activeTab === "preview" ? "hidden" : "flex"
+                    "w-[380px] min-w-[340px] flex-shrink-0 flex flex-col border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900",
+                    activeTab === "preview" ? "hidden md:flex" : "flex"
                 )}>
-                    <FormPanel
-                        data={data}
-                        onUpdate={update}
-                        onAIGenerate={generateAI}
-                        aiLoading={aiLoading}
-                    />
+                    {sidebarTab === "content" && (
+                        <FormPanel
+                            data={data}
+                            onUpdate={update}
+                            onAIGenerate={generateAI}
+                            aiLoading={aiLoading}
+                        />
+                    )}
+                    {sidebarTab === "templates" && (
+                        <TemplateDrawer
+                            current={template}
+                            onSelect={(t) => setTemplate(t)}
+                            data={data}
+                        />
+                    )}
+                    {sidebarTab === "styles" && (
+                        <DesignPanel
+                            design={design}
+                            onChange={setDesign}
+                        />
+                    )}
+                    {sidebarTab === "reorder" && (
+                        <div className="p-5 space-y-4 overflow-y-auto h-full bg-slate-50 dark:bg-slate-950">
+                            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">Section Order</h3>
+                            <SectionOrderEditor order={data.sectionOrder} onMove={moveSection} />
+                        </div>
+                    )}
                 </div>
 
                 {/* Right panel — hidden on mobile when editing */}
@@ -3189,7 +3824,23 @@ export default function ResumeBuilder() {
                     "md:flex",
                     activeTab === "form" ? "hidden md:flex" : "flex"
                 )}>
-                    <PreviewPanel data={data} template={template} previewRef={previewRef} />
+                    <PreviewPanel 
+                        data={data} 
+                        template={template} 
+                        previewRef={previewRef} 
+                        design={design} 
+                        onDesignChange={(newDesign) => {
+                            if (!isLocked) setDesign(newDesign);
+                        }}
+                        onAskAI={generateAI}
+                        aiLoading={aiLoading}
+                        onReset={resetData}
+                        isLocked={isLocked}
+                        onToggleLock={() => setIsLocked(!isLocked)}
+                        selectedElement={selectedElement}
+                        setSelectedElement={setSelectedElement}
+                        onUpdate={update}
+                    />
                 </div>
             </div>
         </div>
