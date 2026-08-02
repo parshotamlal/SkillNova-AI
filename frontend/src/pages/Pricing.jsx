@@ -1,5 +1,6 @@
 import { Check, Crown, Gift } from "lucide-react";
 import axios from "axios";
+import SEO from "../components/SEO";
 
 export default function Pricing() {
   const plans = [
@@ -72,6 +73,18 @@ export default function Pricing() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50">
+      <SEO
+        title="Pricing — Free & Premium AI Resume Builder Plans | ResumeAI Online"
+        description="ResumeAI Online offers a free plan for job seekers and an affordable premium plan. Compare features: ATS checker, AI resume builder, 50+ templates, PDF download. No credit card required."
+        url="/pricing"
+        keywords="resume builder pricing, free resume builder, AI resume builder cost, ATS checker plan, resume tool free vs paid, ResumeAI plans"
+        schemaType="page"
+        showBreadcrumb={true}
+        breadcrumbs={[
+          { name: 'Home', url: '/' },
+          { name: 'Pricing', url: '/pricing' },
+        ]}
+      />
       {/* Hero Section */}
       <section className="py-16 lg:py-24 text-center px-4">
         <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">

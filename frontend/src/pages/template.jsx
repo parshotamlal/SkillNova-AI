@@ -3,6 +3,7 @@ import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import { generateAISummary, saveUserResume } from "../services/api";
 import { CanvaToolbar } from "../features/CanvaToolbar";
+import SEO from "../components/SEO";
 
 // ─── Tailwind class helpers ───────────────────────────────────────────────────
 const cn = (...classes) => classes.filter(Boolean).join(" ");
@@ -3719,6 +3720,26 @@ export default function ResumeBuilder() {
 
     return (
         <div className={cn("flex flex-col h-screen overflow-hidden font-sans", dark ? "dark" : "")}>
+            <SEO
+              title="Free AI Resume Builder — Create ATS Resume Online | 50+ Templates | ResumeAI Online"
+              description="Build a professional ATS-optimized resume in 5 minutes with our free AI resume builder. Choose from 50+ templates for software engineers, freshers, data analysts & more. Download as PDF instantly."
+              url="/templates"
+              keywords="AI resume builder, free resume builder, resume templates, ATS resume builder, online resume builder, resume maker, professional resume, resume for freshers, software engineer resume template, free CV maker, resume builder India, best resume builder 2026"
+              schemaType="software"
+              showBreadcrumb={true}
+              breadcrumbs={[
+                { name: 'Home', url: '/' },
+                { name: 'Resume Builder & Templates', url: '/templates' },
+              ]}
+              showFaq={true}
+              faqItems={[
+                { q: 'How do I build a resume with AI?', a: 'Select a template, fill in your details, and click the AI Suggest button. Our AI auto-generates professional content for your summary, skills, and bullet points based on your job role.' },
+                { q: 'Are the resume templates ATS-friendly?', a: 'Yes. All 50+ templates are tested for ATS compatibility. They use standard formatting without tables, text boxes, or graphics that confuse ATS parsers.' },
+                { q: 'Can I download my resume for free?', a: 'Yes, you can build and download your resume as a PDF for free. No watermarks on our free plan.' },
+                { q: 'Which resume template is best for software engineers?', a: 'The Professional, Modern, and Technical templates are ideal for software engineers. They highlight skills, projects, and GitHub links prominently.' },
+                { q: 'Can I build a resume for freshers?', a: 'Absolutely. We have dedicated templates for freshers with sections for internships, projects, certifications, and skills — perfect for campus placements in India.' },
+              ]}
+            />
             <TopBar
                 dark={dark}
                 onToggleDark={() => setDark(!dark)}

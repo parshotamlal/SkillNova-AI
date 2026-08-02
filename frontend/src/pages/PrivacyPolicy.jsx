@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Shield, Eye, Lock, Trash2, Bell, Mail } from "lucide-react";
 import { gsap } from "gsap";
+import SEO from "../components/SEO";
  
 const sections = [
   {
@@ -126,6 +127,18 @@ export default function PrivacyPolicy() {
       ref={pageRef}
       className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 relative overflow-hidden"
     >
+      <SEO
+        title="Privacy Policy | How We Protect Your Data — ResumeAI Online"
+        description="ResumeAI Online's privacy policy explains how we collect, use, and protect your personal information and resume data. GDPR compliant. Data encrypted in transit and at rest."
+        url="/Privacy-Policy"
+        keywords="ResumeAI Online privacy policy, resume data protection, GDPR resume builder"
+        schemaType="page"
+        showBreadcrumb={true}
+        breadcrumbs={[
+          { name: 'Home', url: '/' },
+          { name: 'Privacy Policy', url: '/Privacy-Policy' },
+        ]}
+      />
       {/* Background orbs */}
       <div ref={orb1Ref} className="pointer-events-none absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-blue-200/40" style={{ filter: "blur(90px)" }} />
       <div ref={orb2Ref} className="pointer-events-none absolute -bottom-24 -right-32 w-[420px] h-[420px] rounded-full bg-teal-200/40" style={{ filter: "blur(80px)" }} />
@@ -162,6 +175,7 @@ export default function PrivacyPolicy() {
  
         {/* ── Sections ── */}
         <div className="space-y-5" style={{ perspective: "900px" }}>
+          {/* eslint-disable-next-line no-unused-vars */}
           {sections.map(({ icon: Icon, title, content }, i) => (
             <div
               key={i}

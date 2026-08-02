@@ -175,9 +175,23 @@ export default function Index() {
       ref={pageRef}
       className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 relative overflow-hidden"
     >
-      <SEO 
-        title="ResumeAi Online | Best AI Resume Analyzer & ATS Checker"
-        description="Optimize your resume with our AI-powered ATS resume checker. Get instant feedback, match jobs accurately, and boost your interview chances with ResumeAi Online."
+      <SEO
+        title="Free AI Resume Builder | ATS Score Checker & 50+ Templates — ResumeAI Online"
+        description="Build a job-winning ATS resume in 5 minutes with AI. Free resume builder, ATS score checker, 50+ templates & cover letter generator. Trusted by 100,000+ freshers, software engineers & professionals in India, USA & UK."
+        url="/"
+        keywords="AI resume builder, free resume builder, ATS resume checker, ATS score checker free, resume builder India, resume for freshers, software engineer resume, online resume builder, resume templates, resume maker, AI CV builder, free ATS checker, resume optimizer, best resume builder 2026"
+        schemaType="home"
+        showFaq={true}
+        showHowTo={true}
+        howToTitle="How to Create an ATS-Optimized Resume with AI"
+        howToDescription="Follow these 5 steps to build a resume that passes ATS screening and lands you more interviews."
+        howToSteps={[
+          { name: 'Upload or Start Your Resume', text: 'Choose a blank resume or upload your existing resume file (PDF). Our AI instantly detects your current information.', url: '/analyze' },
+          { name: 'Select an ATS-Friendly Template', text: 'Pick from 50+ professionally designed ATS resume templates. All templates pass standard ATS parsing tests.', url: '/templates' },
+          { name: 'Add Keywords from Job Description', text: 'Paste the job description and our AI automatically suggests missing keywords to improve your ATS match score.' },
+          { name: 'Check Your ATS Score', text: 'Get an instant ATS compatibility score from 0–100. See exactly which keywords are missing and how to fix formatting issues.', url: '/check-ats-score' },
+          { name: 'Download as ATS-Ready PDF', text: 'Export your polished, ATS-optimized resume as a high-quality PDF instantly — no watermarks, no sign-up required.' },
+        ]}
       />
       {/* Floating background orbs */}
       <div

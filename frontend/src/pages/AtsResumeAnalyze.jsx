@@ -8,12 +8,10 @@ import SEO from "../components/SEO";
 export default function Upload() {
   const navigate = useNavigate();
   const [resumeFile, setResumeFile] = useState(null);
-  const [jobDescription, setJobDescription] = useState("");
+  const [jobDescription, _setJobDescription] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const VITE_API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
- 
-  console.log("VITE_API_URL:", VITE_API_URL);
  
   // ── Refs ───────────────────────────────────────────────────────────
   const pageRef        = useRef(null);
@@ -152,6 +150,10 @@ export default function Upload() {
 
     try {
       setIsAnalyzing(true);
+      // Build multipart form data
+      const formData = new FormData();
+      formData.append("resume", resumeFile);
+      if (jobDescription) formData.append("jobDescription", jobDescription);
       const res = await axios.post(`${VITE_API_URL}/api/analyze/ats-score/file`, formData, { headers });
       const result = res.data;
  
@@ -174,9 +176,35 @@ export default function Upload() {
       ref={pageRef}
       className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 relative overflow-hidden"
     >
-      <SEO 
-        title="Check ATS Score | ResumeAi Online"
-        description="Check your resume's ATS score for free. Find out if your resume can pass Applicant Tracking Systems and get hired faster."
+      <SEO
+        title="Free ATS Resume Checker — Check Your ATS Score Instantly | ResumeAI Online"
+        description="Upload your resume and get a free ATS score in 30 seconds. Our AI analyzes keyword match, formatting, section structure & gives actionable fixes. 95%+ accuracy. No sign-up required."
+        url="/check-ats-score"
+        keywords="ATS resume checker, ATS score checker free, check ATS score, ATS resume scanner, resume ATS test, free ATS checker India, applicant tracking system checker, ATS resume optimizer, ATS compatibility checker, resume ATS score"
+        schemaType="page"
+        showBreadcrumb={true}
+        breadcrumbs={[
+          { name: 'Home', url: '/' },
+          { name: 'ATS Resume Checker', url: '/check-ats-score' },
+        ]}
+        showHowTo={true}
+        howToTitle="How to Check Your ATS Resume Score for Free"
+        howToDescription="Get your ATS resume score in under 60 seconds — no sign-up needed."
+        howToSteps={[
+          { name: 'Upload Your Resume', text: 'Drag and drop your resume PDF or Word file into the upload area.' },
+          { name: 'Add the Job Description', text: 'Paste the full job description into the text area to enable keyword matching analysis.' },
+          { name: 'Run ATS Analysis', text: 'Click Analyze. Our AI scans your resume against 50+ ATS criteria in under 30 seconds.' },
+          { name: 'Review Your Score & Fixes', text: 'See your ATS score from 0–100, missing keywords, formatting issues, and actionable improvements.' },
+          { name: 'Optimize and Re-check', text: 'Apply the suggested fixes and re-upload to see your score improve. Aim for 80+ for best results.' },
+        ]}
+        showFaq={true}
+        faqItems={[
+          { q: 'What is an ATS resume score?', a: 'An ATS score is a percentage (0–100) showing how well your resume matches what an Applicant Tracking System expects. A score above 80 significantly improves your chances of passing automated screening.' },
+          { q: 'How accurate is the ATS checker?', a: 'Our ATS checker achieves 95%+ accuracy by simulating how real ATS software like Taleo, Workday, iCIMS, and Greenhouse parse your resume.' },
+          { q: 'Is this ATS checker free?', a: 'Yes, completely free. No sign-up or credit card required to get your ATS score.' },
+          { q: 'What file formats are supported?', a: 'We support PDF and DOCX (Word) resume files for ATS analysis.' },
+          { q: 'What does the ATS checker analyze?', a: 'It analyzes keyword match rate, formatting compliance, section completeness (contact, summary, experience, education, skills), readability, and ATS-unfriendly elements like tables and graphics.' },
+        ]}
       />
       {/* Background orbs */}
       <div

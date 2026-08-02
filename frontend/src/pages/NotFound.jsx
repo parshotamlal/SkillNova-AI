@@ -1,6 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import { gsap } from "gsap";
+import SEO from "../components/SEO";
 
 export default function NotFound() {
   useEffect(() => {
@@ -25,6 +26,12 @@ export default function NotFound() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center text-center px-8 py-16">
+      <SEO
+        title="404 — Page Not Found | ResumeAI Online"
+        description="The page you're looking for doesn't exist. Go back to the ResumeAI Online homepage to build your free ATS resume."
+        url="/404"
+        noindex={true}
+      />
       <p id="num" className="text-8xl font-medium text-gray-200 tracking-tighter leading-none mb-4 select-none">
         404
       </p>
@@ -34,12 +41,12 @@ export default function NotFound() {
       <p id="sub" className="text-base text-gray-500 max-w-sm mb-10 leading-relaxed">
         The page you're looking for doesn't exist or may have been moved.
       </p>
-      <div id="btns" className="flex gap-3 flex-wrap justify-content-center">
+      <div id="btns" className="flex gap-3 flex-wrap justify-center">
         <a href="/" className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
           ← Go home
         </a>
-        <a href="/search" className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-gray-500 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-          Search site
+        <a href="/templates" className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-gray-500 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+          Browse Templates
         </a>
       </div>
     </div>

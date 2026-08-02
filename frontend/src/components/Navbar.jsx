@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { gsap } from "gsap";
 import { fetchProfile } from "../services/api";
 import Logo from "../../public/SkillNova-Logo.png";
@@ -18,7 +18,6 @@ export default function Navbar({ showAuthButtons = true }) {
   const navbarRef = useRef(null);
  
   const isActive = (path) => location.pathname === path;
-  const isHome = location.pathname === "/";
  
   const navLinks = [
     { path: "/", label: "Home" },
@@ -152,10 +151,10 @@ export default function Navbar({ showAuthButtons = true }) {
             {/* ── Desktop nav links ── */}
             <div className="hidden md:flex items-center space-x-2">
               {navLinks.map((link, i) => (
-                <button
+                <Link
                   key={link.path}
+                  to={link.path}
                   ref={(el) => (navLinksRef.current[i] = el)}
-                  onClick={() => navigate(link.path)}
                   onMouseEnter={(e) => handleLinkHover(e.currentTarget)}
                   onMouseLeave={(e) => handleLinkLeave(e.currentTarget)}
                   className={`relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
@@ -168,7 +167,7 @@ export default function Navbar({ showAuthButtons = true }) {
                   {isActive(link.path) && (
                     <span className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></span>
                   )}
-                </button>
+                </Link>
               ))}
             </div>
 
@@ -240,10 +239,11 @@ export default function Navbar({ showAuthButtons = true }) {
           style={{ height: 0, opacity: 0 }}
         >
           <div className="px-2 pt-2 pb-3 space-y-1">
-            {navLinks.map((link) => (
-              <button
+          {navLinks.map((link) => (
+              <Link
                 key={link.path}
-                onClick={() => { navigate(link.path); setMobileOpen(false); }}
+                to={link.path}
+                onClick={() => setMobileOpen(false)}
                 className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium transition ${
                   isActive(link.path)
                     ? "text-blue-600 bg-blue-50"
@@ -251,7 +251,7 @@ export default function Navbar({ showAuthButtons = true }) {
                 }`}
               >
                 {link.label}
-              </button>
+              </Link>
             ))}
 
             <div className="flex flex-col items-start px-2 space-y-1">

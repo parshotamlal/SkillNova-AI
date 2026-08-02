@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { FileText } from "lucide-react";
 import { gsap } from "gsap";
+import SEO from "../components/SEO";
  
 const sections = [
   {
@@ -127,6 +128,18 @@ export default function TermsOfService() {
       ref={pageRef}
       className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 relative overflow-hidden"
     >
+      <SEO
+        title="Terms of Service | ResumeAI Online — AI Resume Builder"
+        description="Read ResumeAI Online's Terms of Service. Understand your rights when using our free AI resume builder, ATS checker, and resume templates."
+        url="/Terms-of-Service"
+        keywords="ResumeAI Online terms of service, resume builder terms, AI tool terms"
+        schemaType="page"
+        showBreadcrumb={true}
+        breadcrumbs={[
+          { name: 'Home', url: '/' },
+          { name: 'Terms of Service', url: '/Terms-of-Service' },
+        ]}
+      />
       {/* Background orbs */}
       <div ref={orb1Ref} className="pointer-events-none absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-blue-200/40" style={{ filter: "blur(90px)" }} />
       <div ref={orb2Ref} className="pointer-events-none absolute -bottom-24 -right-32 w-[420px] h-[420px] rounded-full bg-teal-200/40" style={{ filter: "blur(80px)" }} />
