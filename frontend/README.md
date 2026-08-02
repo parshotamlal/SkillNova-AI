@@ -1,12 +1,63 @@
-# React + Vite
+# ResumeAI Online — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React 19 + Vite 7 SPA for [resumeaionline.in](https://www.resumeaionline.in) — AI Resume Builder & ATS Checker.
 
-Currently, two official plugins are available:
+## 🚀 Quick Start
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```bash
+# Install dependencies
+npm install
 
-## Expanding the ESLint configuration
+# Create your .env file
+cp .env.example .env   # then fill in your values
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+# Start development server
+npm run dev            # → http://localhost:5173
+```
+
+## 📜 Available Scripts
+
+| Command | Description |
+|---|---|
+| `npm run dev` | Start Vite dev server with HMR |
+| `npm run build` | Build for production (outputs to `/dist`) |
+| `npm run preview` | Preview the production build locally |
+| `npm run lint` | Run ESLint on all source files |
+
+## 🔑 Environment Variables
+
+Create a `frontend/.env` file:
+
+```env
+VITE_API_URL=http://localhost:8000
+VITE_FIREBASE_API_KEY=...
+VITE_FIREBASE_AUTH_DOMAIN=...
+VITE_FIREBASE_PROJECT_ID=...
+VITE_FIREBASE_STORAGE_BUCKET=...
+VITE_FIREBASE_MESSAGING_SENDER_ID=...
+VITE_FIREBASE_APP_ID=...
+VITE_STRIPE_PUBLISHABLE_KEY=pk_test_...
+```
+
+## 🏗️ Key Directories
+
+```
+src/
+├── components/     # Navbar, Footer, SEO
+├── pages/          # All route-level page components
+├── context/        # AuthContext + ProtectedRoute
+├── features/       # CanvaToolbar (resume builder sidebar)
+├── services/       # api.js — all Axios API calls
+└── firebase.js     # Firebase app init
+```
+
+## 🚢 Deployment
+
+Deployed on **Vercel**. `vercel.json` handles SPA routing (all routes → `index.html`).
+
+```bash
+vercel          # deploy from CLI
+# or connect GitHub for auto-deploy on push to main
+```
+
+See the [root README](../README.md) for the full project documentation.
