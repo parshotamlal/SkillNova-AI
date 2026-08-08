@@ -16,15 +16,25 @@ const app = express();
 connectDB();
 
 // Middleware
+const allowedOrigins = [
+  "https://skill-nova-ai.vercel.app",
+  "https://skill-nova-drjg7o1ch-parshotamlals-projects.vercel.app",
+  "https://www.resumeaionline.in",
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "http://127.0.0.1:5173",
+  "http://127.0.0.1:3000"
+];
+
 app.use(
   cors({
-    origin: [
-      "https://skill-nova-ai.vercel.app",
-      "https://skill-nova-drjg7o1ch-parshotamlals-projects.vercel.app",
-      "https://www.resumeaionline.in",
-      "http://localhost:5173",
-      "http://localhost:3000"
-    ],
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin) || origin.startsWith("http://localhost:") || origin.startsWith("http://127.0.0.1:")) {
+        callback(null, true);
+      } else {
+        callback(null, true);
+      }
+    },
     credentials: true,
   })
 );

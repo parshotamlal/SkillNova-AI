@@ -7,7 +7,7 @@ import { loginUser, googleAuth } from "../services/api";
 import { gsap } from "gsap";
 import GoogleSignupButton from "../components/common/GoogleSignUpButton";
 import { auth, googleProvider } from "../firebase";
-import { signInWithPopup } from "firebase/auth";
+import { signInWithPopup, signInWithRedirect, getRedirectResult } from "firebase/auth";
  
 export default function Login() {
   const navigate = useNavigate();
@@ -15,6 +15,26 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [isGoogleAuthPending, setIsGoogleAuthPending] = useState(false);
+
+  // Handle Firebase redirect result (if popup was blocked and redirect was used)
+  useEffect(() => {
+    getRedirectResult(auth)
+      .then(async (result) => {
+        if (result && result.user) {
+          const user = result.user;
+          const data = await googleAuth(user.displayName, user.email, user.uid);
+          if (data.message === "Login successful" || data.message === "Signup successful") {
+            navigate("/");
+          } else {
+            setError(data.message || "Google authentication failed");
+          }
+        }
+      })
+      .catch((err) => {
+        console.error("Redirect Google Auth Error:", err);
+      });
+  }, []);
  
   // ── Refs ───────────────────────────────────────────────────────────
   const pageRef      = useRef(null);
@@ -138,11 +158,16 @@ export default function Login() {
 
   // ── Google Auth ────────────────────────────────────────────────────
   const handleGoogleAuth = async () => {
+    if (isGoogleAuthPending) return;
+    setIsGoogleAuthPending(true);
+    setError("");
+
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
+      const userName = user.displayName || user.email?.split("@")[0] || "User";
       
-      const data = await googleAuth(user.displayName, user.email, user.uid);
+      const data = await googleAuth(userName, user.email, user.uid);
 
       if (data.message === "Login successful" || data.message === "Signup successful") {
         // Outro before navigate
@@ -154,8 +179,27 @@ export default function Login() {
         setError(data.message || "Google authentication failed");
       }
     } catch (error) {
-      console.error(error);
-      setError(`Google Auth Error: ${error.message}`);
+      console.error("Google auth error:", error);
+      if (
+        error.code === "auth/popup-blocked" ||
+        error.code === "auth/cancelled-popup-request" ||
+        (error.message && error.message.includes("INTERNAL ASSERTION FAILED"))
+      ) {
+        console.log("Popup blocked or cancelled, attempting redirect fallback...");
+        try {
+          await signInWithRedirect(auth, googleProvider);
+          return;
+        } catch (redirectErr) {
+          console.error("Redirect fallback error:", redirectErr);
+          setError("Google sign-in popup was blocked by browser. Please allow popups or try again.");
+        }
+      } else if (error.code === "auth/popup-closed-by-user") {
+        setError("Sign-in popup was closed before completing authentication.");
+      } else {
+        setError(error.message || "Google authentication failed. Please try again.");
+      }
+    } finally {
+      setIsGoogleAuthPending(false);
     }
   };
  

@@ -71,20 +71,25 @@ router.post("/google", async (req, res) => {
   const { name, email, googleId } = req.body;
 
   try {
+    const userName = name || (email ? email.split("@")[0] : "User");
     let user = await User.findOne({ email });
 
     if (!user) {
       // Create new user if they don't exist
-      user = await User.create({ name, email, googleId });
+      user = await User.create({ name: userName, email, googleId });
     } else {
-      // If user exists but doesn't have a googleId, maybe link them
+      // If user exists but doesn't have a googleId, link them
       if (!user.googleId) {
         user.googleId = googleId;
-        await user.save();
       }
+      if (!user.name) {
+        user.name = userName;
+      }
+      await user.save();
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+    const secret = process.env.JWT_SECRET || "skillnova_default_secret_key_2026";
+    const token = jwt.sign({ id: user._id }, secret, { expiresIn: "7d" });
 
     res.json({
       message: "Login successful",
@@ -96,7 +101,8 @@ router.post("/google", async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(500).json({ message: "Google Auth failed" });
+    console.error("Google Auth backend error:", err);
+    res.status(500).json({ message: "Google Auth failed", error: err.message });
   }
 });
 
