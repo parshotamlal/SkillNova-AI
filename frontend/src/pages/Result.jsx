@@ -17,6 +17,7 @@ import {
 import { useRef, useState, useMemo } from "react";
 import jsPDF from "jspdf";
 import { rewriteResume, generateCoverLetter } from "../services/api";
+import RecruitmentMatchResultsCard from "../components/RecruitmentMatchResultsCard";
  
 export default function Result() {
   const navigate = useNavigate();
@@ -1111,6 +1112,11 @@ export default function Result() {
           </div>
         )}
  
+        {/* Recruitment Match Results */}
+        {result?.recruitmentMatch && (
+          <RecruitmentMatchResultsCard recruitmentMatch={result.recruitmentMatch} />
+        )}
+
         {/* Mobile action buttons */}
         <div className="sm:hidden flex flex-col space-y-3 mt-8">
           <button onClick={handleDownloadPDF} className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-700">

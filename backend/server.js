@@ -7,6 +7,7 @@ import authRoutes from "./routes/authRoutes.js";
 import analyzeRoutes from "./routes/analyze.js";
 import stripeRoutes from "./routes/Stripe.js";
 import profileRoutes from "./routes/profile.js";
+import recruitmentRoutes from "./routes/recruitment.js";
 import { requireAuth } from "./middleware/authMiddleware.js";
 
 dotenv.config();
@@ -47,6 +48,7 @@ app.use("/api/analyze", analyzeRoutes);
 app.use("/api/stripe", stripeRoutes);
 
 app.use("/api/profile", profileRoutes);
+app.use("/api/recruitment", recruitmentRoutes);
 
 app.get("/", (req, res) => {
   res.send("API is running");

@@ -14,6 +14,7 @@ import {
   List
 } from "lucide-react";
 import { useRef } from "react";
+import RecruitmentMatchResultsCard from "../components/RecruitmentMatchResultsCard";
 
 export default function AtsResult() {
   const navigate = useNavigate();
@@ -253,6 +254,11 @@ export default function AtsResult() {
             )}
           </div>
         </div>
+
+        {/* Recruitment Match Results */}
+        {result?.recruitmentMatch && (
+          <RecruitmentMatchResultsCard recruitmentMatch={result.recruitmentMatch} />
+        )}
 
       </main>
     </div>

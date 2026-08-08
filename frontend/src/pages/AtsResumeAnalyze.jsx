@@ -4,6 +4,7 @@ import { Upload as UploadIcon, FileText, Loader2 } from "lucide-react";
 import axios from "axios";
 import { gsap } from "gsap";
 import SEO from "../components/SEO";
+import { processRecruitmentMatching } from "../services/recruitmentMatcher";
  
 export default function Upload() {
   const navigate = useNavigate();
@@ -11,7 +12,14 @@ export default function Upload() {
   const [jobDescription, _setJobDescription] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [dragActive, setDragActive] = useState(false);
-  const VITE_API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const getApiBaseUrl = () => {
+    let url = import.meta.env.VITE_API_URL;
+    if (!url) return "";
+    url = url.trim().replace(/\/+$/, "");
+    if (url.endsWith("/api")) url = url.slice(0, -4);
+    return url;
+  };
+  const VITE_API_URL = getApiBaseUrl();
  
   // ── Refs ───────────────────────────────────────────────────────────
   const pageRef        = useRef(null);
@@ -156,7 +164,17 @@ export default function Upload() {
       if (jobDescription) formData.append("jobDescription", jobDescription);
       const res = await axios.post(`${VITE_API_URL}/api/analyze/ats-score/file`, formData, { headers });
       const result = res.data;
- 
+
+      // Run Recruitment Job Matching
+      if (result && result.resumeText) {
+        try {
+          const recruitmentMatch = await processRecruitmentMatching(result.resumeText);
+          result.recruitmentMatch = recruitmentMatch;
+        } catch (matchErr) {
+          console.error("Recruitment match error:", matchErr);
+        }
+      }
+
       // Outro before navigate
       gsap.to(resumeCardRef.current, {
         opacity: 0, y: -20, duration: 0.35, ease: "power2.in",

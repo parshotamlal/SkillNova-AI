@@ -22,9 +22,10 @@ export default function Navbar({ showAuthButtons = true }) {
   const navLinks = [
     { path: "/", label: "Home" },
     { path: "/analyze", label: "Analyze" },
+    { path: "/recruitment", label: "Recruitment" },
     { path: "/pricing", label: "Pricing" },
-    {path:"/check-ats-score",label:"ATS Checker"},
-    {path:"/templates",label:"Templates"}
+    { path: "/check-ats-score", label: "ATS Checker" },
+    { path: "/templates", label: "Templates" }
   ];
  
   // ── Mount animation ──────────────────────────────────────────────

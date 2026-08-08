@@ -23,7 +23,8 @@ const TermsOfService = lazy(() => import("./pages/TermsofService.jsx"));
 const Status = lazy(() => import("./pages/Status.jsx"));
 const CheckAtsScore = lazy(() => import("./pages/AtsResumeAnalyze.jsx"));
 const AtsResult = lazy(() => import("./pages/AtsResult.jsx"));
-const Templates = lazy(() => import("./pages/template.jsx"))
+const Templates = lazy(() => import("./pages/template.jsx"));
+const Recruitment = lazy(() => import("./pages/Recruitment.jsx"));
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -105,6 +106,7 @@ function App() {
                   <Route path="/Terms-of-Service" element={<TermsOfService />} />
                   <Route path="/status" element={<Status />} />
                   <Route path="/templates" element={<Templates />} />
+                  <Route path="/recruitment" element={<Recruitment />} />
 
                   <Route path="*" element={<NotFound />} />
                 </Routes>

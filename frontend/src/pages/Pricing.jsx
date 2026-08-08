@@ -45,7 +45,14 @@ export default function Pricing() {
     },
   ];
 
-  const VITE_API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const getApiBaseUrl = () => {
+    let url = import.meta.env.VITE_API_URL;
+    if (!url) return "";
+    url = url.trim().replace(/\/+$/, "");
+    if (url.endsWith("/api")) url = url.slice(0, -4);
+    return url;
+  };
+  const VITE_API_URL = getApiBaseUrl();
 
   const handlePurchase = async (planName) => {
     try {
