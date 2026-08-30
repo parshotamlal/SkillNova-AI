@@ -17,15 +17,19 @@ export default function Navbar({ showAuthButtons = true }) {
   const mobileMenuRef = useRef(null);
   const navbarRef = useRef(null);
  
+  const [currentUser, setCurrentUser] = useState(null);
+
   const isActive = (path) => location.pathname === path;
- 
+  const isAdmin = currentUser?.email?.toLowerCase() === "parshotamworks@gmail.com";
+
   const navLinks = [
     { path: "/", label: "Home" },
     { path: "/analyze", label: "Analyze" },
     { path: "/recruitment", label: "Recruitment" },
     { path: "/pricing", label: "Pricing" },
     { path: "/check-ats-score", label: "ATS Checker" },
-    { path: "/templates", label: "Templates" }
+    { path: "/templates", label: "Templates" },
+    ...(isAdmin ? [{ path: "/admin/payments", label: "Admin" }] : [])
   ];
  
   // ── Mount animation ──────────────────────────────────────────────
@@ -112,14 +116,21 @@ export default function Navbar({ showAuthButtons = true }) {
     const fetchData = async () => {
       try {
         const res = await fetchProfile();
-        setLogin(!!res.user);
+        if (res && res.user) {
+          setLogin(true);
+          setCurrentUser(res.user);
+        } else {
+          setLogin(false);
+          setCurrentUser(null);
+        }
       } catch (err) {
         console.error("Failed to fetch profile", err);
         setLogin(false);
+        setCurrentUser(null);
       }
     };
     fetchData();
-  });
+  }, [location.pathname]);
  
   return (
     <nav

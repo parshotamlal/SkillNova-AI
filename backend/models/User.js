@@ -19,9 +19,12 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: false },
   googleId: { type: String, required: false },
+  isPremium: { type: Boolean, default: false },
+  plan: { type: String, default: "Free" },
+  role: { type: String, default: "user" },
   resumes: [resumeSchema],
   atsScores: [atsScoreSchema]
-});
+}, { timestamps: true });
 
 const User = mongoose.model("User", userSchema);
 export default User;

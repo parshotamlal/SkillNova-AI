@@ -41,6 +41,9 @@ export default defineConfig({
       generateRobotsTxt: false, // We manage our own robots.txt
     })
   ],
+  esbuild: {
+    drop: ['console', 'debugger'],
+  },
   build: {
     rollupOptions: {
       output: {

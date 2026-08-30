@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import { 
   Briefcase, 
   Plus, 
@@ -20,7 +21,12 @@ import {
   Loader2,
   Send,
   RefreshCw,
-  FileCheck
+  FileCheck,
+  Crown,
+  Lock,
+  Zap,
+  ArrowRight,
+  ShieldCheck
 } from "lucide-react";
 import { gsap } from "gsap";
 import axios from "axios";
@@ -33,9 +39,14 @@ import {
   getNotifications 
 } from "../services/recruitmentService";
 import { processRecruitmentMatching } from "../services/recruitmentMatcher";
+import { fetchProfile, getMyPaymentStatus } from "../services/api";
 import RecruitmentMatchResultsCard from "../components/RecruitmentMatchResultsCard";
 
 export default function Recruitment() {
+  const [authLoading, setAuthLoading] = useState(true);
+  const [isProUser, setIsProUser] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+
   const [jobs, setJobs] = useState([]);
   const [notifications, setNotifications] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -84,6 +95,62 @@ export default function Recruitment() {
   const jobsGridRef = useRef(null);
   const historyRef = useRef(null);
 
+  // Check user Pro / Premium status & fetch user profile
+  useEffect(() => {
+    const checkAccess = async () => {
+      try {
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+          setIsProUser(false);
+          setAuthLoading(false);
+          return;
+        }
+
+        // Fetch profile and payment status in parallel
+        const [profileRes, paymentRes] = await Promise.allSettled([
+          fetchProfile(),
+          getMyPaymentStatus(),
+        ]);
+
+        const profileData = profileRes.status === "fulfilled" ? profileRes.value : null;
+        const paymentData = paymentRes.status === "fulfilled" ? paymentRes.value : null;
+
+        const user = profileData?.user;
+
+        if (user) {
+          setCurrentUser(user);
+
+          // Pre-populate recruiter details in job form if empty
+          setFormData((prev) => ({
+            ...prev,
+            recruiterName: prev.recruiterName || user.name || "",
+            recruiterEmail: prev.recruiterEmail || user.email || "",
+          }));
+
+          const hasPro =
+            user.isPremium === true ||
+            user.plan?.toLowerCase() === "pro" ||
+            user.plan?.toLowerCase() === "premium" ||
+            paymentData?.isPremium === true ||
+            paymentData?.plan?.toLowerCase() === "pro" ||
+            paymentData?.plan?.toLowerCase() === "premium" ||
+            user.email?.toLowerCase() === "parshotamworks@gmail.com" ||
+            user.role === "admin";
+
+          setIsProUser(Boolean(hasPro));
+        } else {
+          setIsProUser(false);
+        }
+      } catch (err) {
+        setIsProUser(false);
+      } finally {
+        setAuthLoading(false);
+      }
+    };
+
+    checkAccess();
+  }, []);
+
   // Load jobs and notification history
   const loadData = () => {
     setJobs(getSavedJobs());
@@ -96,29 +163,34 @@ export default function Recruitment() {
 
   // GSAP Animations
   useEffect(() => {
+    if (!isProUser || authLoading || !pageRef.current || !headerRef.current) return;
+
     const ctx = gsap.context(() => {
+      if (!orb1Ref.current || !orb2Ref.current || !headerRef.current) return;
+
       gsap.set([orb1Ref.current, orb2Ref.current], { scale: 0.6, opacity: 0 });
       gsap.set(headerRef.current, { opacity: 0, y: 30 });
-      gsap.set(statsRef.current, { opacity: 0, y: 20 });
-      gsap.set(uploadCardRef.current, { opacity: 0, y: 20 });
-      gsap.set(jobsGridRef.current, { opacity: 0, y: 25 });
-      gsap.set(historyRef.current, { opacity: 0, y: 25 });
+      if (statsRef.current) gsap.set(statsRef.current, { opacity: 0, y: 20 });
+      if (uploadCardRef.current) gsap.set(uploadCardRef.current, { opacity: 0, y: 20 });
+      if (jobsGridRef.current) gsap.set(jobsGridRef.current, { opacity: 0, y: 25 });
+      if (historyRef.current) gsap.set(historyRef.current, { opacity: 0, y: 25 });
 
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
       tl.to([orb1Ref.current, orb2Ref.current], { scale: 1, opacity: 1, duration: 1.4, stagger: 0.2 }, 0)
-        .to(headerRef.current, { opacity: 1, y: 0, duration: 0.6 }, 0.2)
-        .to(statsRef.current, { opacity: 1, y: 0, duration: 0.5 }, 0.4)
-        .to(uploadCardRef.current, { opacity: 1, y: 0, duration: 0.55 }, 0.5)
-        .to(jobsGridRef.current, { opacity: 1, y: 0, duration: 0.6 }, 0.65)
-        .to(historyRef.current, { opacity: 1, y: 0, duration: 0.6 }, 0.8);
+        .to(headerRef.current, { opacity: 1, y: 0, duration: 0.6 }, 0.2);
+
+      if (statsRef.current) tl.to(statsRef.current, { opacity: 1, y: 0, duration: 0.5 }, 0.4);
+      if (uploadCardRef.current) tl.to(uploadCardRef.current, { opacity: 1, y: 0, duration: 0.55 }, 0.5);
+      if (jobsGridRef.current) tl.to(jobsGridRef.current, { opacity: 1, y: 0, duration: 0.6 }, 0.65);
+      if (historyRef.current) tl.to(historyRef.current, { opacity: 1, y: 0, duration: 0.6 }, 0.8);
 
       gsap.to(orb1Ref.current, { x: 30, y: 20, duration: 8, repeat: -1, yoyo: true, ease: "sine.inOut" });
       gsap.to(orb2Ref.current, { x: -25, y: -15, duration: 10, repeat: -1, yoyo: true, ease: "sine.inOut" });
     }, pageRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [isProUser, authLoading]);
 
   // Open Modal for Add
   const handleOpenAddModal = () => {
@@ -285,6 +357,127 @@ export default function Recruitment() {
   const activeJobsCount = jobs.filter(j => j.status === "active" || j.status === true).length;
   const emailsSentCount = notifications.filter(n => n.emailSent).length;
 
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 flex items-center justify-center">
+        <Loader2 className="w-10 h-10 animate-spin text-amber-500" />
+      </div>
+    );
+  }
+
+  // ── GOLDEN PRO LOCK SCREEN FOR NON-PRO USERS ─────────────────────────
+  if (!isProUser) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-slate-50 to-orange-50 relative overflow-hidden py-16 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+        <SEO
+          title="Unlock AI Recruitment Suite | Pro Feature"
+          description="Recruitment portal is exclusively available for Pro members."
+        />
+
+        {/* Ambient Glows */}
+        <div className="pointer-events-none absolute -top-24 -left-24 w-96 h-96 rounded-full bg-amber-300/30 blur-[100px]" />
+        <div className="pointer-events-none absolute -bottom-24 -right-24 w-96 h-96 rounded-full bg-yellow-300/30 blur-[100px]" />
+
+        <div className="relative z-10 max-w-2xl w-full text-center">
+          {/* Glowing Golden Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-100 to-yellow-100 border border-amber-300 text-amber-800 text-xs font-bold uppercase tracking-wider mb-6 shadow-sm">
+            <Sparkles className="w-4 h-4 text-amber-600" />
+            Exclusive Pro Feature
+          </div>
+
+          {/* Big Golden Crown Emoji & Glow */}
+          <div className="relative mx-auto w-28 h-28 mb-6 flex items-center justify-center">
+            <div className="absolute inset-0 bg-gradient-to-tr from-amber-400 via-yellow-300 to-amber-500 rounded-3xl blur-lg opacity-70 animate-pulse" />
+            <div className="relative w-28 h-28 bg-gradient-to-tr from-amber-500 to-yellow-400 rounded-3xl p-1 shadow-2xl flex items-center justify-center">
+              <div className="w-full h-full bg-slate-900 rounded-[22px] flex items-center justify-center">
+                <span className="text-5xl select-none filter drop-shadow-[0_0_12px_rgba(245,158,11,0.8)]">
+                  👑
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Main Headline */}
+          <h1 className="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight mb-4">
+            AI Recruitment Portal is a{" "}
+            <span className="bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 bg-clip-text text-transparent">
+              Pro Feature
+            </span>
+          </h1>
+
+          <p className="text-slate-600 text-base sm:text-lg max-w-xl mx-auto mb-8">
+            Supercharge your hiring workflow. Post unlimited job requirements, automatically match incoming resumes with AI, and dispatch next-round candidate emails in 1-click.
+          </p>
+
+          {/* Feature Highlights Grid */}
+          <div className="bg-white/80 backdrop-blur-md border border-amber-200/80 rounded-3xl p-6 sm:p-8 shadow-xl mb-8 text-left grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="flex items-start gap-3">
+              <div className="p-2 rounded-xl bg-amber-100 text-amber-700 mt-0.5">
+                <CheckCircle2 className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-slate-900">Automated AI Matching</h4>
+                <p className="text-xs text-slate-500 mt-0.5">Instant match score & skill gap analysis.</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <div className="p-2 rounded-xl bg-amber-100 text-amber-700 mt-0.5">
+                <Mail className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-slate-900">Candidate Email Dispatch</h4>
+                <p className="text-xs text-slate-500 mt-0.5">1-Click shortlisted candidate interview invite.</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <div className="p-2 rounded-xl bg-amber-100 text-amber-700 mt-0.5">
+                <Briefcase className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-slate-900">Unlimited Job Profiles</h4>
+                <p className="text-xs text-slate-500 mt-0.5">Manage multiple job openings simultaneously.</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <div className="p-2 rounded-xl bg-amber-100 text-amber-700 mt-0.5">
+                <Zap className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-slate-900">Priority AI Processing</h4>
+                <p className="text-xs text-slate-500 mt-0.5">High-speed Gemini AI evaluation engine.</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Glowing CTA Button */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              to="/pricing"
+              className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-600 hover:to-yellow-600 text-slate-950 font-bold text-base rounded-2xl shadow-xl shadow-amber-500/25 hover:shadow-amber-500/40 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2"
+            >
+              <span>👑 Buy Pro Plan — ₹149 /month</span>
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+
+            <Link
+              to="/"
+              className="w-full sm:w-auto px-6 py-4 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-sm rounded-2xl border border-slate-200 shadow-sm transition"
+            >
+              Back to Home
+            </Link>
+          </div>
+
+          <p className="text-xs text-slate-400 mt-4">
+            ✨ Instant Activation • Cancel Anytime • 7-Day Money Back Guarantee
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div ref={pageRef} className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 relative overflow-hidden py-10">
       <SEO 
@@ -301,8 +494,13 @@ export default function Recruitment() {
         {/* Header */}
         <div ref={headerRef} className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-100/60 text-blue-700 text-xs font-semibold mb-2">
-              <Sparkles className="w-4 h-4 text-blue-600" /> AI-Powered Candidate Matching
+            <div className="flex flex-wrap items-center gap-2 mb-2">
+              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-100/60 text-blue-700 text-xs font-semibold">
+                <Sparkles className="w-4 h-4 text-blue-600" /> AI-Powered Candidate Matching
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-100 border border-amber-300 text-amber-800 text-xs font-bold shadow-sm">
+                <Crown className="w-3.5 h-3.5 text-amber-600" /> Pro Member Active 👑
+              </span>
             </div>
             <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
               Recruitment & Job Matching

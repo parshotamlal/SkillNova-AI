@@ -233,4 +233,72 @@ export const deleteUserAtsScore = async (scoreId) => {
   }
 };
 
+// ── Payment Claims (Razorpay Manual Verification) ──────────────────────────
+export const submitPaymentClaim = async (paymentId, plan = "Pro", amount = "₹149") => {
+  try {
+    const token = localStorage.getItem('authToken');
+    const res = await fetch(`${BASE_URL}/api/payments/claim`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { "Authorization": `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ paymentId, plan, amount }),
+    });
+    return await res.json();
+  } catch (error) {
+    console.error("Submit Payment Claim Error:", error);
+    return { message: "Failed to submit payment claim. Please check connection." };
+  }
+};
+
+export const getMyPaymentStatus = async () => {
+  try {
+    const token = localStorage.getItem('authToken');
+    const res = await fetch(`${BASE_URL}/api/payments/my-status`, {
+      headers: {
+        ...(token ? { "Authorization": `Bearer ${token}` } : {}),
+      },
+    });
+    return await res.json();
+  } catch (error) {
+    console.error("Get Payment Status Error:", error);
+    return { claims: [], isPremium: false };
+  }
+};
+
+export const getAdminPaymentClaims = async () => {
+  try {
+    const token = localStorage.getItem('authToken');
+    const res = await fetch(`${BASE_URL}/api/payments/admin/all`, {
+      headers: {
+        ...(token ? { "Authorization": `Bearer ${token}` } : {}),
+      },
+    });
+    return await res.json();
+  } catch (error) {
+    console.error("Get Admin Claims Error:", error);
+    return { claims: [] };
+  }
+};
+
+export const updateAdminPaymentClaim = async (claimId, action, notes = "") => {
+  try {
+    const token = localStorage.getItem('authToken');
+    const res = await fetch(`${BASE_URL}/api/payments/admin/action`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { "Authorization": `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ claimId, action, notes }),
+    });
+    return await res.json();
+  } catch (error) {
+    console.error("Update Payment Claim Error:", error);
+    return { message: "Failed to update claim." };
+  }
+};
+
+
 

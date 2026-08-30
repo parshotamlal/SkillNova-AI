@@ -8,9 +8,18 @@ import analyzeRoutes from "./routes/analyze.js";
 import stripeRoutes from "./routes/Stripe.js";
 import profileRoutes from "./routes/profile.js";
 import recruitmentRoutes from "./routes/recruitment.js";
+import paymentRoutes from "./routes/paymentClaims.js";
 import { requireAuth } from "./middleware/authMiddleware.js";
 
 dotenv.config();
+
+// Silence console statements across backend
+const serverLog = console.log;
+console.log = () => {};
+console.warn = () => {};
+console.info = () => {};
+console.debug = () => {};
+console.error = () => {};
 
 const app = express();
 
@@ -49,6 +58,7 @@ app.use("/api/stripe", stripeRoutes);
 
 app.use("/api/profile", profileRoutes);
 app.use("/api/recruitment", recruitmentRoutes);
+app.use("/api/payments", paymentRoutes);
 
 app.get("/", (req, res) => {
   res.send("API is running");
@@ -62,7 +72,7 @@ app.get("/health", (req, res) => {
 // Start Server
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () =>
-  console.log(`✅ Server running at http://localhost:${PORT}`)
+  serverLog(`✅ Server running at http://localhost:${PORT}`)
 );
 
 export default app; 

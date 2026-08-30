@@ -25,6 +25,7 @@ const CheckAtsScore = lazy(() => import("./pages/AtsResumeAnalyze.jsx"));
 const AtsResult = lazy(() => import("./pages/AtsResult.jsx"));
 const Templates = lazy(() => import("./pages/template.jsx"));
 const Recruitment = lazy(() => import("./pages/Recruitment.jsx"));
+const AdminPayments = lazy(() => import("./pages/AdminPayments.jsx"));
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -107,6 +108,14 @@ function App() {
                   <Route path="/status" element={<Status />} />
                   <Route path="/templates" element={<Templates />} />
                   <Route path="/recruitment" element={<Recruitment />} />
+                  <Route
+                    path="/admin/payments"
+                    element={
+                      <ProtectedRoute>
+                        <AdminPayments />
+                      </ProtectedRoute>
+                    }
+                  />
 
                   <Route path="*" element={<NotFound />} />
                 </Routes>
