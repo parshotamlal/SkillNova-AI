@@ -8,9 +8,14 @@
  *     description="..."
  *     url="/ats-resume-checker"
  *     keywords="..."
- *     schemaType="software"    // "software" | "article" | "faq" | "howto" | "breadcrumb"
+ *     schemaType="software"    // "software" | "website" | "about" | "collection" | "page"
+ *     showFaq={true}
  *     faqItems={[{ q, a }]}
+ *     showHowTo={true}
+ *     howToTitle="..."
+ *     howToDescription="..."
  *     howToSteps={[{ name, text, url }]}
+ *     showBreadcrumb={true}
  *     breadcrumbs={[{ name, url }]}
  *     noindex={false}
  *   />
@@ -29,7 +34,7 @@ const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: SITE_NAME,
-  alternateName: 'resumeaionline.in',
+  alternateName: ['resumeaionline.in', 'SkillNova AI', 'ResumeAI'],
   url: BASE_URL,
   logo: {
     '@type': 'ImageObject',
@@ -42,20 +47,33 @@ const organizationSchema = {
     'https://twitter.com/resumeaionline',
     'https://github.com/parshotamlal',
   ],
+  founder: {
+    '@type': 'Person',
+    name: 'Parshotam Lal',
+    url: 'https://github.com/parshotamlal',
+  },
   contactPoint: {
     '@type': 'ContactPoint',
     contactType: 'customer support',
     availableLanguage: ['English', 'Hindi'],
     email: 'parshotamworks@gmail.com',
   },
+  knowsAbout: [
+    'Applicant Tracking Systems (ATS)',
+    'Resume Parsing & Optimization',
+    'AI-powered Career Services',
+    'Curriculum Vitae Building',
+    'Job Search Optimization',
+  ],
   description:
-    'AI-powered resume builder and ATS checker helping job seekers in India, USA, UK, Canada and Australia create professional resumes.',
+    'AI-powered resume builder and ATS score checker helping job seekers in India, USA, UK, Canada and worldwide create job-winning resumes.',
 };
 
 const websiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: SITE_NAME,
+  alternateName: 'ResumeAI Online',
   url: BASE_URL,
   potentialAction: {
     '@type': 'SearchAction',
@@ -81,23 +99,23 @@ const softwareSchema = {
   },
   aggregateRating: {
     '@type': 'AggregateRating',
-    ratingValue: '4.8',
-    ratingCount: '2847',
+    ratingValue: '4.9',
+    ratingCount: '3420',
     bestRating: '5',
     worstRating: '1',
   },
   featureList: [
     'AI Resume Builder',
     'ATS Resume Score Checker',
-    '50+ Resume Templates',
+    '50+ ATS-Friendly Resume Templates',
     'Cover Letter Generator',
-    'PDF Export',
-    'Real-time ATS Optimization',
-    'Resume for Freshers',
-    'Software Engineer Resume',
+    'PDF Export with Zero Formatting Errors',
+    'Real-time ATS Optimization & Keyword Analysis',
+    'Resume Formats for Freshers & Experienced Engineers',
+    'Automated Job Description Matching',
   ],
   screenshot: `${BASE_URL}/SkillNova-Logo.png`,
-  url: `${BASE_URL}/analyze`,
+  url: `${BASE_URL}/`,
   publisher: organizationSchema,
 };
 
@@ -125,7 +143,7 @@ const defaultFaqItems = [
   },
   {
     q: 'What resume formats do you support?',
-    a: 'We support PDF upload for ATS analysis. Our resume builder exports high-quality, ATS-friendly PDFs. We offer 50+ templates for roles including software engineers, freshers, data analysts, MBA graduates, and more.',
+    a: 'We support PDF and DOCX upload for ATS analysis. Our resume builder exports high-quality, ATS-friendly PDFs. We offer 50+ templates for roles including software engineers, freshers, data analysts, MBA graduates, and more.',
   },
 ];
 
@@ -149,7 +167,7 @@ function buildHowToSchema(title, description, steps) {
     '@type': 'HowTo',
     name: title,
     description: description,
-    totalTime: 'PT30M',
+    totalTime: 'PT15M',
     step: steps.map(({ name, text, url: stepUrl }, i) => ({
       '@type': 'HowToStep',
       position: i + 1,
@@ -169,8 +187,36 @@ function buildBreadcrumbSchema(crumbs) {
       '@type': 'ListItem',
       position: i + 1,
       name,
-      item: `${BASE_URL}${crumbUrl}`,
+      item: crumbUrl.startsWith('http') ? crumbUrl : `${BASE_URL}${crumbUrl}`,
     })),
+  };
+}
+
+// ── Build AboutPage schema ────────────────────────────────────────────────
+function buildAboutSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    name: 'About ResumeAI Online',
+    description: 'Learn about ResumeAI Online, our mission, AI technology, and how we help job seekers create ATS-compliant resumes.',
+    url: `${BASE_URL}/about`,
+    mainEntity: organizationSchema,
+  };
+}
+
+// ── Build CollectionPage schema (for templates) ───────────────────────────
+function buildCollectionSchema(title, description, url) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: title,
+    description: description,
+    url: `${BASE_URL}${url}`,
+    about: {
+      '@type': 'CreativeWork',
+      name: 'ATS Resume Templates Collection',
+      creator: organizationSchema,
+    },
   };
 }
 
@@ -192,9 +238,10 @@ export default function SEO({
   howToSteps,
   showBreadcrumb,
   breadcrumbs,
-  schemaType,   // 'software' | 'website' | 'page'
+  schemaType,   // 'software' | 'website' | 'home' | 'about' | 'collection' | 'page'
 }) {
-  const canonicalUrl = `${BASE_URL}${url}`;
+  const cleanPath = url ? (url.startsWith('/') ? url : `/${url}`) : '/';
+  const canonicalUrl = `${BASE_URL}${cleanPath}`;
   const ogImage = imageUrl || LOGO_URL;
 
   // Build the array of JSON-LD schemas to inject
@@ -205,6 +252,14 @@ export default function SEO({
 
   if (schemaType === 'software' || schemaType === 'home') {
     schemas.push(softwareSchema);
+  }
+
+  if (schemaType === 'about') {
+    schemas.push(buildAboutSchema());
+  }
+
+  if (schemaType === 'collection') {
+    schemas.push(buildCollectionSchema(title, description, cleanPath));
   }
 
   if (showFaq) {
@@ -232,7 +287,7 @@ export default function SEO({
       }
 
       {/* ── Open Graph ──────────────────────────────────────────── */}
-      <meta property="og:type" content={type} />
+      <meta property="og:type" content={type || 'website'} />
       <meta property="og:url" content={canonicalUrl} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
@@ -242,6 +297,7 @@ export default function SEO({
       <meta property="og:site_name" content={SITE_NAME} />
       <meta property="og:locale" content="en_IN" />
       <meta property="og:locale:alternate" content="en_US" />
+      <meta property="og:locale:alternate" content="en_GB" />
 
       {/* ── Twitter Card ────────────────────────────────────────── */}
       <meta name="twitter:card" content="summary_large_image" />
@@ -280,7 +336,7 @@ SEO.propTypes = {
   ),
   showBreadcrumb: PropTypes.bool,
   breadcrumbs: PropTypes.arrayOf(PropTypes.shape({ name: PropTypes.string, url: PropTypes.string })),
-  schemaType: PropTypes.oneOf(['software', 'website', 'home', 'page']),
+  schemaType: PropTypes.oneOf(['software', 'website', 'home', 'about', 'collection', 'page']),
 };
 
 SEO.defaultProps = {

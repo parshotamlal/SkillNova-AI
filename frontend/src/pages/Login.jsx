@@ -8,6 +8,7 @@ import { gsap } from "gsap";
 import GoogleSignupButton from "../components/common/GoogleSignUpButton";
 import { auth, googleProvider } from "../firebase";
 import { signInWithPopup, signInWithRedirect, getRedirectResult } from "firebase/auth";
+import SEO from "../components/SEO";
  
 export default function Login() {
   const navigate = useNavigate();
@@ -203,12 +204,17 @@ export default function Login() {
     }
   };
  
-  // ── Render ─────────────────────────────────────────────────────────
   return (
     <div
       ref={pageRef}
       className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 flex items-center justify-center px-4 relative overflow-hidden"
     >
+      <SEO
+        title="Sign In to Your Account — ResumeAI Online"
+        description="Log in to ResumeAI Online to manage your ATS resumes, view analysis reports, and download job-winning resumes."
+        url="/login"
+        noindex={true}
+      />
       {/* Background orbs */}
       <div
         ref={orb1Ref}

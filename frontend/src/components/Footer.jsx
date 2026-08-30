@@ -95,7 +95,7 @@ export default function Footer() {
             <h3 className="text-lg font-semibold mb-4">Company</h3>
             <ul className="space-y-2 text-sm text-gray-400">
               <li>
-                <Link to="/" className="hover:text-white transition-colors">
+                <Link to="/about" className="hover:text-white transition-colors">
                   About Us
                 </Link>
               </li>
@@ -134,7 +134,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  to="/Privacy-Policy"
+                  to="/privacy-policy"
                   className="hover:text-white transition-colors"
                 >
                   Privacy Policy
@@ -142,7 +142,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  to="/Terms-of-Service"
+                  to="/terms-of-service"
                   className="hover:text-white transition-colors"
                 >
                   Terms of Service
@@ -175,10 +175,10 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} ResumeAI Online. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0 text-sm text-gray-400">
-            <Link to="/Privacy-Policy" className="hover:text-white transition-colors">
+            <Link to="/privacy-policy" className="hover:text-white transition-colors">
               Privacy
             </Link>
-            <Link to="/Terms-of-Service" className="hover:text-white transition-colors">
+            <Link to="/terms-of-service" className="hover:text-white transition-colors">
               Terms
             </Link>
             <Link to="/help-center" className="hover:text-white transition-colors">

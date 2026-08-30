@@ -130,13 +130,13 @@ export default function PrivacyPolicy() {
       <SEO
         title="Privacy Policy | How We Protect Your Data — ResumeAI Online"
         description="ResumeAI Online's privacy policy explains how we collect, use, and protect your personal information and resume data. GDPR compliant. Data encrypted in transit and at rest."
-        url="/Privacy-Policy"
+        url="/privacy-policy"
         keywords="ResumeAI Online privacy policy, resume data protection, GDPR resume builder"
         schemaType="page"
         showBreadcrumb={true}
         breadcrumbs={[
           { name: 'Home', url: '/' },
-          { name: 'Privacy Policy', url: '/Privacy-Policy' },
+          { name: 'Privacy Policy', url: '/privacy-policy' },
         ]}
       />
       {/* Background orbs */}

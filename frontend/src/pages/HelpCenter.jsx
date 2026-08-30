@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, ChevronDown, HelpCircle, Zap, CreditCard, Settings, MessageCircle, BookOpen } from "lucide-react";
 import { gsap } from "gsap";
+import SEO from "../components/SEO";
  
 const categories = [
   { label: "All",             icon: BookOpen   },
@@ -191,14 +192,29 @@ export default function HelpCenter() {
           item.q.toLowerCase().includes(query.toLowerCase()) ||
           item.a.toLowerCase().includes(query.toLowerCase())
       ),
-    }))
-    .filter((cat) => cat.items.length > 0);
- 
+  const allFaqItems = useMemo(() => {
+    return faqs.flatMap((c) => c.items);
+  }, []);
+
   return (
     <div
       ref={pageRef}
       className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 relative overflow-hidden"
     >
+      <SEO
+        title="Help Center & FAQs — Support, Guides & ATS Tips | ResumeAI Online"
+        description="Find answers to frequently asked questions about ResumeAI Online, ATS scoring, resume uploads, privacy, templates, and subscription plans."
+        url="/help-center"
+        keywords="ResumeAI help, ATS checker FAQ, resume builder support, how to check ATS score, ATS resume format help"
+        schemaType="page"
+        showBreadcrumb={true}
+        breadcrumbs={[
+          { name: "Home", url: "/" },
+          { name: "Help Center", url: "/help-center" },
+        ]}
+        showFaq={true}
+        faqItems={allFaqItems}
+      />
       {/* Background orbs */}
       <div ref={orb1Ref} className="pointer-events-none absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-blue-200/40" style={{ filter: "blur(90px)" }} />
       <div ref={orb2Ref} className="pointer-events-none absolute -bottom-24 -right-32 w-[420px] h-[420px] rounded-full bg-teal-200/40" style={{ filter: "blur(80px)" }} />

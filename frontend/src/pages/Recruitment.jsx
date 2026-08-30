@@ -481,8 +481,16 @@ export default function Recruitment() {
   return (
     <div ref={pageRef} className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 relative overflow-hidden py-10">
       <SEO 
-        title="Recruitment & Job Matching | ResumeAi Online" 
-        description="Manage job descriptions, match applicant resumes against candidate profiles, and automate next round email notifications."
+        title="Recruitment & AI Candidate Matching — ATS Shortlisting Tool | ResumeAI Online" 
+        description="Save job descriptions, parse applicant resumes automatically with AI, calculate match scores, and streamline interview shortlisting."
+        url="/recruitment"
+        keywords="recruitment AI matcher, candidate screening tool, automated resume shortlisting, ATS candidate matching, recruiter tools"
+        schemaType="software"
+        showBreadcrumb={true}
+        breadcrumbs={[
+          { name: "Home", url: "/" },
+          { name: "Recruitment Matching", url: "/recruitment" },
+        ]}
       />
 
       {/* Background Orbs */}

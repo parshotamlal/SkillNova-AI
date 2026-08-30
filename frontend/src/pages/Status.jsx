@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { CheckCircle, AlertCircle, Clock } from "lucide-react";
 import { gsap } from "gsap";
+import SEO from "../components/SEO";
  
 const services = [
   { name: "Resume Analysis API",  status: "operational", latency: "142ms" },
@@ -148,6 +149,18 @@ export default function Status() {
       ref={pageRef}
       className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 relative overflow-hidden"
     >
+      <SEO
+        title="System Status & Uptime — ResumeAI Online"
+        description="Check real-time system performance, API response latencies, and service uptime across ResumeAI Online systems."
+        url="/status"
+        keywords="ResumeAI status, system uptime, API response time, resume analyzer operational status"
+        schemaType="page"
+        showBreadcrumb={true}
+        breadcrumbs={[
+          { name: "Home", url: "/" },
+          { name: "System Status", url: "/status" },
+        ]}
+      />
       {/* Background orbs */}
       <div ref={orb1Ref} className="pointer-events-none absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-blue-200/40" style={{ filter: "blur(90px)" }} />
       <div ref={orb2Ref} className="pointer-events-none absolute -bottom-24 -right-32 w-[420px] h-[420px] rounded-full bg-teal-200/40" style={{ filter: "blur(80px)" }} />

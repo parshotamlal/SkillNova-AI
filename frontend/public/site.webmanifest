@@ -1,0 +1,22 @@
+{
+  "name": "ResumeAI Online — AI Resume Builder & ATS Checker",
+  "short_name": "ResumeAI",
+  "description": "Build job-winning ATS-optimized resumes in 5 minutes with AI.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "/SkillNova-Logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/SkillNova-Logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["business", "productivity", "utilities"]
+}

@@ -2,18 +2,19 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import generateSitemap from 'vite-plugin-sitemap'
 
-// All public routes — private routes (/profile, /result, /ats-result, /analyze) are excluded
+// All public routes — private routes (/profile, /result, /ats-result, /admin) are excluded
 const publicRoutes = [
   '/',
   '/check-ats-score',
   '/templates',
+  '/analyze',
   '/pricing',
+  '/about',
+  '/recruitment',
   '/help-center',
-  '/Privacy-Policy',
-  '/Terms-of-Service',
   '/status',
-  '/login',
-  '/signup',
+  '/privacy-policy',
+  '/terms-of-service',
 ]
 
 // https://vite.dev/config/
@@ -55,4 +56,4 @@ export default defineConfig({
       }
     }
   }
-})
+})

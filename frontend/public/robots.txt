@@ -4,19 +4,23 @@
 User-agent: *
 Allow: /
 
-# ── Block private/dashboard routes (save crawl budget) ──────────────────
+# ── Block private/user routes (conserve crawl budget) ───────────────────
 Disallow: /profile
 Disallow: /dashboard
-Disallow: /analyze
 Disallow: /result
 Disallow: /ats-result
 Disallow: /success
+Disallow: /admin/
 Disallow: /api/
 
-# ── Always allow CSS + JS for rendering ────────────────────────────────
+# ── Always allow static styling and script assets for Googlebot ─────────
 Allow: /assets/
 Allow: /*.css$
 Allow: /*.js$
+Allow: /*.png$
+Allow: /*.svg$
+Allow: /*.jpg$
+Allow: /*.webp$
 
 # ── Throttle aggressive crawlers ────────────────────────────────────────
 User-agent: AhrefsBot
@@ -28,5 +32,5 @@ Crawl-delay: 10
 User-agent: MJ12bot
 Disallow: /
 
-# ── Sitemaps ────────────────────────────────────────────────────────────
+# ── XML Sitemaps ────────────────────────────────────────────────────────
 Sitemap: https://www.resumeaionline.in/sitemap.xml

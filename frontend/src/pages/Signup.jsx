@@ -9,6 +9,7 @@ import { gsap } from "gsap";
 import GoogleSignupButton from "../components/common/GoogleSignUpButton";
 import { auth, googleProvider } from "../firebase";
 import { signInWithPopup, signInWithRedirect, getRedirectResult } from "firebase/auth";
+import SEO from "../components/SEO";
  
 export default function Register() {
   const navigate = useNavigate();
@@ -216,12 +217,17 @@ export default function Register() {
     }
   };
  
-  // ── Render ─────────────────────────────────────────────────────────
   return (
     <div
       ref={pageRef}
       className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 flex items-center justify-center px-4 relative overflow-hidden"
     >
+      <SEO
+        title="Create Free Account — ResumeAI Online"
+        description="Join ResumeAI Online to build ATS-friendly resumes, optimize your job match score, and land your next dream role."
+        url="/signup"
+        noindex={true}
+      />
       {/* Background orbs */}
       <div
         ref={orb1Ref}

@@ -1,5 +1,5 @@
-"use client";
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 import { gsap } from "gsap";
 import SEO from "../components/SEO";
 
@@ -42,12 +42,12 @@ export default function NotFound() {
         The page you're looking for doesn't exist or may have been moved.
       </p>
       <div id="btns" className="flex gap-3 flex-wrap justify-center">
-        <a href="/" className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+        <Link to="/" className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
           ← Go home
-        </a>
-        <a href="/templates" className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-gray-500 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+        </Link>
+        <Link to="/templates" className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-gray-500 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
           Browse Templates
-        </a>
+        </Link>
       </div>
     </div>
   );

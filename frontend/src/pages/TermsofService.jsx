@@ -131,13 +131,13 @@ export default function TermsOfService() {
       <SEO
         title="Terms of Service | ResumeAI Online — AI Resume Builder"
         description="Read ResumeAI Online's Terms of Service. Understand your rights when using our free AI resume builder, ATS checker, and resume templates."
-        url="/Terms-of-Service"
+        url="/terms-of-service"
         keywords="ResumeAI Online terms of service, resume builder terms, AI tool terms"
         schemaType="page"
         showBreadcrumb={true}
         breadcrumbs={[
           { name: 'Home', url: '/' },
-          { name: 'Terms of Service', url: '/Terms-of-Service' },
+          { name: 'Terms of Service', url: '/terms-of-service' },
         ]}
       />
       {/* Background orbs */}

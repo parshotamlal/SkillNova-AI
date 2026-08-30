@@ -23,6 +23,7 @@ const TermsOfService = lazy(() => import("./pages/TermsofService.jsx"));
 const Status = lazy(() => import("./pages/Status.jsx"));
 const CheckAtsScore = lazy(() => import("./pages/AtsResumeAnalyze.jsx"));
 const AtsResult = lazy(() => import("./pages/AtsResult.jsx"));
+const AboutUs = lazy(() => import("./pages/AboutUs.jsx"));
 const Templates = lazy(() => import("./pages/template.jsx"));
 const Recruitment = lazy(() => import("./pages/Recruitment.jsx"));
 const AdminPayments = lazy(() => import("./pages/AdminPayments.jsx"));
@@ -101,13 +102,19 @@ function App() {
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/success" element={<Success />} />
 
-                  {/* SUPPORT */}
-                  <Route path="/help-center" element={<HelpCenter />} />
-                  <Route path="/Privacy-Policy" element={<PrivacyPolicy />} />
-                  <Route path="/Terms-of-Service" element={<TermsOfService />} />
-                  <Route path="/status" element={<Status />} />
+                  {/* Public Content & SEO Routes */}
+                  <Route path="/about" element={<AboutUs />} />
                   <Route path="/templates" element={<Templates />} />
                   <Route path="/recruitment" element={<Recruitment />} />
+                  <Route path="/help-center" element={<HelpCenter />} />
+                  <Route path="/status" element={<Status />} />
+                  <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                  <Route path="/terms-of-service" element={<TermsOfService />} />
+                  
+                  {/* Backwards-compatible aliases */}
+                  <Route path="/Privacy-Policy" element={<PrivacyPolicy />} />
+                  <Route path="/Terms-of-Service" element={<TermsOfService />} />
+
                   <Route
                     path="/admin/payments"
                     element={
