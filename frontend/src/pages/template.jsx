@@ -737,7 +737,7 @@ export function TopBar({ dark, onToggleDark, onDownload, onReset, downloading, a
                     ✦
                 </span>
                 <span className="hidden sm:inline-block font-extrabold text-sm tracking-wide text-slate-800 dark:text-slate-200">
-                    SkillNova <span className="text-blue-600">Workspace</span>
+                    ResumeAi <span className="text-blue-600">Workspace</span>
                 </span>
             </a>
             <div className="flex-1" />

@@ -134,7 +134,7 @@ export default function Profile() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-teal-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 py-10 px-4 sm:px-6 lg:px-8">
       <SEO 
-        title="User Profile Dashboard | SkillNova AI"
+        title="User Profile Dashboard | ResumeAi Online"
         description="Manage your account profile, review your resume history, and inspect your past ATS scoring reports in your personalized dashboard."
       />
       

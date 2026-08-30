@@ -99,7 +99,7 @@ export default function AdminPayments() {
 
   return (
     <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8">
-      <SEO title="Payment Claims Admin | SkillNova AI" description="Admin verification dashboard" />
+      <SEO title="Payment Claims Admin | ResumeAi Online" description="Admin verification dashboard" />
 
       <div className="max-w-6xl mx-auto">
         {/* Header */}

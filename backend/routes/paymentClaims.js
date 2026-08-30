@@ -28,7 +28,7 @@ const sendAdminNotificationMail = async ({ userEmail, userName, paymentId, plan,
         </div>
         <div style="padding: 24px; background: #ffffff; color: #1e293b; line-height: 1.6;">
           <p style="font-size: 15px; margin-top: 0;">Hello Admin,</p>
-          <p>A new payment claim has been submitted on SkillNova AI / ResumeAI:</p>
+          <p>A new payment claim has been submitted on ResumeAi Online:</p>
 
           <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px;">
             <tr style="background: #f8fafc;">
@@ -60,13 +60,13 @@ const sendAdminNotificationMail = async ({ userEmail, userName, paymentId, plan,
           </div>
         </div>
         <div style="background: #f1f5f9; padding: 12px; text-align: center; font-size: 12px; color: #64748b;">
-          SkillNova AI Payment System • Automatic Alert
+          ResumeAi Online Payment System • Automatic Alert
         </div>
       </div>
     `;
 
     await transporter.sendMail({
-      from: `"SkillNova AI" <${SMTP_USER}>`,
+      from: `"ResumeAi Online" <${SMTP_USER}>`,
       to: ADMIN_EMAIL,
       subject: `🔔 New Payment Claim Submitted: ${paymentId} (${userEmail})`,
       html: htmlContent,

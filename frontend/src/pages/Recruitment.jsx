@@ -481,7 +481,7 @@ export default function Recruitment() {
   return (
     <div ref={pageRef} className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 relative overflow-hidden py-10">
       <SEO 
-        title="Recruitment & Job Matching | SkillNova AI" 
+        title="Recruitment & Job Matching | ResumeAi Online" 
         description="Manage job descriptions, match applicant resumes against candidate profiles, and automate next round email notifications."
       />
 
