@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { gsap } from "gsap";
 import { fetchProfile } from "../services/api";
-import Logo from "../../public/SkillNova-Logo.png";
+import Logo from "../../public/resumeaionlinelogo.png";
  
 export default function Navbar({ showAuthButtons = true }) {
   const navigate = useNavigate();
@@ -153,7 +153,6 @@ export default function Navbar({ showAuthButtons = true }) {
               <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-teal-400">
                 Resume Ai
               </h1>
-              <p className="text-xs text-gray-500 leading-none">Powered by AI</p>
             </div>
             <h1 className="sm:hidden text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-teal-400">
               Resume Ai

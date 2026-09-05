@@ -3,12 +3,14 @@ import { AuthProvider } from "./context/AuthContext.jsx";
 import ProtectedRoute from "./context/ProtectedRoute.jsx";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import { useState, useEffect, lazy, Suspense } from "react";
+import { lazy, Suspense } from "react";
 import { HelmetProvider } from 'react-helmet-async';
 import SEO from "./components/SEO";
 
-// Lazy load pages for performance
-const Home = lazy(() => import("./pages/Home"));
+// Direct load for main landing page (instant first paint)
+import Home from "./pages/Home.jsx";
+
+// Lazy load other pages for performance
 const Analyze = lazy(() => import("./pages/Analyze"));
 const Result = lazy(() => import("./pages/Result"));
 const Login = lazy(() => import("./pages/Login"));
@@ -29,33 +31,6 @@ const Recruitment = lazy(() => import("./pages/Recruitment.jsx"));
 const AdminPayments = lazy(() => import("./pages/AdminPayments.jsx"));
 
 function App() {
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    // Hide loading when page is fully loaded
-    const handleLoad = () => {
-      setIsLoading(false);
-    };
-
-    if (document.readyState === 'complete') {
-      setIsLoading(false);
-    } else {
-      window.addEventListener('load', handleLoad);
-    }
-
-    return () => {
-      window.removeEventListener('load', handleLoad);
-    };
-  }, []);
-
-  if (isLoading) {
-    return (
-      <div className="fixed inset-0 bg-gradient-to-br from-blue-50 via-white to-teal-50 flex items-center justify-center z-50">
-        <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-200 border-t-blue-600"></div>
-      </div>
-    );
-  }
-
   return (
     <HelmetProvider>
       <AuthProvider>

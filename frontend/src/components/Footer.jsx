@@ -1,5 +1,5 @@
 import { Mail, Github, Twitter, Linkedin } from "lucide-react";
-import Logo from "../../public/SkillNova-Logo.png";
+import Logo from "../../public/resumeaionlinelogo.png";
 import { Link } from "react-router-dom";
 
 export default function Footer() {

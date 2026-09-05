@@ -8,12 +8,12 @@
   "theme_color": "#2563eb",
   "icons": [
     {
-      "src": "/SkillNova-Logo.png",
+      "src": "/resumeaionlinelogo.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/SkillNova-Logo.png",
+      "src": "/resumeaionlinelogo.png",
       "sizes": "512x512",
       "type": "image/png"
     }

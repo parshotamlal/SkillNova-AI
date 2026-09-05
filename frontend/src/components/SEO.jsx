@@ -25,7 +25,7 @@ import { Helmet } from 'react-helmet-async';
 import PropTypes from 'prop-types';
 
 const BASE_URL = 'https://www.resumeaionline.in';
-const LOGO_URL = `${BASE_URL}/SkillNova-Logo.png`;
+const LOGO_URL = `${BASE_URL}/resumeaionlinelogo.png`;
 const SITE_NAME = 'ResumeAI Online';
 const TWITTER_HANDLE = '@resumeaionline';
 
