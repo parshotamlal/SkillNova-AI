@@ -5,7 +5,7 @@
   <!-- Homepage -->
   <url>
     <loc>https://www.resumeaionline.in/</loc>
-    <lastmod>2026-08-30</lastmod>
+    <lastmod>2026-09-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://www.resumeaionline.in/" />
@@ -18,7 +18,7 @@
   <!-- ATS Score Checker Tool -->
   <url>
     <loc>https://www.resumeaionline.in/check-ats-score</loc>
-    <lastmod>2026-08-30</lastmod>
+    <lastmod>2026-09-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://www.resumeaionline.in/check-ats-score" />
@@ -29,7 +29,7 @@
   <!-- Resume Templates Collection -->
   <url>
     <loc>https://www.resumeaionline.in/templates</loc>
-    <lastmod>2026-08-30</lastmod>
+    <lastmod>2026-09-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
     <xhtml:link rel="alternate" hreflang="en-IN" href="https://www.resumeaionline.in/templates" />
@@ -40,31 +40,40 @@
   <!-- AI Resume Analyzer -->
   <url>
     <loc>https://www.resumeaionline.in/analyze</loc>
-    <lastmod>2026-08-30</lastmod>
+    <lastmod>2026-09-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://www.resumeaionline.in/analyze" />
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://www.resumeaionline.in/analyze" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.resumeaionline.in/analyze" />
   </url>
 
   <!-- Pricing Plans -->
   <url>
     <loc>https://www.resumeaionline.in/pricing</loc>
-    <lastmod>2026-08-30</lastmod>
+    <lastmod>2026-09-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://www.resumeaionline.in/pricing" />
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://www.resumeaionline.in/pricing" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.resumeaionline.in/pricing" />
   </url>
 
   <!-- About Us (E-E-A-T & Trust) -->
   <url>
     <loc>https://www.resumeaionline.in/about</loc>
-    <lastmod>2026-08-30</lastmod>
+    <lastmod>2026-09-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://www.resumeaionline.in/about" />
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://www.resumeaionline.in/about" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.resumeaionline.in/about" />
   </url>
 
   <!-- Recruitment & Candidate Matching -->
   <url>
     <loc>https://www.resumeaionline.in/recruitment</loc>
-    <lastmod>2026-08-30</lastmod>
+    <lastmod>2026-09-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
@@ -72,7 +81,7 @@
   <!-- Help Center & FAQs -->
   <url>
     <loc>https://www.resumeaionline.in/help-center</loc>
-    <lastmod>2026-08-30</lastmod>
+    <lastmod>2026-09-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
@@ -80,7 +89,7 @@
   <!-- System Status -->
   <url>
     <loc>https://www.resumeaionline.in/status</loc>
-    <lastmod>2026-08-30</lastmod>
+    <lastmod>2026-09-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.70</priority>
   </url>
@@ -88,7 +97,7 @@
   <!-- Privacy Policy -->
   <url>
     <loc>https://www.resumeaionline.in/privacy-policy</loc>
-    <lastmod>2026-08-30</lastmod>
+    <lastmod>2026-09-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.50</priority>
   </url>
@@ -96,7 +105,7 @@
   <!-- Terms of Service -->
   <url>
     <loc>https://www.resumeaionline.in/terms-of-service</loc>
-    <lastmod>2026-08-30</lastmod>
+    <lastmod>2026-09-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.50</priority>
   </url>

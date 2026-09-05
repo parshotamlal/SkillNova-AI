@@ -1,5 +1,7 @@
 # robots.txt — ResumeAI Online (https://www.resumeaionline.in)
-# Updated: August 2026
+# Updated: September 2026
+
+Host: https://www.resumeaionline.in
 
 User-agent: *
 Allow: /

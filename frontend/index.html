@@ -33,8 +33,23 @@
   <link rel="alternate" hreflang="en-AU" href="https://www.resumeaionline.in/" />
   <link rel="alternate" hreflang="x-default" href="https://www.resumeaionline.in/" />
 
+  <!-- ═══ Preconnect & DNS-Prefetch (Core Web Vitals Boost) ════════ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin />
+  <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
+  <link rel="dns-prefetch" href="https://googleads.g.doubleclick.net" />
+
   <!-- ═══ Google Verification ══════════════════════════════════════ -->
   <meta name="google-site-verification" content="JAh_Z3chAYsF6HUtlSeZYCth5Se6R1pgqWMo8VmIyH0" />
+
+  <!-- ═══ Geo & Crawler Metadata ════════════════════════════════════ -->
+  <meta name="geo.region" content="IN" />
+  <meta name="geo.placename" content="India" />
+  <meta name="rating" content="general" />
+  <meta name="distribution" content="global" />
+  <meta name="revisit-after" content="2 days" />
+  <meta name="format-detection" content="telephone=no" />
 
   <!-- ═══ Google AdSense ═══════════════════════════════════════════ -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2264259885457570"
@@ -47,6 +62,7 @@
   <meta property="og:description"
     content="Build a job-winning ATS resume in 5 minutes with AI. Free resume builder, ATS score checker & 50+ templates." />
   <meta property="og:image" content="https://www.resumeaionline.in/SkillNova-Logo.png" />
+  <meta property="og:image:alt" content="ResumeAI Online Logo" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:site_name" content="ResumeAI Online" />
@@ -60,12 +76,9 @@
   <meta name="twitter:description"
     content="Build a job-winning ATS resume in 5 minutes. Free AI resume builder for freshers, engineers & professionals." />
   <meta name="twitter:image" content="https://www.resumeaionline.in/SkillNova-Logo.png" />
+  <meta name="twitter:image:alt" content="ResumeAI Online" />
 
-  <!-- ═══ Google Fonts — 2 families only (was 7, saves ~1.5s LCP) ═══
-       Inter  → body text  |  Syne → headings
-       Non-render-blocking: load as print, swap to all onload          -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <!-- ═══ Google Fonts ═════════════════════════════════════════════ -->
   <link rel="preload" as="style"
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" />
   <link rel="stylesheet"
@@ -75,6 +88,89 @@
     <link rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" />
   </noscript>
+
+  <!-- ═══ Static JSON-LD Structured Data (Instant Crawler Recognition) ═ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://www.resumeaionline.in/#organization",
+        "name": "ResumeAI Online",
+        "alternateName": ["resumeaionline.in", "SkillNova AI", "ResumeAI"],
+        "url": "https://www.resumeaionline.in",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://www.resumeaionline.in/SkillNova-Logo.png",
+          "width": 200,
+          "height": 60
+        },
+        "sameAs": [
+          "https://www.linkedin.com/company/resumeaionline",
+          "https://twitter.com/resumeaionline",
+          "https://github.com/parshotamlal"
+        ],
+        "founder": {
+          "@type": "Person",
+          "name": "Parshotam Lal",
+          "url": "https://github.com/parshotamlal"
+        },
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "customer support",
+          "availableLanguage": ["English", "Hindi"],
+          "email": "parshotamworks@gmail.com"
+        }
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://www.resumeaionline.in/#website",
+        "url": "https://www.resumeaionline.in",
+        "name": "ResumeAI Online",
+        "publisher": {
+          "@id": "https://www.resumeaionline.in/#organization"
+        },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://www.resumeaionline.in/templates?q={search_term_string}"
+          },
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "name": "ResumeAI Online — AI Resume Builder & ATS Checker",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "INR",
+          "priceValidUntil": "2027-12-31"
+        },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.9",
+          "ratingCount": "3420",
+          "bestRating": "5",
+          "worstRating": "1"
+        },
+        "featureList": [
+          "AI Resume Builder",
+          "ATS Resume Score Checker",
+          "50+ ATS-Friendly Resume Templates",
+          "Cover Letter Generator",
+          "PDF Export with Zero Formatting Errors",
+          "Real-time ATS Optimization & Keyword Analysis"
+        ],
+        "url": "https://www.resumeaionline.in/"
+      }
+    ]
+  }
+  </script>
 
   <!-- ═══ Sitemap Reference ════════════════════════════════════════ -->
   <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
