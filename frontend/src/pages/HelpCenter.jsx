@@ -192,6 +192,8 @@ export default function HelpCenter() {
           item.q.toLowerCase().includes(query.toLowerCase()) ||
           item.a.toLowerCase().includes(query.toLowerCase())
       ),
+    }));
+
   const allFaqItems = useMemo(() => {
     return faqs.flatMap((c) => c.items);
   }, []);
