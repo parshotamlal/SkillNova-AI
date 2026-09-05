@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { gsap } from "gsap";
 import { fetchProfile } from "../services/api";
-import Logo from "../../public/resumeaionlinelogo.png";
+
+const Logo = "/resumeaionlinelogo.png";
  
 export default function Navbar({ showAuthButtons = true }) {
   const navigate = useNavigate();

@@ -1,6 +1,7 @@
 import { Mail, Github, Twitter, Linkedin } from "lucide-react";
-import Logo from "../../public/resumeaionlinelogo.png";
 import { Link } from "react-router-dom";
+
+const Logo = "/resumeaionlinelogo.png";
 
 export default function Footer() {
   return (
