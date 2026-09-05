@@ -32,7 +32,7 @@ export default function Upload() {
   const analyzeBtn     = useRef(null);
   const dropZoneRef    = useRef(null);
  
-  // ── GSAP entrance ──────────────────────────────────────────────────
+  // ── GSAP entrance ───────────────────────────────────s───────────────
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.set([orb1Ref.current, orb2Ref.current], { scale: 0.5, opacity: 0 });
