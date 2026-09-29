@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
 import { Upload, Brain, Target, Star, ChevronDown } from "lucide-react";
 import { IoDocumentOutline } from "react-icons/io5";
@@ -238,22 +239,22 @@ export default function HomePage() {
               Get detailed ATS score checks, section-by-section improvements, and instant professional templates designed to land you interviews.
             </p>
             <div ref={heroBtnRef} className="flex flex-col sm:flex-row justify-center items-center gap-4">
-              <button
+              <Link
+                href="/check-ats-score"
                 aria-label="Check ATS Score"
-                onClick={() => router.push("/check-ats-score")}
                 className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 text-base font-semibold rounded-2xl shadow-lg shadow-blue-500/15 hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 inline-flex items-center justify-center cursor-pointer"
               >
                 <IoDocumentOutline className="mr-2 h-5 w-5" aria-hidden="true" />
                 Check ATS Score
-              </button>
-              <button
+              </Link>
+              <Link
+                href="/analyze"
                 aria-label="Start Analyzing Resume"
-                onClick={() => router.push("/analyze")}
                 className="w-full sm:w-auto bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-8 py-4 text-base font-semibold rounded-2xl shadow-sm hover:shadow-md transition-all duration-200 transform hover:-translate-y-0.5 inline-flex items-center justify-center cursor-pointer"
               >
                 <Upload className="mr-2 h-5 w-5" aria-hidden="true" />
                 Start Analyzing
-              </button>
+              </Link>
             </div>
  
             {/* Stats row */}
@@ -493,21 +494,23 @@ export default function HomePage() {
               { title: "Digital Marketing", desc: "SEO, Performance Ads & Social Media", href: "/templates" },
               { title: "Finance & Accounting", desc: "Financial Modeling, CA, Auditing & Banking", href: "/templates" },
             ].map((cat, i) => (
-              <button
+              <Link
                 key={i}
-                onClick={() => router.push(cat.href)}
-                className="text-left bg-white/90 hover:bg-blue-50/80 p-5 rounded-2xl border border-gray-100 shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 cursor-pointer group"
+                href={cat.href}
+                className="text-left bg-white/90 hover:bg-blue-50/80 p-5 rounded-2xl border border-gray-100 shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 cursor-pointer group flex flex-col justify-between"
               >
-                <h3 className="font-bold text-gray-900 group-hover:text-blue-600 text-base mb-1">
-                  {cat.title}
-                </h3>
-                <p className="text-xs text-gray-500 leading-relaxed">
-                  {cat.desc}
-                </p>
+                <div>
+                  <h3 className="font-bold text-gray-900 group-hover:text-blue-600 text-base mb-1">
+                    {cat.title}
+                  </h3>
+                  <p className="text-xs text-gray-500 leading-relaxed">
+                    {cat.desc}
+                  </p>
+                </div>
                 <span className="inline-block mt-3 text-xs font-semibold text-blue-600">
                   Build Resume →
                 </span>
-              </button>
+              </Link>
             ))}
           </div>
         </section>
@@ -594,18 +597,18 @@ export default function HomePage() {
               Scan your resume in 3 seconds, beat the ATS filters, and start getting interview callbacks this week.
             </p>
             <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-              <button
-                onClick={() => router.push("/check-ats-score")}
-                className="w-full sm:w-auto bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg font-bold rounded-2xl shadow-lg transition-all transform hover:scale-105 cursor-pointer"
+              <Link
+                href="/check-ats-score"
+                className="w-full sm:w-auto bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg font-bold rounded-2xl shadow-lg transition-all transform hover:scale-105 inline-block cursor-pointer"
               >
                 Scan My Resume Free →
-              </button>
-              <button
-                onClick={() => router.push("/templates")}
-                className="w-full sm:w-auto bg-blue-700/60 hover:bg-blue-700 text-white border border-white/30 px-8 py-4 text-lg font-semibold rounded-2xl transition-all cursor-pointer"
+              </Link>
+              <Link
+                href="/templates"
+                className="w-full sm:w-auto bg-blue-700/60 hover:bg-blue-700 text-white border border-white/30 px-8 py-4 text-lg font-semibold rounded-2xl transition-all inline-block cursor-pointer"
               >
                 Explore 50+ Templates
-              </button>
+              </Link>
             </div>
           </div>
         </section>

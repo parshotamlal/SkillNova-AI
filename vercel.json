@@ -1,12 +1,6 @@
 {
   "buildCommand": "cd frontend && npm install && npm run build",
-  "outputDirectory": "frontend/dist",
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/"
-    }
-  ],
+  "outputDirectory": "frontend/.next",
   "headers": [
     {
       "source": "/(.*)",
@@ -34,7 +28,7 @@
       ]
     },
     {
-      "source": "/assets/(.*)",
+      "source": "/_next/static/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
