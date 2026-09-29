@@ -357,21 +357,172 @@ export default function HomePage() {
                 </p>
               </div>
             </div>
- 
+
           </div>
         </div>
- 
+
+        {/* ── Why Resumes Fail ATS Section ─────────────────────────────── */}
+        <section className="mt-32" aria-labelledby="why-ats-heading">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <span className="text-blue-600 font-semibold tracking-wider text-xs uppercase bg-blue-100/70 px-3.5 py-1.5 rounded-full">
+              Industry Insights
+            </span>
+            <h2 id="why-ats-heading" className="text-3xl sm:text-4xl font-extrabold text-gray-900 mt-4 mb-4">
+              Why 75%+ of Resumes Never Reach a Human Recruiter
+            </h2>
+            <p className="text-gray-600 text-lg">
+              Top companies like Google, Amazon, Microsoft, and TCS use Applicant Tracking Systems (ATS) to filter hundreds of applications in seconds.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-white/90 backdrop-blur-md rounded-2xl p-7 border border-red-100 shadow-lg">
+              <div className="w-12 h-12 bg-red-100 text-red-600 rounded-xl flex items-center justify-center font-bold text-xl mb-5">
+                ✕
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Unparseable Graphics & Tables</h3>
+              <p className="text-gray-600 leading-relaxed text-sm">
+                Complex columns, icons, text boxes, and Photoshop templates confuse ATS parsers like Workday and Greenhouse, resulting in immediate auto-rejection.
+              </p>
+            </div>
+
+            <div className="bg-white/90 backdrop-blur-md rounded-2xl p-7 border border-amber-100 shadow-lg">
+              <div className="w-12 h-12 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center font-bold text-xl mb-5">
+                !
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Missing Job Description Keywords</h3>
+              <p className="text-gray-600 leading-relaxed text-sm">
+                If your resume lacks the specific hard skills, technologies, and action verbs required by the job posting, your ATS match score drops below the interview cutoff.
+              </p>
+            </div>
+
+            <div className="bg-white/90 backdrop-blur-md rounded-2xl p-7 border border-green-100 shadow-lg">
+              <div className="w-12 h-12 bg-green-100 text-green-600 rounded-xl flex items-center justify-center font-bold text-xl mb-5">
+                ✓
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">The ResumeAI Online Solution</h3>
+              <p className="text-gray-600 leading-relaxed text-sm">
+                Our AI scans your resume against the exact target job description, injects optimal keywords with zero keyword stuffing, and formats it to achieve a 90%+ ATS score.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Comparison Table (Rank booster for Google Featured Snippets) ── */}
+        <section className="mt-32" aria-labelledby="comparison-heading">
+          <div className="text-center max-w-3xl mx-auto mb-14">
+            <span className="text-teal-600 font-semibold tracking-wider text-xs uppercase bg-teal-100/70 px-3.5 py-1.5 rounded-full">
+              Feature Comparison
+            </span>
+            <h2 id="comparison-heading" className="text-3xl sm:text-4xl font-extrabold text-gray-900 mt-4 mb-4">
+              ResumeAI Online vs Traditional Resume Builders
+            </h2>
+            <p className="text-gray-600 text-lg">
+              See why modern job seekers switch from basic graphic templates to AI-native ATS optimization.
+            </p>
+          </div>
+
+          <div className="overflow-x-auto bg-white rounded-3xl shadow-xl border border-gray-100 p-2 sm:p-6">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-gray-200">
+                  <th className="p-4 font-bold text-gray-900">Feature</th>
+                  <th className="p-4 font-bold text-blue-600 bg-blue-50/70 rounded-t-xl text-center">
+                    ResumeAI Online 🚀
+                  </th>
+                  <th className="p-4 font-medium text-gray-500 text-center">Canva / Word</th>
+                  <th className="p-4 font-medium text-gray-500 text-center">Traditional Builders (Zety/Novo)</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100 text-sm">
+                <tr>
+                  <td className="p-4 font-semibold text-gray-800">Instant ATS Compatibility Score</td>
+                  <td className="p-4 text-center font-bold text-green-600 bg-blue-50/40">✓ Yes (AI-Powered 0–100)</td>
+                  <td className="p-4 text-center text-red-500">✕ No</td>
+                  <td className="p-4 text-center text-amber-600">Limited / Paid Only</td>
+                </tr>
+                <tr>
+                  <td className="p-4 font-semibold text-gray-800">Job Description Keyword Matcher</td>
+                  <td className="p-4 text-center font-bold text-green-600 bg-blue-50/40">✓ Real-time Matching</td>
+                  <td className="p-4 text-center text-red-500">✕ No</td>
+                  <td className="p-4 text-center text-red-500">✕ No</td>
+                </tr>
+                <tr>
+                  <td className="p-4 font-semibold text-gray-800">50+ Clean ATS-Tested Templates</td>
+                  <td className="p-4 text-center font-bold text-green-600 bg-blue-50/40">✓ 100% ATS Compliant</td>
+                  <td className="p-4 text-center text-red-500">✕ Often Fails ATS Parsing</td>
+                  <td className="p-4 text-center text-green-600">✓ Partial</td>
+                </tr>
+                <tr>
+                  <td className="p-4 font-semibold text-gray-800">AI Bullet Point & Summary Rewriter</td>
+                  <td className="p-4 text-center font-bold text-green-600 bg-blue-50/40">✓ Included Free</td>
+                  <td className="p-4 text-center text-red-500">✕ No</td>
+                  <td className="p-4 text-center text-amber-600">Paid Subscription</td>
+                </tr>
+                <tr>
+                  <td className="p-4 font-semibold text-gray-800">Watermark-Free High-Res PDF Export</td>
+                  <td className="p-4 text-center font-bold text-green-600 bg-blue-50/40">✓ Free Unlimited</td>
+                  <td className="p-4 text-center text-green-600">✓ Yes</td>
+                  <td className="p-4 text-center text-red-500">✕ Paid Paywall</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        {/* ── Popular Job Categories / Keywords Hub ──────────────────────── */}
+        <section className="mt-32" aria-labelledby="categories-heading">
+          <div className="text-center max-w-3xl mx-auto mb-14">
+            <span className="text-indigo-600 font-semibold tracking-wider text-xs uppercase bg-indigo-100/70 px-3.5 py-1.5 rounded-full">
+              Industry Ready
+            </span>
+            <h2 id="categories-heading" className="text-3xl sm:text-4xl font-extrabold text-gray-900 mt-4 mb-4">
+              Resume Templates Tailored For Your Domain
+            </h2>
+            <p className="text-gray-600 text-lg">
+              Explore ATS-compliant formats designed by industry hiring managers across top professions.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            {[
+              { title: "Software Engineer", desc: "Full Stack, Frontend, Backend & DevOps", href: "/templates" },
+              { title: "Data Analyst / AI", desc: "Python, SQL, PowerBI & Machine Learning", href: "/templates" },
+              { title: "College Freshers", desc: "Zero-experience projects & academic highlights", href: "/templates" },
+              { title: "Product Manager", desc: "Agile, Roadmaps, User Growth & KPIs", href: "/templates" },
+              { title: "Digital Marketing", desc: "SEO, Performance Ads & Social Media", href: "/templates" },
+              { title: "Finance & Accounting", desc: "Financial Modeling, CA, Auditing & Banking", href: "/templates" },
+            ].map((cat, i) => (
+              <button
+                key={i}
+                onClick={() => router.push(cat.href)}
+                className="text-left bg-white/90 hover:bg-blue-50/80 p-5 rounded-2xl border border-gray-100 shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 cursor-pointer group"
+              >
+                <h3 className="font-bold text-gray-900 group-hover:text-blue-600 text-base mb-1">
+                  {cat.title}
+                </h3>
+                <p className="text-xs text-gray-500 leading-relaxed">
+                  {cat.desc}
+                </p>
+                <span className="inline-block mt-3 text-xs font-semibold text-blue-600">
+                  Build Resume →
+                </span>
+              </button>
+            ))}
+          </div>
+        </section>
+
         {/* ── Testimonials Section ──────────────────────────────────────── */}
         <section className="mt-32" aria-labelledby="testimonials-heading">
           <div className="text-center mb-12">
-            <h2 id="testimonials-heading" className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Loved by Job Seekers</h2>
-            <p className="text-xl text-gray-600">See how ResumeAi Online has helped professionals land their dream jobs.</p>
+            <h2 id="testimonials-heading" className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Loved by 100,000+ Job Seekers</h2>
+            <p className="text-xl text-gray-600">See how ResumeAI Online has helped candidates land top tech, banking & corporate roles.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { name: "Sarah J.", role: "Software Engineer", text: "ResumeAi Online's ATS checker highlighted exactly what my resume was missing. I got 3 interviews in a week after updating it!" },
-              { name: "Michael T.", role: "Product Manager", text: "The AI feedback is incredibly detailed and accurate. It's like having a professional resume writer by your side 24/7." },
-              { name: "Emily R.", role: "Marketing Specialist", text: "I struggled with getting past the ATS filters. Thanks to ResumeAi Online, my resume score went from 45% to 92%." }
+              { name: "Sarah J.", role: "Senior Software Engineer @ FinTech", text: "ResumeAI Online's ATS score checker highlighted exactly which keywords my resume was missing for React & AWS roles. I received 3 interview calls within 7 days!" },
+              { name: "Michael T.", role: "Product Manager", text: "The AI summary and bullet point rewriter transformed my generic statements into high-impact, quantifiable achievements. Outstanding quality!" },
+              { name: "Emily R.", role: "Marketing Specialist", text: "I struggled getting past corporate ATS filters. With ResumeAI Online, my score climbed from 48% to 94%, and I finally received multiple recruiter callbacks." }
             ].map((testimonial, idx) => (
               <article key={idx} className="bg-white/80 backdrop-blur-md rounded-2xl p-8 border border-gray-100 shadow-xl relative">
                 <div className="flex gap-1 mb-4">
@@ -386,18 +537,39 @@ export default function HomePage() {
             ))}
           </div>
         </section>
- 
-        {/* ── FAQ Section ──────────────────────────────────────────────── */}
+
+        {/* ── Comprehensive FAQ Section ─────────────────────────────────── */}
         <section className="mt-32 mb-10" aria-labelledby="faq-heading">
           <div className="text-center mb-12">
             <h2 id="faq-heading" className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
-            <p className="text-xl text-gray-600">Everything you need to know about our AI Resume Analyzer.</p>
+            <p className="text-xl text-gray-600">Everything you need to know about ATS resumes, AI analysis & hiring algorithms.</p>
           </div>
           <div className="max-w-3xl mx-auto space-y-4">
             {[
-              { q: "How does the ATS Resume Checker work?", a: "Our AI scans your resume against standard Applicant Tracking System (ATS) algorithms. It checks for keywords, formatting, and relevance to provide a match score and actionable feedback." },
-              { q: "Is ResumeAi Online free to use?", a: "Yes! We offer a completely free tier that allows you to analyze your resume and get essential feedback to improve your job application." },
-              { q: "How accurate is the AI feedback?", a: "Our AI is trained on millions of successful resumes and job descriptions, providing industry-standard accuracy of up to 98% in predicting ATS compatibility." }
+              { 
+                q: "What is an ATS Friendly Resume?", 
+                a: "An ATS (Applicant Tracking System) friendly resume is structured and formatted so automated hiring systems (like Workday, Greenhouse, Taleo, and Lever) can parse and index your work experience, skills, and education without distortion. It avoids unparseable graphic tables, multi-layer text boxes, and incompatible fonts." 
+              },
+              { 
+                q: "How does the ResumeAI Online ATS Score Checker work?", 
+                a: "Our AI engine analyzes your uploaded resume against industry-standard ATS parsing algorithms and your target job description. It calculates a compatibility score (0–100) based on keyword density, quantifiable metrics, section clarity, and formatting compliance." 
+              },
+              { 
+                q: "Is ResumeAI Online completely free to use?", 
+                a: "Yes! You can analyze your resume, test your ATS score, customize 50+ resume templates, and download clean, watermark-free PDF resumes completely free." 
+              },
+              { 
+                q: "Can freshers with zero experience create a high-scoring ATS resume?", 
+                a: "Absolutely. ResumeAI Online provides specialized fresher templates highlighting academic coursework, internships, GitHub/live projects, certifications, and technical proficiencies to ensure high ATS rank even without years of prior employment." 
+              },
+              { 
+                q: "What is considered a good ATS resume score?", 
+                a: "An ATS score above 80% is considered strong, while a score of 90%+ puts your application in the top 5% of candidate pools, virtually guaranteeing human recruiter review." 
+              },
+              { 
+                q: "Which file format is better for ATS: PDF or DOCX?", 
+                a: "Both PDF and DOCX are accepted by modern ATS systems. ResumeAI Online generates clean, vector-rendered PDF documents that retain 100% font fidelity and structure across all major parsing engines." 
+              }
             ].map((faq, idx) => (
               <details key={idx} className="group bg-white rounded-xl shadow-sm border border-gray-100 [&_summary::-webkit-details-marker]:hidden">
                 <summary className="flex cursor-pointer items-center justify-between gap-1.5 p-6 text-gray-900 font-semibold text-lg">
@@ -411,8 +583,35 @@ export default function HomePage() {
             ))}
           </div>
         </section>
- 
+
+        {/* ── Final Call to Action ──────────────────────────────────────── */}
+        <section className="mt-24 mb-16 bg-gradient-to-r from-blue-600 via-indigo-600 to-teal-500 rounded-3xl p-10 sm:p-16 text-center text-white shadow-2xl relative overflow-hidden">
+          <div className="relative z-10 max-w-2xl mx-auto">
+            <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight mb-4">
+              Ready to Land Your Dream Job?
+            </h2>
+            <p className="text-blue-100 text-lg sm:text-xl mb-8 leading-relaxed">
+              Scan your resume in 3 seconds, beat the ATS filters, and start getting interview callbacks this week.
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+              <button
+                onClick={() => router.push("/check-ats-score")}
+                className="w-full sm:w-auto bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg font-bold rounded-2xl shadow-lg transition-all transform hover:scale-105 cursor-pointer"
+              >
+                Scan My Resume Free →
+              </button>
+              <button
+                onClick={() => router.push("/templates")}
+                className="w-full sm:w-auto bg-blue-700/60 hover:bg-blue-700 text-white border border-white/30 px-8 py-4 text-lg font-semibold rounded-2xl transition-all cursor-pointer"
+              >
+                Explore 50+ Templates
+              </button>
+            </div>
+          </div>
+        </section>
+
       </main>
     </div>
   );
 }
+

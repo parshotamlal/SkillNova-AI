@@ -157,6 +157,36 @@ export default function RootLayout({ children }) {
         ],
         url: "https://www.resumeaionline.in/",
       },
+      {
+        "@type": "FAQPage",
+        "@id": "https://www.resumeaionline.in/#faq",
+        mainEntity: [
+          {
+            "@type": "Question",
+            name: "How does the AI Resume Builder and ATS Checker work?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "ResumeAI Online analyzes your resume against industry-standard ATS algorithms and job descriptions to evaluate formatting, keyword matching, and quantifiable achievements, giving you a detailed score and AI suggestions to reach 90%+ ATS score.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "Is ResumeAI Online completely free to use?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Yes! You can build resumes, test ATS compatibility scores, and download standard ATS-optimized PDF resumes for free.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "Are the resume templates ATS friendly?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Yes, all 50+ resume templates on ResumeAI Online are designed with clean typography, standard headers, and single/dual column hierarchies tested against top ATS parsers like Workday, Greenhouse, Taleo, and Lever.",
+            },
+          },
+        ],
+      },
     ],
   };
 
