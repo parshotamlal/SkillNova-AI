@@ -1,5 +1,7 @@
+'use client';
+
 import { Mail, Github, Twitter, Linkedin } from "lucide-react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 
 const Logo = "/resumeaionlinelogo.png";
 
@@ -59,32 +61,32 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Product — use <Link> so Google can crawl these */}
+          {/* Product */}
           <nav aria-label="Product navigation">
             <h3 className="text-lg font-semibold mb-4">Product</h3>
             <ul className="space-y-2 text-sm text-gray-400">
               <li>
-                <Link to="/" className="hover:text-white transition-colors">
+                <Link href="/" className="hover:text-white transition-colors">
                   Home
                 </Link>
               </li>
               <li>
-                <Link to="/analyze" className="hover:text-white transition-colors">
+                <Link href="/analyze" className="hover:text-white transition-colors">
                   AI Resume Analyzer
                 </Link>
               </li>
               <li>
-                <Link to="/check-ats-score" className="hover:text-white transition-colors">
+                <Link href="/check-ats-score" className="hover:text-white transition-colors">
                   ATS Score Checker
                 </Link>
               </li>
               <li>
-                <Link to="/templates" className="hover:text-white transition-colors">
+                <Link href="/templates" className="hover:text-white transition-colors">
                   Resume Templates
                 </Link>
               </li>
               <li>
-                <Link to="/pricing" className="hover:text-white transition-colors">
+                <Link href="/pricing" className="hover:text-white transition-colors">
                   Pricing
                 </Link>
               </li>
@@ -96,7 +98,7 @@ export default function Footer() {
             <h3 className="text-lg font-semibold mb-4">Company</h3>
             <ul className="space-y-2 text-sm text-gray-400">
               <li>
-                <Link to="/about" className="hover:text-white transition-colors">
+                <Link href="/about" className="hover:text-white transition-colors">
                   About Us
                 </Link>
               </li>
@@ -127,7 +129,7 @@ export default function Footer() {
             <ul className="space-y-2 text-sm text-gray-400 mb-4">
               <li>
                 <Link
-                  to="/help-center"
+                  href="/help-center"
                   className="hover:text-white transition-colors"
                 >
                   Help Center
@@ -135,7 +137,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  to="/privacy-policy"
+                  href="/privacy-policy"
                   className="hover:text-white transition-colors"
                 >
                   Privacy Policy
@@ -143,7 +145,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  to="/terms-of-service"
+                  href="/terms-of-service"
                   className="hover:text-white transition-colors"
                 >
                   Terms of Service
@@ -151,7 +153,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  to="/status"
+                  href="/status"
                   className="hover:text-white transition-colors"
                 >
                   Status
@@ -176,13 +178,13 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} ResumeAI Online. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0 text-sm text-gray-400">
-            <Link to="/privacy-policy" className="hover:text-white transition-colors">
+            <Link href="/privacy-policy" className="hover:text-white transition-colors">
               Privacy
             </Link>
-            <Link to="/terms-of-service" className="hover:text-white transition-colors">
+            <Link href="/terms-of-service" className="hover:text-white transition-colors">
               Terms
             </Link>
-            <Link to="/help-center" className="hover:text-white transition-colors">
+            <Link href="/help-center" className="hover:text-white transition-colors">
               Help
             </Link>
           </div>

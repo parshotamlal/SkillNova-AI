@@ -1,5 +1,7 @@
+'use client';
+
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import { Upload as UploadIcon, FileText, Loader2 } from "lucide-react";
 import axios from "axios";
 import { gsap } from "gsap";
@@ -7,13 +9,13 @@ import SEO from "../components/SEO";
 import { processRecruitmentMatching } from "../services/recruitmentMatcher";
  
 export default function Upload() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [resumeFile, setResumeFile] = useState(null);
   const [jobDescription, _setJobDescription] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const getApiBaseUrl = () => {
-    let url = import.meta.env.VITE_API_URL;
+    let url = (typeof process !== "undefined" && process.env?.NEXT_PUBLIC_API_URL) || "";
     if (!url) return "";
     url = url.trim().replace(/\/+$/, "");
     if (url.endsWith("/api")) url = url.slice(0, -4);
@@ -175,10 +177,16 @@ export default function Upload() {
         }
       }
 
-      // Outro before navigate
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem("ats_result", JSON.stringify(result));
+      }
+
       gsap.to(resumeCardRef.current, {
-        opacity: 0, y: -20, duration: 0.35, ease: "power2.in",
-        onComplete: () => navigate("/ats-result", { state: { result } }),
+        opacity: 0,
+        y: -20,
+        duration: 0.35,
+        ease: "power2.in",
+        onComplete: () => router.push("/ats-result"),
       });
     } catch (err) {
       console.error(err);

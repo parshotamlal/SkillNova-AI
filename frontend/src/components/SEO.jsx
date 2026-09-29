@@ -1,27 +1,10 @@
+'use client';
+
 /**
- * SEO.jsx — Complete per-page SEO meta + structured data (JSON-LD)
- *
- * Usage (place at top of any page component):
- *
- *   <SEO
- *     title="..."
- *     description="..."
- *     url="/ats-resume-checker"
- *     keywords="..."
- *     schemaType="software"    // "software" | "website" | "about" | "collection" | "page"
- *     showFaq={true}
- *     faqItems={[{ q, a }]}
- *     showHowTo={true}
- *     howToTitle="..."
- *     howToDescription="..."
- *     howToSteps={[{ name, text, url }]}
- *     showBreadcrumb={true}
- *     breadcrumbs={[{ name, url }]}
- *     noindex={false}
- *   />
+ * SEO.jsx — Next.js and React 19 compatible SEO & Structured Data (JSON-LD)
  */
 
-import { Helmet } from 'react-helmet-async';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 const BASE_URL = 'https://www.resumeaionline.in';
@@ -119,7 +102,6 @@ const softwareSchema = {
   publisher: organizationSchema,
 };
 
-// ── Default FAQ items (shown on Homepage) ─────────────────────────────────
 const defaultFaqItems = [
   {
     q: 'How does the ATS Resume Checker work?',
@@ -147,7 +129,6 @@ const defaultFaqItems = [
   },
 ];
 
-// ── Build FAQ schema ────────────────────────────────────────────────────────
 function buildFaqSchema(items) {
   return {
     '@context': 'https://schema.org',
@@ -160,7 +141,6 @@ function buildFaqSchema(items) {
   };
 }
 
-// ── Build HowTo schema ─────────────────────────────────────────────────────
 function buildHowToSchema(title, description, steps) {
   return {
     '@context': 'https://schema.org',
@@ -178,7 +158,6 @@ function buildHowToSchema(title, description, steps) {
   };
 }
 
-// ── Build BreadcrumbList schema ────────────────────────────────────────────
 function buildBreadcrumbSchema(crumbs) {
   return {
     '@context': 'https://schema.org',
@@ -192,7 +171,6 @@ function buildBreadcrumbSchema(crumbs) {
   };
 }
 
-// ── Build AboutPage schema ────────────────────────────────────────────────
 function buildAboutSchema() {
   return {
     '@context': 'https://schema.org',
@@ -204,7 +182,6 @@ function buildAboutSchema() {
   };
 }
 
-// ── Build CollectionPage schema (for templates) ───────────────────────────
 function buildCollectionSchema(title, description, url) {
   return {
     '@context': 'https://schema.org',
@@ -220,73 +197,65 @@ function buildCollectionSchema(title, description, url) {
   };
 }
 
-// ── Main SEO Component ─────────────────────────────────────────────────────
 export default function SEO({
-  title,
-  description,
-  url,
-  imageUrl,
-  keywords,
-  type,
-  noindex,
-  // Schema toggles
-  showFaq,
-  faqItems,
-  showHowTo,
-  howToTitle,
-  howToDescription,
-  howToSteps,
-  showBreadcrumb,
-  breadcrumbs,
-  schemaType,   // 'software' | 'website' | 'home' | 'about' | 'collection' | 'page'
+  title = 'Free AI Resume Builder | ATS Resume Checker & Templates — ResumeAI Online',
+  description = 'Build a job-winning ATS resume in 5 minutes with AI. Free resume builder, ATS score checker, 50+ templates & cover letter generator.',
+  url = '/',
+  imageUrl = LOGO_URL,
+  keywords = 'AI resume builder, free resume builder, ATS resume checker, ATS score checker, resume templates',
+  type = 'website',
+  noindex = false,
+  showFaq = false,
+  faqItems = [],
+  showHowTo = false,
+  howToTitle = '',
+  howToDescription = '',
+  howToSteps = [],
+  showBreadcrumb = false,
+  breadcrumbs = [],
+  schemaType = 'website',
 }) {
   const cleanPath = url ? (url.startsWith('/') ? url : `/${url}`) : '/';
   const canonicalUrl = `${BASE_URL}${cleanPath}`;
   const ogImage = imageUrl || LOGO_URL;
 
-  // Build the array of JSON-LD schemas to inject
-  const schemas = [
-    organizationSchema,
-    websiteSchema,
-  ];
-
+  const schemas = [organizationSchema, websiteSchema];
   if (schemaType === 'software' || schemaType === 'home') {
     schemas.push(softwareSchema);
   }
-
   if (schemaType === 'about') {
     schemas.push(buildAboutSchema());
   }
-
   if (schemaType === 'collection') {
     schemas.push(buildCollectionSchema(title, description, cleanPath));
   }
-
   if (showFaq) {
     schemas.push(buildFaqSchema(faqItems && faqItems.length ? faqItems : defaultFaqItems));
   }
-
   if (showHowTo && howToSteps && howToSteps.length) {
     schemas.push(buildHowToSchema(howToTitle, howToDescription, howToSteps));
   }
-
   if (showBreadcrumb && breadcrumbs && breadcrumbs.length) {
     schemas.push(buildBreadcrumbSchema(breadcrumbs));
   }
 
+  useEffect(() => {
+    if (title && typeof document !== 'undefined') {
+      document.title = title;
+    }
+  }, [title]);
+
   return (
-    <Helmet>
-      {/* ── Standard SEO ────────────────────────────────────────── */}
+    <>
       <title>{title}</title>
       <meta name="description" content={description} />
       {keywords && <meta name="keywords" content={keywords} />}
       <link rel="canonical" href={canonicalUrl} />
-      {noindex
-        ? <meta name="robots" content="noindex, nofollow" />
-        : <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-      }
-
-      {/* ── Open Graph ──────────────────────────────────────────── */}
+      {noindex ? (
+        <meta name="robots" content="noindex, nofollow" />
+      ) : (
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+      )}
       <meta property="og:type" content={type || 'website'} />
       <meta property="og:url" content={canonicalUrl} />
       <meta property="og:title" content={title} />
@@ -296,28 +265,23 @@ export default function SEO({
       <meta property="og:image:height" content="630" />
       <meta property="og:site_name" content={SITE_NAME} />
       <meta property="og:locale" content="en_IN" />
-      <meta property="og:locale:alternate" content="en_US" />
-      <meta property="og:locale:alternate" content="en_GB" />
-
-      {/* ── Twitter Card ────────────────────────────────────────── */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:site" content={TWITTER_HANDLE} />
       <meta name="twitter:creator" content="@parshotamsinghx" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={ogImage} />
-
-      {/* ── JSON-LD Structured Data ──────────────────────────────── */}
       {schemas.map((schema, i) => (
-        <script key={i} type="application/ld+json">
-          {JSON.stringify(schema)}
-        </script>
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        />
       ))}
-    </Helmet>
+    </>
   );
 }
 
-// ── PropTypes ──────────────────────────────────────────────────────────────
 SEO.propTypes = {
   title: PropTypes.string,
   description: PropTypes.string,
@@ -337,20 +301,4 @@ SEO.propTypes = {
   showBreadcrumb: PropTypes.bool,
   breadcrumbs: PropTypes.arrayOf(PropTypes.shape({ name: PropTypes.string, url: PropTypes.string })),
   schemaType: PropTypes.oneOf(['software', 'website', 'home', 'about', 'collection', 'page']),
-};
-
-SEO.defaultProps = {
-  title: 'Free AI Resume Builder | ATS Resume Checker & Templates — ResumeAI Online',
-  description:
-    'Build a job-winning ATS resume in 5 minutes with AI. Free resume builder, ATS score checker, 50+ templates & cover letter generator. Trusted by 100,000+ job seekers.',
-  url: '/',
-  imageUrl: LOGO_URL,
-  keywords:
-    'AI resume builder, free resume builder, ATS resume checker, ATS score checker, resume templates, resume maker, online resume builder, resume for freshers, software engineer resume, resume builder India',
-  type: 'website',
-  noindex: false,
-  showFaq: false,
-  showHowTo: false,
-  showBreadcrumb: false,
-  schemaType: 'website',
 };

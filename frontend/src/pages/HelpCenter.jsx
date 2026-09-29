@@ -1,5 +1,7 @@
+'use client';
+
 import { useState, useEffect, useRef, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import { Search, ChevronDown, HelpCircle, Zap, CreditCard, Settings, MessageCircle, BookOpen } from "lucide-react";
 import { gsap } from "gsap";
 import SEO from "../components/SEO";
@@ -92,7 +94,7 @@ const faqs = [
 ];
  
 export default function HelpCenter() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [query, setQuery]                   = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
   const [openItem, setOpenItem]             = useState(null);
@@ -362,7 +364,7 @@ export default function HelpCenter() {
  
         <p
           className="text-center text-sm text-gray-400 mt-10 cursor-pointer hover:text-blue-500 transition"
-          onClick={() => navigate("/")}
+          onClick={() => router.push("/")}
         >
           ← Back to home
         </p>

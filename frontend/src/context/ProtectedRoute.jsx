@@ -1,33 +1,45 @@
-import { Navigate } from "react-router-dom";
+'use client';
+
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { fetchProfile } from "../services/api";
 
 export default function ProtectedRoute({ children }) {
+  const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(null);
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // First check if token exists in localStorage
-        const token = localStorage.getItem('authToken');
-        
+        if (typeof window === "undefined") return;
+        const token = localStorage.getItem("authToken");
+
         if (!token) {
           setIsAuthenticated(false);
+          router.replace("/login");
           return;
         }
 
         const res = await fetchProfile();
-        setIsAuthenticated(!!res.user);
+        if (res && res.user) {
+          setIsAuthenticated(true);
+        } else {
+          localStorage.removeItem("authToken");
+          setIsAuthenticated(false);
+          router.replace("/login");
+        }
       } catch (error) {
         console.error("Auth check failed:", error);
-        // Remove invalid token from localStorage
-        localStorage.removeItem('authToken');
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("authToken");
+        }
         setIsAuthenticated(false);
+        router.replace("/login");
       }
     };
 
     checkAuth();
-  }, []);
+  }, [router]);
 
   if (isAuthenticated === null) {
     return (
@@ -38,7 +50,7 @@ export default function ProtectedRoute({ children }) {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return null;
   }
 
   return children;

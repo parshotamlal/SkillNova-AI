@@ -1,5 +1,7 @@
+'use client';
+
 import { useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import { FileText } from "lucide-react";
 import { gsap } from "gsap";
 import SEO from "../components/SEO";
@@ -48,7 +50,7 @@ const sections = [
 ];
  
 export default function TermsOfService() {
-  const navigate = useNavigate();
+  const router = useRouter();
  
   const pageRef      = useRef(null);
   const orb1Ref      = useRef(null);
@@ -210,7 +212,7 @@ export default function TermsOfService() {
  
         <p
           className="text-center text-sm text-gray-400 mt-8 cursor-pointer hover:text-blue-500 transition"
-          onClick={() => navigate("/")}
+          onClick={() => router.push("/")}
         >
           ← Back to home
         </p>

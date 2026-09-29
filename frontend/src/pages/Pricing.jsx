@@ -1,5 +1,7 @@
+'use client';
+
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { Check, Crown, Gift, ExternalLink, X, ShieldCheck } from "lucide-react";
 // import axios from "axios";
 import SEO from "../components/SEO";
@@ -193,7 +195,7 @@ export default function Pricing() {
             {latestClaim.status === "pending" && userStatus.isAdmin && (
               <div className="mt-3 pt-3 border-t border-amber-200/60">
                 <Link
-                  to="/admin/payments"
+                  href="/admin/payments"
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-semibold transition shadow-sm"
                 >
                   <ShieldCheck className="w-3.5 h-3.5" />

@@ -1,3 +1,5 @@
+'use client';
+
 import { createContext, useContext, useEffect, useState } from "react";
 import { fetchProfile } from "../services/api";
 
@@ -10,7 +12,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // First check if token exists in localStorage
+        if (typeof window === 'undefined') return;
         const token = localStorage.getItem('authToken');
         
         if (!token) {
@@ -19,13 +21,14 @@ export const AuthProvider = ({ children }) => {
         }
 
         const res = await fetchProfile();
-        if (res.user) {
+        if (res && res.user) {
           setUser(res.user);
         }
       } catch (error) {
         console.error("Auth check failed:", error);
-        // Remove invalid token from localStorage
-        localStorage.removeItem('authToken');
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('authToken');
+        }
         setUser(null);
       } finally {
         setLoading(false);

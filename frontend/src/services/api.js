@@ -1,5 +1,5 @@
 const getApiBaseUrl = () => {
-  let url = import.meta.env.VITE_API_URL || "";
+  let url = (typeof process !== "undefined" && process.env?.NEXT_PUBLIC_API_URL) || (typeof import.meta !== "undefined" && import.meta.env?.VITE_API_URL) || "";
   if (!url) return "";
   url = url.trim().replace(/\/+$/, "");
   if (url.endsWith("/api")) {

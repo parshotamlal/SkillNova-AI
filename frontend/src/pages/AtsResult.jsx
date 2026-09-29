@@ -1,4 +1,6 @@
-import { useLocation, useNavigate } from "react-router-dom";
+'use client';
+
+import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
   RotateCcw,
@@ -13,13 +15,27 @@ import {
   Award,
   List
 } from "lucide-react";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import RecruitmentMatchResultsCard from "../components/RecruitmentMatchResultsCard";
 
-export default function AtsResult() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const result = location.state?.result;
+export default function AtsResult({ initialResult = null }) {
+  const router = useRouter();
+  const [result, setResult] = useState(initialResult);
+  const [isClientLoaded, setIsClientLoaded] = useState(false);
+
+  useEffect(() => {
+    setIsClientLoaded(true);
+    if (!result && typeof window !== "undefined") {
+      try {
+        const stored = sessionStorage.getItem("ats_result");
+        if (stored) {
+          setResult(JSON.parse(stored));
+        }
+      } catch (e) {
+        console.error("Failed to load ATS result from session", e);
+      }
+    }
+  }, [result]);
 
   const reportRef = useRef(null);
 
@@ -28,7 +44,7 @@ export default function AtsResult() {
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="text-center">
           <p className="text-lg text-red-600 font-semibold">No analysis result found.</p>
-          <button className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition" onClick={() => navigate("/check-ats-score")}>
+          <button className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition cursor-pointer" onClick={() => router.push("/check-ats-score")}>
             Go Back
           </button>
         </div>
@@ -84,7 +100,7 @@ export default function AtsResult() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <button onClick={() => navigate("/check-ats-score")} className="flex items-center text-sm text-gray-700 hover:text-blue-600 font-medium">
+              <button onClick={() => router.push("/check-ats-score")} className="flex items-center text-sm text-gray-700 hover:text-blue-600 font-medium">
                 <ArrowLeft className="h-4 w-4 mr-2" />Back
               </button>
               <span className="text-xl font-bold text-gray-900 ml-6">ATS Analysis Result</span>
@@ -94,7 +110,7 @@ export default function AtsResult() {
               <button onClick={() => window.print()} className="hidden sm:flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-100">
                 <FileText className="h-4 w-4 mr-2" />Print Report
               </button>
-              <button onClick={() => navigate("/check-ats-score")} className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700">
+              <button onClick={() => router.push("/check-ats-score")} className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700">
                 <RotateCcw className="h-4 w-4 mr-2" />Analyze Another
               </button>
             </div>

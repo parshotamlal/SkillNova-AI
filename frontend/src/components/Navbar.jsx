@@ -1,13 +1,16 @@
+'use client';
+
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
 import { gsap } from "gsap";
 import { fetchProfile } from "../services/api";
 
 const Logo = "/resumeaionlinelogo.png";
  
 export default function Navbar({ showAuthButtons = true }) {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const router = useRouter();
+  const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [login, setLogin] = useState(false);
  
@@ -20,7 +23,7 @@ export default function Navbar({ showAuthButtons = true }) {
  
   const [currentUser, setCurrentUser] = useState(null);
 
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path) => pathname === path;
   const isAdmin = currentUser?.email?.toLowerCase() === "parshotamworks@gmail.com";
 
   const navLinks = [
@@ -35,6 +38,7 @@ export default function Navbar({ showAuthButtons = true }) {
  
   // ── Mount animation ──────────────────────────────────────────────
   useEffect(() => {
+    if (!navbarRef.current) return;
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
  
@@ -87,8 +91,7 @@ export default function Navbar({ showAuthButtons = true }) {
         { height: 0, opacity: 0 },
         { height: "auto", opacity: 1, duration: 0.35, ease: "power2.out" }
       );
-      // Stagger the menu items inside
-      const items = mobileMenuRef.current.querySelectorAll("button");
+      const items = mobileMenuRef.current.querySelectorAll("button, a");
       gsap.fromTo(
         items,
         { x: -16, opacity: 0 },
@@ -106,10 +109,10 @@ export default function Navbar({ showAuthButtons = true }) {
  
   // ── Nav link hover handler ───────────────────────────────────────
   const handleLinkHover = (el) => {
-    gsap.to(el, { scale: 1.06, duration: 0.18, ease: "power1.out" });
+    if (el) gsap.to(el, { scale: 1.06, duration: 0.18, ease: "power1.out" });
   };
   const handleLinkLeave = (el) => {
-    gsap.to(el, { scale: 1, duration: 0.18, ease: "power1.in" });
+    if (el) gsap.to(el, { scale: 1, duration: 0.18, ease: "power1.in" });
   };
  
   // ── Profile fetch ────────────────────────────────────────────────
@@ -131,7 +134,7 @@ export default function Navbar({ showAuthButtons = true }) {
       }
     };
     fetchData();
-  }, [location.pathname]);
+  }, [pathname]);
  
   return (
     <nav
@@ -145,7 +148,7 @@ export default function Navbar({ showAuthButtons = true }) {
           <div
             ref={logoRef}
             className="flex items-center cursor-pointer"
-            onClick={() => navigate("/")}
+            onClick={() => router.push("/")}
           >
             <div className="p-2 rounded-lg">
               <img src={Logo} className="w-10 h-10" alt="Resume Logo" />
@@ -165,7 +168,7 @@ export default function Navbar({ showAuthButtons = true }) {
               {navLinks.map((link, i) => (
                 <Link
                   key={link.path}
-                  to={link.path}
+                  href={link.path}
                   ref={(el) => (navLinksRef.current[i] = el)}
                   onMouseEnter={(e) => handleLinkHover(e.currentTarget)}
                   onMouseLeave={(e) => handleLinkLeave(e.currentTarget)}
@@ -189,18 +192,18 @@ export default function Navbar({ showAuthButtons = true }) {
                 {!login ? (
                   <div className="hidden md:flex items-center space-x-3">
                     <button
-                      onClick={() => navigate("/login")}
+                      onClick={() => router.push("/login")}
                       onMouseEnter={(e) => handleLinkHover(e.currentTarget)}
                       onMouseLeave={(e) => handleLinkLeave(e.currentTarget)}
-                      className="px-3 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 transition"
+                      className="px-3 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 transition cursor-pointer"
                     >
                       Sign In
                     </button>
                     <button
-                      onClick={() => navigate("/signup")}
+                      onClick={() => router.push("/signup")}
                       onMouseEnter={(e) => handleLinkHover(e.currentTarget)}
                       onMouseLeave={(e) => handleLinkLeave(e.currentTarget)}
-                      className="px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-500 transition"
+                      className="px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-500 transition cursor-pointer"
                     >
                       Get Started
                     </button>
@@ -208,10 +211,10 @@ export default function Navbar({ showAuthButtons = true }) {
                 ) : (
                   <div className="hidden md:block">
                     <button
-                      onClick={() => navigate("/profile")}
+                      onClick={() => router.push("/profile")}
                       onMouseEnter={(e) => handleLinkHover(e.currentTarget)}
                       onMouseLeave={(e) => handleLinkLeave(e.currentTarget)}
-                      className="p-1 text-gray-600 hover:text-blue-600 transition"
+                      className="p-1 text-gray-600 hover:text-blue-600 transition cursor-pointer"
                     >
                       <img
                         src="/profile.png"
@@ -254,7 +257,7 @@ export default function Navbar({ showAuthButtons = true }) {
           {navLinks.map((link) => (
               <Link
                 key={link.path}
-                to={link.path}
+                href={link.path}
                 onClick={() => setMobileOpen(false)}
                 className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium transition ${
                   isActive(link.path)
@@ -268,8 +271,8 @@ export default function Navbar({ showAuthButtons = true }) {
 
             <div className="flex flex-col items-start px-2 space-y-1">
               <button
-                onClick={() => { navigate("/profile"); setMobileOpen(false); }}
-                className="px-1 py-1 text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition"
+                onClick={() => { router.push("/profile"); setMobileOpen(false); }}
+                className="px-1 py-1 text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition cursor-pointer"
               >
                 Account
               </button>
@@ -278,14 +281,14 @@ export default function Navbar({ showAuthButtons = true }) {
             {!login && showAuthButtons && (
               <div className="pt-4 space-y-2">
                 <button
-                  onClick={() => { navigate("/login"); setMobileOpen(false); }}
-                  className="w-full px-3 py-2 text-base font-medium border border-gray-300 rounded-md hover:text-blue-600 hover:border-blue-600 transition"
+                  onClick={() => { router.push("/login"); setMobileOpen(false); }}
+                  className="w-full px-3 py-2 text-base font-medium border border-gray-300 rounded-md hover:text-blue-600 hover:border-blue-600 transition cursor-pointer"
                 >
                   Sign In
                 </button>
                 <button
-                  onClick={() => { navigate("/signup"); setMobileOpen(false); }}
-                  className="w-full px-3 py-2 text-base font-medium text-white bg-blue-600 rounded-md hover:bg-blue-500 transition"
+                  onClick={() => { router.push("/signup"); setMobileOpen(false); }}
+                  className="w-full px-3 py-2 text-base font-medium text-white bg-blue-600 rounded-md hover:bg-blue-500 transition cursor-pointer"
                 >
                   Get Started
                 </button>
@@ -297,5 +300,3 @@ export default function Navbar({ showAuthButtons = true }) {
     </nav>
   );
 }
-
- 

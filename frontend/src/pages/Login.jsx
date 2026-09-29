@@ -1,8 +1,10 @@
+'use client';
+
 import { useState, useEffect, useRef } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Mail, Lock, ArrowLeft } from "lucide-react";
-import { FaRegEye } from "react-icons/fa";
-import { FaRegEyeSlash } from "react-icons/fa";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { loginUser, googleAuth } from "../services/api";
 import { gsap } from "gsap";
 import GoogleSignupButton from "../components/common/GoogleSignUpButton";
@@ -11,14 +13,14 @@ import { signInWithPopup, signInWithRedirect, getRedirectResult } from "firebase
 import SEO from "../components/SEO";
  
 export default function Login() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [isGoogleAuthPending, setIsGoogleAuthPending] = useState(false);
 
-  // Handle Firebase redirect result (if popup was blocked and redirect was used)
+  // Handle Firebase redirect result
   useEffect(() => {
     getRedirectResult(auth)
       .then(async (result) => {
@@ -26,7 +28,7 @@ export default function Login() {
           const user = result.user;
           const data = await googleAuth(user.displayName, user.email, user.uid);
           if (data.message === "Login successful" || data.message === "Signup successful") {
-            navigate("/");
+            router.push("/");
           } else {
             setError(data.message || "Google authentication failed");
           }
@@ -35,7 +37,7 @@ export default function Login() {
       .catch((err) => {
         console.error("Redirect Google Auth Error:", err);
       });
-  }, []);
+  }, [router]);
  
   // ── Refs ───────────────────────────────────────────────────────────
   const pageRef      = useRef(null);
@@ -54,79 +56,58 @@ export default function Login() {
   // ── GSAP entrance ──────────────────────────────────────────────────
   useEffect(() => {
     const ctx = gsap.context(() => {
- 
       // Initial states
-      gsap.set([orb1Ref.current, orb2Ref.current], { scale: 0.5, opacity: 0 });
-      gsap.set(cardRef.current,      { opacity: 0, y: 50, scale: 0.96 });
-      gsap.set(backBtnRef.current,   { opacity: 0, x: -16 });
-      gsap.set(headingRef.current,   { opacity: 0, y: 20 });
-      gsap.set(subRef.current,       { opacity: 0, y: 14 });
-      gsap.set(emailRowRef.current,  { opacity: 0, x: -24 });
-      gsap.set(passRowRef.current,   { opacity: 0, x: -24 });
-      gsap.set(submitBtnRef.current, { opacity: 0, y: 16, scale: 0.95 });
-      gsap.set(signupRowRef.current, { opacity: 0, y: 10 });
+      if (orb1Ref.current && orb2Ref.current) gsap.set([orb1Ref.current, orb2Ref.current], { scale: 0.5, opacity: 0 });
+      if (cardRef.current) gsap.set(cardRef.current, { opacity: 0, y: 50, scale: 0.96 });
+      if (backBtnRef.current) gsap.set(backBtnRef.current, { opacity: 0, x: -16 });
+      if (headingRef.current) gsap.set(headingRef.current, { opacity: 0, y: 20 });
+      if (subRef.current) gsap.set(subRef.current, { opacity: 0, y: 14 });
+      if (emailRowRef.current) gsap.set(emailRowRef.current, { opacity: 0, y: 20 });
+      if (passRowRef.current) gsap.set(passRowRef.current, { opacity: 0, y: 20 });
+      if (submitBtnRef.current) gsap.set(submitBtnRef.current, { opacity: 0, y: 16 });
+      if (signupRowRef.current) gsap.set(signupRowRef.current, { opacity: 0, y: 12 });
  
-      // Master timeline
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
  
-      tl
-        .to([orb1Ref.current, orb2Ref.current], { scale: 1, opacity: 1, duration: 1.6, stagger: 0.25, ease: "power2.out" }, 0)
-        .to(cardRef.current,      { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "back.out(1.3)" }, 0.25)
-        .to(backBtnRef.current,   { opacity: 1, x: 0, duration: 0.5 }, 0.55)
-        .to(headingRef.current,   { opacity: 1, y: 0, duration: 0.6 }, 0.65)
-        .to(subRef.current,       { opacity: 1, y: 0, duration: 0.55 }, 0.8)
-        .to(emailRowRef.current,  { opacity: 1, x: 0, duration: 0.55 }, 0.95)
-        .to(passRowRef.current,   { opacity: 1, x: 0, duration: 0.55 }, 1.1)
-        .to(submitBtnRef.current, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "back.out(1.4)" }, 1.25)
-        .to(signupRowRef.current, { opacity: 1, y: 0, duration: 0.45 }, 1.4);
+      if (orb1Ref.current && orb2Ref.current) {
+        tl.to([orb1Ref.current, orb2Ref.current], { scale: 1, opacity: 1, duration: 1.6, stagger: 0.3, ease: "power2.out" }, 0);
+      }
+      if (cardRef.current) tl.to(cardRef.current, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.2)" }, 0.2);
+      if (backBtnRef.current) tl.to(backBtnRef.current, { opacity: 1, x: 0, duration: 0.4 }, 0.45);
+      if (headingRef.current) tl.to(headingRef.current, { opacity: 1, y: 0, duration: 0.5 }, 0.5);
+      if (subRef.current) tl.to(subRef.current, { opacity: 1, y: 0, duration: 0.45 }, 0.6);
+      if (emailRowRef.current) tl.to(emailRowRef.current, { opacity: 1, y: 0, duration: 0.45 }, 0.68);
+      if (passRowRef.current) tl.to(passRowRef.current, { opacity: 1, y: 0, duration: 0.45 }, 0.76);
+      if (submitBtnRef.current) tl.to(submitBtnRef.current, { opacity: 1, y: 0, duration: 0.45, ease: "back.out(1.4)" }, 0.84);
+      if (signupRowRef.current) tl.to(signupRowRef.current, { opacity: 1, y: 0, duration: 0.4 }, 0.92);
  
-      // Orb ambient drift
-      gsap.to(orb1Ref.current, { x: 30, y: 20, duration: 8,  repeat: -1, yoyo: true, ease: "sine.inOut" });
-      gsap.to(orb2Ref.current, { x: -25, y: -18, duration: 10, repeat: -1, yoyo: true, ease: "sine.inOut" });
+      if (orb1Ref.current) gsap.to(orb1Ref.current, { x: 30, y: 20, duration: 8, repeat: -1, yoyo: true, ease: "sine.inOut" });
+      if (orb2Ref.current) gsap.to(orb2Ref.current, { x: -25, y: -18, duration: 10, repeat: -1, yoyo: true, ease: "sine.inOut" });
  
-      // Card subtle float
-      gsap.to(cardRef.current, { y: -6, duration: 3.5, repeat: -1, yoyo: true, ease: "sine.inOut", delay: 1 });
- 
-      // Mouse parallax on page
       const onMove = (e) => {
         const px = e.clientX / window.innerWidth;
         const py = e.clientY / window.innerHeight;
-        gsap.to(orb1Ref.current, { x: px * 45 - 22, y: py * 32 - 16, duration: 1.8, ease: "power1.out", overwrite: "auto" });
-        gsap.to(orb2Ref.current, { x: -px * 32 + 16, y: -py * 25 + 12, duration: 2.2, ease: "power1.out", overwrite: "auto" });
+        if (orb1Ref.current) gsap.to(orb1Ref.current, { x: px * 45 - 22, y: py * 30 - 15, duration: 1.8, ease: "power1.out", overwrite: "auto" });
+        if (orb2Ref.current) gsap.to(orb2Ref.current, { x: -px * 30 + 15, y: -py * 24 + 12, duration: 2.2, ease: "power1.out", overwrite: "auto" });
       };
-      pageRef.current?.addEventListener("mousemove", onMove);
- 
-      // Card 3D tilt on mouse
-      const card = cardRef.current;
-      const onCardMove = (e) => {
-        const rect = card.getBoundingClientRect();
-        const rx = gsap.utils.mapRange(0, rect.height,  6, -6, e.clientY - rect.top);
-        const ry = gsap.utils.mapRange(0, rect.width,  -6,  6, e.clientX - rect.left);
-        gsap.to(card, { rotateX: rx, rotateY: ry, duration: 0.4, ease: "power2.out", transformPerspective: 900, overwrite: "auto" });
-      };
-      const onCardLeave = () =>
-        gsap.to(card, { rotateX: 0, rotateY: 0, duration: 0.6, ease: "power3.out" });
- 
-      card.addEventListener("mousemove", onCardMove);
-      card.addEventListener("mouseleave", onCardLeave);
+      const page = pageRef.current;
+      page?.addEventListener("mousemove", onMove);
  
       return () => {
-        pageRef.current?.removeEventListener("mousemove", onMove);
-        card.removeEventListener("mousemove", onCardMove);
-        card.removeEventListener("mouseleave", onCardLeave);
+        page?.removeEventListener("mousemove", onMove);
       };
-    }, pageRef);
+    });
  
     return () => ctx.revert();
   }, []);
  
-  // ── Shake card on error ────────────────────────────────────────────
+  // ── Error shake animation ──────────────────────────────────────────
   useEffect(() => {
-    if (!error) return;
+    if (!error || !cardRef.current) return;
     gsap.fromTo(
       cardRef.current,
-      { x: -10 },
-      { x: 0, duration: 0.5, ease: "elastic.out(1, 0.3)" }
+      { x: -8 },
+      { x: 8, duration: 0.08, repeat: 5, yoyo: true, ease: "power1.inOut", onComplete: () => gsap.set(cardRef.current, { x: 0 }) }
     );
     if (errorRef.current) {
       gsap.fromTo(errorRef.current, { opacity: 0, y: -8 }, { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" });
@@ -138,16 +119,16 @@ export default function Login() {
     e.preventDefault();
     setError("");
  
-    // Button press animation
-    gsap.to(submitBtnRef.current, { scale: 0.96, duration: 0.12, yoyo: true, repeat: 1, ease: "power1.inOut" });
+    if (submitBtnRef.current) {
+      gsap.to(submitBtnRef.current, { scale: 0.96, duration: 0.12, yoyo: true, repeat: 1, ease: "power1.inOut" });
+    }
  
     try {
       const data = await loginUser(email, password);
       if (data.message === "Login successful") {
-        // Outro before navigate
         gsap.to(cardRef.current, {
           opacity: 0, y: -30, scale: 0.95, duration: 0.4, ease: "power2.in",
-          onComplete: () => navigate("/"),
+          onComplete: () => router.push("/"),
         });
       } else {
         setError(data.message || "Login failed");
@@ -171,10 +152,9 @@ export default function Login() {
       const data = await googleAuth(userName, user.email, user.uid);
 
       if (data.message === "Login successful" || data.message === "Signup successful") {
-        // Outro before navigate
         gsap.to(cardRef.current, {
           opacity: 0, y: -30, scale: 0.95, duration: 0.4, ease: "power2.in",
-          onComplete: () => navigate("/"),
+          onComplete: () => router.push("/"),
         });
       } else {
         setError(data.message || "Google authentication failed");
@@ -215,7 +195,6 @@ export default function Login() {
         url="/login"
         noindex={true}
       />
-      {/* Background orbs */}
       <div
         ref={orb1Ref}
         className="pointer-events-none absolute -top-28 -left-36 w-[480px] h-[480px] rounded-full bg-blue-200/40"
@@ -230,17 +209,15 @@ export default function Login() {
       <main className="relative z-10 w-full max-w-md py-12">
         <div ref={cardRef} className="bg-white rounded-2xl shadow-lg p-8" style={{ transformStyle: "preserve-3d" }}>
  
-          {/* Back button */}
           <button
             ref={backBtnRef}
-            onClick={() => navigate("/")}
-            className="mb-4 flex items-center text-gray-600 hover:text-gray-900 transition"
+            onClick={() => router.push("/")}
+            className="mb-4 flex items-center text-gray-600 hover:text-gray-900 transition cursor-pointer"
           >
             <ArrowLeft className="h-5 w-5 mr-2" />
             <span className="text-sm font-medium">Back</span>
           </button>
  
-          {/* Heading */}
           <div className="text-center mb-8">
             <h1 ref={headingRef} className="text-2xl font-bold text-gray-900 mb-1">
               Welcome Back
@@ -251,8 +228,6 @@ export default function Login() {
           </div>
  
           <form onSubmit={handleSubmit} className="space-y-6">
- 
-            {/* Email */}
             <div ref={emailRowRef}>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                 Email Address
@@ -271,7 +246,6 @@ export default function Login() {
               </div>
             </div>
  
-            {/* Password */}
             <div ref={passRowRef}>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
                 Password
@@ -298,31 +272,28 @@ export default function Login() {
               </div>
             </div>
  
-            {/* Error */}
             {error && (
               <div ref={errorRef} className="text-red-500 text-sm text-center font-medium">
                 {error}
               </div>
             )}
  
-            {/* Submit */}
             <button
               ref={submitBtnRef}
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition cursor-pointer"
             >
               Sign In
             </button>
           </form>
-
-            <div className="flex items-center justify-center mt-5">
-              <GoogleSignupButton onClick={handleGoogleAuth} />
-            </div>
  
-          {/* Signup link */}
+          <div className="flex items-center justify-center mt-5">
+            <GoogleSignupButton onClick={handleGoogleAuth} />
+          </div>
+ 
           <div ref={signupRowRef} className="mt-6 text-center text-sm text-gray-600">
-            Don't have an account?{" "}
-            <Link to="/signup" className="text-blue-600 hover:underline font-medium">
+            Don&apos;t have an account?{" "}
+            <Link href="/signup" className="text-blue-600 hover:underline font-medium">
               Sign up
             </Link>
           </div>
@@ -332,4 +303,3 @@ export default function Login() {
     </div>
   );
 }
- 

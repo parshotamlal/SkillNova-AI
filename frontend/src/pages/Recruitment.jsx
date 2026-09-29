@@ -1,5 +1,7 @@
+'use client';
+
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { 
   Briefcase, 
   Plus, 
@@ -64,7 +66,7 @@ export default function Recruitment() {
   const [dragActive, setDragActive] = useState(false);
 
   const getApiBaseUrl = () => {
-    let url = import.meta.env.VITE_API_URL;
+    let url = (typeof process !== "undefined" && process.env?.NEXT_PUBLIC_API_URL) || "";
     if (!url) return "";
     url = url.trim().replace(/\/+$/, "");
     if (url.endsWith("/api")) url = url.slice(0, -4);
@@ -455,7 +457,7 @@ export default function Recruitment() {
           {/* Glowing CTA Button */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
-              to="/pricing"
+              href="/pricing"
               className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-600 hover:to-yellow-600 text-slate-950 font-bold text-base rounded-2xl shadow-xl shadow-amber-500/25 hover:shadow-amber-500/40 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2"
             >
               <span>👑 Buy Pro Plan — ₹149 /month</span>
@@ -463,7 +465,7 @@ export default function Recruitment() {
             </Link>
 
             <Link
-              to="/"
+              href="/"
               className="w-full sm:w-auto px-6 py-4 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-sm rounded-2xl border border-slate-200 shadow-sm transition"
             >
               Back to Home

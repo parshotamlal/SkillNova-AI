@@ -1,4 +1,6 @@
-import { useNavigate } from "react-router-dom";
+'use client';
+
+import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { Upload, Brain, Target, Star, ChevronDown } from "lucide-react";
 import { IoDocumentOutline } from "react-icons/io5";
@@ -7,7 +9,7 @@ import { gsap } from "gsap";
 import SEO from "../components/SEO";
  
 export default function Index() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
  
   const cardsRef = useRef([]);
@@ -229,16 +231,16 @@ export default function Index() {
             <div ref={heroBtnRef} className="flex flex-col sm:flex-row justify-center items-center gap-4">
               <button
                 aria-label="Check ATS Score"
-                onClick={() => navigate("/check-ats-score")}
-                className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 text-base font-semibold rounded-2xl shadow-lg shadow-blue-500/15 hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 inline-flex items-center justify-center"
+                onClick={() => router.push("/check-ats-score")}
+                className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 text-base font-semibold rounded-2xl shadow-lg shadow-blue-500/15 hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 inline-flex items-center justify-center cursor-pointer"
               >
                 <IoDocumentOutline className="mr-2 h-5 w-5" aria-hidden="true" />
                 Check ATS Score
               </button>
               <button
                 aria-label="Start Analyzing Resume"
-                onClick={() => navigate("/analyze")}
-                className="w-full sm:w-auto bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-8 py-4 text-base font-semibold rounded-2xl shadow-sm hover:shadow-md transition-all duration-200 transform hover:-translate-y-0.5 inline-flex items-center justify-center"
+                onClick={() => router.push("/analyze")}
+                className="w-full sm:w-auto bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-8 py-4 text-base font-semibold rounded-2xl shadow-sm hover:shadow-md transition-all duration-200 transform hover:-translate-y-0.5 inline-flex items-center justify-center cursor-pointer"
               >
                 <Upload className="mr-2 h-5 w-5" aria-hidden="true" />
                 Start Analyzing

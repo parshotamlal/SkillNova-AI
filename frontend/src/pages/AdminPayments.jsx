@@ -1,7 +1,9 @@
+'use client';
+
 import { useState, useEffect } from "react";
 import { getAdminPaymentClaims, updateAdminPaymentClaim, fetchProfile } from "../services/api";
 import { CheckCircle2, XCircle, Clock, ShieldCheck, RefreshCw, Search, Lock } from "lucide-react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import SEO from "../components/SEO";
 
 export default function AdminPayments() {
@@ -87,7 +89,7 @@ export default function AdminPayments() {
             Only the administrator (<span className="font-semibold text-slate-800">parshotamworks@gmail.com</span>) can access the payment approval dashboard.
           </p>
           <Link
-            to="/"
+            href="/"
             className="inline-block px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm rounded-xl transition shadow-md"
           >
             Back to Home

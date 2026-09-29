@@ -1,5 +1,7 @@
+'use client';
+
 import { useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import { CheckCircle, AlertCircle, Clock } from "lucide-react";
 import { gsap } from "gsap";
 import SEO from "../components/SEO";
@@ -50,7 +52,7 @@ const incidentStatusConfig = {
 const allOperational = services.every((s) => s.status === "operational");
  
 export default function Status() {
-  const navigate = useNavigate();
+  const router = useRouter();
  
   const pageRef          = useRef(null);
   const orb1Ref          = useRef(null);
@@ -295,7 +297,7 @@ export default function Status() {
  
         <p
           className="text-center text-sm text-gray-400 mt-10 cursor-pointer hover:text-blue-500 transition"
-          onClick={() => navigate("/")}
+          onClick={() => router.push("/")}
         >
           ← Back to home
         </p>
